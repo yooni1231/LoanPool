@@ -12,7 +12,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; f
 .topbar-title { color: #fff; font-size: 15px; font-weight: 700; }
 .topbar-title span { opacity: .6; font-weight: 300; margin-left: 6px; font-size: 13px; }
 
-.page { max-width: 1440px; margin: 0 auto; padding: 24px 20px 60px; }
+.page { max-width: 1500px; margin: 0 auto; padding: 24px 20px 60px; }
 
 .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
 .stat-card { background: #fff; border: 1px solid #DFE1E6; border-radius: 8px; padding: 16px 20px; flex: 1; min-width: 120px; }
@@ -25,17 +25,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; f
 
 .tbl-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.main-table { min-width: 1100px; }
+.main-table { min-width: 1200px; }
 thead th { background: #F4F5F7; padding: 9px 10px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #5E6C84; border-bottom: 2px solid #DFE1E6; white-space: nowrap; }
 th.center, td.center { text-align: center; }
 tbody tr { border-bottom: 1px solid #DFE1E6; transition: background .1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: #F8F9FA; }
 tbody tr.returned-row { background: #F3FFF8; }
-tbody td { padding: 9px 10px; vertical-align: middle; }
-.num-cell { text-align: center; color: #97A0AF; font-size: 12px; width: 36px; }
+tbody td { padding: 9px 10px; vertical-align: top; }
+.num-cell { text-align: center; color: #97A0AF; font-size: 12px; width: 36px; vertical-align: middle !important; }
 .mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; font-weight: 600; }
-.note-cell { font-size: 11px; color: #5E6C84; max-width: 180px; white-space: pre-wrap; word-break: break-word; line-height: 1.5; }
+
+/* Note + PDF cell */
+.note-cell { min-width: 260px; max-width: 340px; }
+.note-text { font-size: 12px; color: #172B4D; white-space: pre-wrap; word-break: break-word; line-height: 1.6; margin-bottom: 6px; }
+.note-text:empty { display: none; }
+
+/* PDF attachments in table */
+.pdf-list { display: flex; flex-direction: column; gap: 4px; }
+.pdf-chip { display: inline-flex; align-items: center; gap: 6px; background: #FFEBE6; border: 1px solid #FFBDAD; border-radius: 4px; padding: 4px 8px; font-size: 11px; font-weight: 600; color: #DE350B; cursor: pointer; text-decoration: none; max-width: 280px; transition: background .15s; }
+.pdf-chip:hover { background: #FFBDAD; }
+.pdf-chip .pdf-icon { font-size: 13px; flex-shrink: 0; }
+.pdf-chip .pdf-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #172B4D; font-weight: 500; }
+.pdf-chip .pdf-del { margin-left: auto; color: #97A0AF; font-size: 14px; line-height: 1; flex-shrink: 0; }
+.pdf-chip .pdf-del:hover { color: #DE350B; }
 
 .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
 .pill-green{background:#E3FCEF;color:#00875A} .pill-red{background:#FFEBE6;color:#DE350B}
@@ -43,7 +56,6 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
 .pill-orange{background:#FFFAE6;color:#FF8B00} .pill-purple{background:#EAE6FF;color:#6554C0}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .dot-green{background:#00875A} .dot-red{background:#DE350B}
-
 .o-mark { color: #00875A; font-weight: 700; font-size: 14px; }
 .x-mark { color: #DFE1E6; font-size: 13px; }
 
@@ -53,21 +65,23 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
 .btn-edit{background:#F4F5F7;color:#172B4D;border:1px solid #DFE1E6} .btn-edit:hover{background:#DEEBFF;color:#0052CC;border-color:#0052CC}
 .btn-return{background:#E3FCEF;color:#00875A;border:1px solid #ABF5D1} .btn-return:hover{background:#ABF5D1}
 .btn-sm{padding:4px 9px;font-size:12px}
-.action-cell { display: flex; gap: 4px; white-space: nowrap; }
+.action-cell { display: flex; gap: 4px; white-space: nowrap; vertical-align: middle !important; }
 
 .tab-row { display: flex; gap: 4px; flex-wrap: wrap; }
 .tab-btn { padding: 5px 14px; border-radius: 4px; border: 1px solid #DFE1E6; background: #fff; cursor: pointer; font-size: 12px; font-family: inherit; color: #5E6C84; }
 .tab-btn.active { background: #0052CC; color: #fff; border-color: #0052CC; }
 
+/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal-overlay.hidden { display: none; }
-.modal { background: #fff; border-radius: 8px; width: 100%; max-width: 580px; box-shadow: 0 8px 32px rgba(9,30,66,.25); max-height: 92vh; overflow-y: auto; }
+.modal { background: #fff; border-radius: 8px; width: 100%; max-width: 600px; box-shadow: 0 8px 32px rgba(9,30,66,.25); max-height: 92vh; overflow-y: auto; }
 .modal-header { padding: 18px 22px 14px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #fff; z-index: 1; }
 .modal-header h3 { font-size: 16px; font-weight: 700; }
 .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #5E6C84; }
 .modal-body { padding: 18px 22px; }
 .modal-footer { padding: 14px 22px; border-top: 1px solid #DFE1E6; display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: #fff; }
 
+/* Form */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-group.full { grid-column: 1/-1; }
@@ -76,12 +90,51 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
 .form-group input, .form-group select, .form-group textarea { border: 2px solid #DFE1E6; border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: inherit; color: #172B4D; outline: none; transition: border-color .15s; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #0052CC; }
 .form-group input.err { border-color: #DE350B; }
-.form-group textarea { resize: vertical; min-height: 64px; }
-.fsec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #5E6C84; grid-column: 1/-1; padding-top: 8px; border-top: 1px solid #DFE1E6; }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.fsec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #5E6C84; grid-column: 1/-1; padding-top: 10px; border-top: 1px solid #DFE1E6; }
 .check-row { display: flex; gap: 20px; grid-column: 1/-1; padding: 4px 0; }
 .check-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
 .check-row input[type=checkbox] { width: 15px; height: 15px; accent-color: #0052CC; cursor: pointer; }
 
+/* PDF Upload area in modal */
+.pdf-upload-area {
+  grid-column: 1/-1;
+  border: 2px dashed #B3D4FF;
+  border-radius: 6px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  background: #F8FBFF;
+}
+.pdf-upload-area:hover, .pdf-upload-area.drag-over { border-color: #0052CC; background: #DEEBFF; }
+.pdf-upload-area input[type=file] { display: none; }
+.pdf-upload-label { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.pdf-upload-icon { font-size: 28px; }
+.pdf-upload-text { font-size: 13px; font-weight: 600; color: #0052CC; }
+.pdf-upload-sub { font-size: 11px; color: #5E6C84; }
+
+/* Pending PDFs in modal */
+.pending-pdfs { grid-column: 1/-1; display: flex; flex-direction: column; gap: 6px; }
+.pending-pdf-item { display: flex; align-items: center; gap: 8px; background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 7px 10px; }
+.pending-pdf-item .pdf-icon { font-size: 16px; color: #DE350B; }
+.pending-pdf-item .pdf-fname { flex: 1; font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pending-pdf-item .pdf-size { font-size: 11px; color: #97A0AF; }
+.pending-pdf-item .pdf-rm { background: none; border: none; cursor: pointer; color: #97A0AF; font-size: 16px; padding: 0 2px; }
+.pending-pdf-item .pdf-rm:hover { color: #DE350B; }
+
+/* PDF viewer modal */
+.pdf-viewer-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.7); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.pdf-viewer-overlay.hidden { display: none; }
+.pdf-viewer-box { background: #fff; border-radius: 8px; width: 100%; max-width: 900px; height: 85vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(9,30,66,.4); }
+.pdf-viewer-header { padding: 14px 18px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; }
+.pdf-viewer-header span { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 600px; }
+.pdf-viewer-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #5E6C84; }
+.pdf-viewer-close:hover { color: #172B4D; }
+.pdf-viewer-body { flex: 1; overflow: hidden; }
+.pdf-viewer-body iframe { width: 100%; height: 100%; border: none; border-radius: 0 0 8px 8px; }
+
+/* Calendar */
 .cal-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .cal-nav-btn { background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 5px 14px; cursor: pointer; font-size: 13px; font-family: inherit; }
 .cal-nav-btn:hover { background: #DEEBFF; border-color: #0052CC; color: #0052CC; }
@@ -116,7 +169,7 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
 .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
 @media(max-width:1000px){ .two-col { grid-template-columns: 1fr; } }
 
-.toast { position: fixed; bottom: 24px; right: 24px; background: #172B4D; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; z-index: 300; transform: translateY(80px); opacity: 0; transition: all .3s; pointer-events: none; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: #172B4D; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; z-index: 400; transform: translateY(80px); opacity: 0; transition: all .3s; pointer-events: none; }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.success { background: #00875A; }
 .toast.err { background: #DE350B; }
@@ -133,9 +186,9 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
 
   <!-- Stats -->
   <div class="stats-row">
-    <div class="stat-card"><div class="stat-num num-blue"  id="statTotal">0</div><div class="stat-label">전체 카메라</div></div>
-    <div class="stat-card"><div class="stat-num num-green" id="statAvail">0</div><div class="stat-label">대출 가능</div></div>
-    <div class="stat-card"><div class="stat-num num-red"   id="statOut">0</div><div class="stat-label">대출 중</div></div>
+    <div class="stat-card"><div class="stat-num num-blue"   id="statTotal">0</div><div class="stat-label">전체 카메라</div></div>
+    <div class="stat-card"><div class="stat-num num-green"  id="statAvail">0</div><div class="stat-label">대출 가능</div></div>
+    <div class="stat-card"><div class="stat-num num-red"    id="statOut">0</div><div class="stat-label">대출 중</div></div>
     <div class="stat-card"><div class="stat-num num-orange" id="statWait">0</div><div class="stat-label">대기 목록</div></div>
     <div class="stat-card"><div class="stat-num num-purple" id="statReturned">0</div><div class="stat-label">반납 완료</div></div>
   </div>
@@ -171,7 +224,7 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
                 <th>Last Update</th>
                 <th>Out</th>
                 <th>In</th>
-                <th>Note</th>
+                <th>Note &amp; Files</th>
                 <th>상태</th>
                 <th>관리</th>
               </tr>
@@ -244,7 +297,8 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
     </div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="fsec">📋 기본 정보</div>
+
+        <div class="fsec" style="border-top:none;padding-top:0">📋 기본 정보</div>
         <div class="form-group">
           <label>P/N (Part Number) <span class="req">*</span></label>
           <input type="text" id="f-pn" placeholder="예: 810-00002-B">
@@ -295,8 +349,24 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
 
         <div class="form-group full">
           <label>Note</label>
-          <textarea id="f-note" placeholder="예: 반납 요청 완료 (2023/8/1) / 첨부파일명 등"></textarea>
+          <textarea id="f-note" placeholder="예: 반납 요청 완료 (2023/8/1) / 특이사항 메모" style="min-height:100px"></textarea>
         </div>
+
+        <div class="fsec">📎 PDF 첨부파일</div>
+
+        <!-- Upload drop zone -->
+        <div class="pdf-upload-area full" id="pdfDropZone">
+          <label class="pdf-upload-label" for="pdfFileInput">
+            <span class="pdf-upload-icon">📄</span>
+            <span class="pdf-upload-text">PDF 파일을 여기에 드래그하거나 클릭하여 업로드</span>
+            <span class="pdf-upload-sub">PDF 파일만 가능 · 여러 파일 동시 업로드 가능</span>
+          </label>
+          <input type="file" id="pdfFileInput" accept=".pdf" multiple>
+        </div>
+
+        <!-- Pending PDFs list -->
+        <div class="pending-pdfs" id="pendingPdfs"></div>
+
       </div>
     </div>
     <div class="modal-footer">
@@ -349,92 +419,223 @@ tbody td { padding: 9px 10px; vertical-align: middle; }
   </div>
 </div>
 
+<!-- ══ PDF VIEWER ══ -->
+<div class="pdf-viewer-overlay hidden" id="pdfViewer">
+  <div class="pdf-viewer-box">
+    <div class="pdf-viewer-header">
+      <span id="pdfViewerTitle">PDF 파일</span>
+      <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
+    </div>
+    <div class="pdf-viewer-body">
+      <iframe id="pdfViewerFrame" src=""></iframe>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
+// ═══════════════════════════════
+//  DATA
+// ═══════════════════════════════
 let cameras = [
-  { id:1, pn:'810-00002-B', sn:'19446EB4', mn:'ZVD1P-S', body:true, power:true, comm:true, location:'Hansero', lastUpdate:'2023-11-18', out:'2025-05-19', inn:'2025-05-19', status:'returned', note:'반납 요청 완료 (2023/8/1)\nLoan Request Form_20250519_Hansero_Z1pS.pdf' },
+  {
+    id:1, pn:'810-00002-B', sn:'19446EB4', mn:'ZVD1P-S',
+    body:true, power:true, comm:true,
+    location:'Hansero', lastUpdate:'2023-11-18',
+    out:'2025-05-19', inn:'2025-05-19',
+    status:'returned',
+    note:'반납 요청 완료 (2023/8/1)',
+    pdfs:[ { name:'Loan Request Form_20250519_Hansero_Z1pS.pdf', dataUrl:null } ]
+  },
 ];
 let waitingList = [
-  { id:1, mn:'Z3',    company:'Bright Machines',      start:'즉시',           returnPlan:'3주',  prio:'high' },
-  { id:2, mn:'Z3',    company:'IT+',                  start:'즉시',           returnPlan:'2주',  prio:'high' },
-  { id:3, mn:'MR60',  company:'Kawasaki Robotics',    start:'준비되는 대로',  returnPlan:'장기', prio:'med'  },
-  { id:4, mn:'MR60',  company:'Pick it (Yaskawa US)', start:'즉시',           returnPlan:'장기', prio:'high' },
-  { id:5, mn:'MR60',  company:'Univ. Porto (FEUP)',   start:'2026-03-23',     returnPlan:'3주',  prio:'low'  },
+  { id:1, mn:'Z3',   company:'Bright Machines',      start:'즉시',          returnPlan:'3주',  prio:'high' },
+  { id:2, mn:'Z3',   company:'IT+',                  start:'즉시',          returnPlan:'2주',  prio:'high' },
+  { id:3, mn:'MR60', company:'Kawasaki Robotics',    start:'준비되는 대로', returnPlan:'장기', prio:'med'  },
+  { id:4, mn:'MR60', company:'Pick it (Yaskawa US)', start:'즉시',          returnPlan:'장기', prio:'high' },
+  { id:5, mn:'MR60', company:'Univ. Porto (FEUP)',   start:'2026-03-23',    returnPlan:'3주',  prio:'low'  },
 ];
 let nextCamId=2, nextWaitId=6, editingId=null;
 let viewFilter='all', calFilter='ALL';
 let currentYear=new Date().getFullYear(), currentMonth=new Date().getMonth();
 const TODAY=new Date();
 
-// ── View Filter ──
-function setViewFilter(f,btn){
-  viewFilter=f;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+// Pending PDFs during modal editing
+let pendingPdfs = []; // [{name, dataUrl}]
+
+// ═══════════════════════════════
+//  PDF HANDLING
+// ═══════════════════════════════
+function initPdfUpload() {
+  const input = document.getElementById('pdfFileInput');
+  const zone  = document.getElementById('pdfDropZone');
+
+  input.addEventListener('change', e => {
+    handleFiles([...e.target.files]);
+    input.value = '';
+  });
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    handleFiles([...e.dataTransfer.files].filter(f => f.type === 'application/pdf'));
+  });
+}
+
+function handleFiles(files) {
+  files.forEach(file => {
+    if (file.type !== 'application/pdf') { showToast('PDF 파일만 업로드 가능합니다.', 'err'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingPdfs.push({ name: file.name, dataUrl: e.target.result, size: file.size });
+      renderPendingPdfs();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPendingPdfs() {
+  const container = document.getElementById('pendingPdfs');
+  if (!pendingPdfs.length) { container.innerHTML = ''; return; }
+  container.innerHTML = pendingPdfs.map((p, i) => `
+    <div class="pending-pdf-item">
+      <span class="pdf-icon">📄</span>
+      <span class="pdf-fname">${p.name}</span>
+      <span class="pdf-size">${p.size ? formatSize(p.size) : ''}</span>
+      <button class="pdf-rm" onclick="removePending(${i})" title="제거">✕</button>
+    </div>`).join('');
+}
+
+function removePending(i) {
+  pendingPdfs.splice(i, 1);
+  renderPendingPdfs();
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+
+// ── PDF Viewer ──
+function openPdf(camId, pdfIdx) {
+  const cam = cameras.find(c => c.id === camId);
+  if (!cam || !cam.pdfs[pdfIdx]) return;
+  const pdf = cam.pdfs[pdfIdx];
+  if (!pdf.dataUrl) { showToast('파일 데이터가 없습니다. 파일을 다시 업로드해주세요.', 'err'); return; }
+  document.getElementById('pdfViewerTitle').textContent = pdf.name;
+  document.getElementById('pdfViewerFrame').src = pdf.dataUrl;
+  document.getElementById('pdfViewer').classList.remove('hidden');
+}
+
+function closePdfViewer() {
+  document.getElementById('pdfViewer').classList.add('hidden');
+  document.getElementById('pdfViewerFrame').src = '';
+}
+
+function deletePdf(camId, pdfIdx) {
+  const cam = cameras.find(c => c.id === camId);
+  if (!cam) return;
+  cam.pdfs.splice(pdfIdx, 1);
+  renderInventory();
+  showToast('파일이 삭제되었습니다.', 'success');
+}
+
+// ═══════════════════════════════
+//  VIEW FILTER
+// ═══════════════════════════════
+function setViewFilter(f, btn) {
+  viewFilter = f;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderInventory();
 }
-function filteredCams(){
-  if(viewFilter==='out')      return cameras.filter(c=>c.status==='out'||c.status==='overdue');
-  if(viewFilter==='avail')    return cameras.filter(c=>c.status==='available');
-  if(viewFilter==='returned') return cameras.filter(c=>c.status==='returned');
+function filteredCams() {
+  if (viewFilter==='out')      return cameras.filter(c => c.status==='out'||c.status==='overdue');
+  if (viewFilter==='avail')    return cameras.filter(c => c.status==='available');
+  if (viewFilter==='returned') return cameras.filter(c => c.status==='returned');
   return cameras;
 }
 
-// ── Render Inventory ──
-function renderInventory(){
-  const tbody=document.getElementById('inventoryBody');
-  const list=filteredCams();
-  if(!list.length){ tbody.innerHTML=`<tr><td colspan="14" class="empty-td">해당하는 카메라가 없습니다.</td></tr>`; return; }
-  const sp=s=>{
-    if(s==='available') return `<span class="pill pill-green"><span class="dot dot-green"></span>대출 가능</span>`;
-    if(s==='out')       return `<span class="pill pill-red"><span class="dot dot-red"></span>대출 중</span>`;
-    if(s==='overdue')   return `<span class="pill pill-orange">⚠️ 연체</span>`;
-    if(s==='returned')  return `<span class="pill pill-purple">✔️ 반납 완료</span>`;
+// ═══════════════════════════════
+//  RENDER INVENTORY
+// ═══════════════════════════════
+function renderInventory() {
+  const tbody = document.getElementById('inventoryBody');
+  const list = filteredCams();
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="14" class="empty-td">해당하는 카메라가 없습니다.</td></tr>`;
+    return;
+  }
+  const sp = s => {
+    if (s==='available') return `<span class="pill pill-green"><span class="dot dot-green"></span>대출 가능</span>`;
+    if (s==='out')       return `<span class="pill pill-red"><span class="dot dot-red"></span>대출 중</span>`;
+    if (s==='overdue')   return `<span class="pill pill-orange">⚠️ 연체</span>`;
+    if (s==='returned')  return `<span class="pill pill-purple">✔️ 반납 완료</span>`;
     return '';
   };
-  const chk=v=>v?`<span class="o-mark">O</span>`:`<span class="x-mark">—</span>`;
-  const fd=d=>d||'—';
-  tbody.innerHTML=list.map((c,i)=>`
-    <tr class="${c.status==='returned'?'returned-row':''}">
+  const chk = v => v ? `<span class="o-mark">O</span>` : `<span class="x-mark">—</span>`;
+  const fd = d => d || '—';
+
+  tbody.innerHTML = list.map((c, i) => {
+    const pdfsHtml = (c.pdfs && c.pdfs.length)
+      ? `<div class="pdf-list">${c.pdfs.map((p, pi) =>
+          `<div class="pdf-chip" onclick="openPdf(${c.id},${pi})">
+            <span class="pdf-icon">📄</span>
+            <span class="pdf-name">${p.name}</span>
+            <span class="pdf-del" onclick="event.stopPropagation();deletePdf(${c.id},${pi})" title="삭제">✕</span>
+          </div>`).join('')}</div>`
+      : '';
+
+    return `<tr class="${c.status==='returned'?'returned-row':''}">
       <td class="num-cell">${i+1}</td>
-      <td class="mono">${c.pn}</td>
-      <td class="mono">${c.sn}</td>
-      <td><span class="pill pill-grey">${c.mn}</span></td>
-      <td class="center">${chk(c.body)}</td>
-      <td class="center">${chk(c.power)}</td>
-      <td class="center">${chk(c.comm)}</td>
-      <td>${c.location}</td>
-      <td style="font-size:12px;color:#5E6C84">${fd(c.lastUpdate)}</td>
-      <td style="font-size:12px">${fd(c.out)}</td>
-      <td style="font-size:12px">${fd(c.inn)}</td>
-      <td class="note-cell">${c.note||'—'}</td>
-      <td>${sp(c.status)}</td>
-      <td><div class="action-cell">
-        ${c.status!=='returned'?`<button class="btn btn-return btn-sm" onclick="markReturned(${c.id})" title="반납 완료 처리">✔️</button>`:''}
+      <td class="mono" style="vertical-align:middle">${c.pn}</td>
+      <td class="mono" style="vertical-align:middle">${c.sn}</td>
+      <td style="vertical-align:middle"><span class="pill pill-grey">${c.mn}</span></td>
+      <td class="center" style="vertical-align:middle">${chk(c.body)}</td>
+      <td class="center" style="vertical-align:middle">${chk(c.power)}</td>
+      <td class="center" style="vertical-align:middle">${chk(c.comm)}</td>
+      <td style="vertical-align:middle">${c.location}</td>
+      <td style="font-size:12px;color:#5E6C84;vertical-align:middle">${fd(c.lastUpdate)}</td>
+      <td style="font-size:12px;vertical-align:middle">${fd(c.out)}</td>
+      <td style="font-size:12px;vertical-align:middle">${fd(c.inn)}</td>
+      <td class="note-cell">
+        <div class="note-text">${c.note || ''}</div>
+        ${pdfsHtml}
+      </td>
+      <td style="vertical-align:middle">${sp(c.status)}</td>
+      <td style="vertical-align:middle"><div class="action-cell">
+        ${c.status!=='returned'?`<button class="btn btn-return btn-sm" onclick="markReturned(${c.id})" title="반납 완료">✔️</button>`:''}
         <button class="btn btn-edit btn-sm" onclick="openEditModal(${c.id})">✏️</button>
         <button class="btn btn-danger btn-sm" onclick="deleteCamera(${c.id})">🗑️</button>
       </div></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
-// ── Mark Returned ──
-function markReturned(id){
-  const c=cameras.find(x=>x.id===id); if(!c) return;
-  c.status='returned';
-  c.inn=new Date().toISOString().slice(0,10);
-  c.lastUpdate=new Date().toISOString().slice(0,10);
-  c.location='Zivid Oslo';
-  showToast('반납 완료 처리되었습니다.','success');
+// ═══════════════════════════════
+//  MARK RETURNED
+// ═══════════════════════════════
+function markReturned(id) {
+  const c = cameras.find(x => x.id===id); if (!c) return;
+  c.status = 'returned';
+  c.inn = new Date().toISOString().slice(0,10);
+  c.lastUpdate = new Date().toISOString().slice(0,10);
+  c.location = 'Zivid Oslo';
+  showToast('반납 완료 처리되었습니다.', 'success');
   renderAll();
 }
 
-// ── Render Waiting ──
-function renderWaiting(){
-  const tbody=document.getElementById('waitingBody');
-  if(!waitingList.length){ tbody.innerHTML=`<tr><td colspan="5" class="empty-td">대기 없음</td></tr>`; return; }
-  const pi={high:'🔴',med:'🟠',low:'🟢'};
-  tbody.innerHTML=waitingList.map(w=>`<tr>
+// ═══════════════════════════════
+//  RENDER WAITING
+// ═══════════════════════════════
+function renderWaiting() {
+  const tbody = document.getElementById('waitingBody');
+  if (!waitingList.length) { tbody.innerHTML=`<tr><td colspan="5" class="empty-td">대기 없음</td></tr>`; return; }
+  const pi = { high:'🔴', med:'🟠', low:'🟢' };
+  tbody.innerHTML = waitingList.map(w => `<tr>
     <td><span class="pill pill-blue">${w.mn}</span></td>
     <td>${pi[w.prio]} ${w.company}</td>
     <td style="font-size:12px">${w.start}</td>
@@ -443,168 +644,191 @@ function renderWaiting(){
   </tr>`).join('');
 }
 
-// ── Render Model Summary ──
-function renderModelSummary(){
-  const map={};
-  cameras.forEach(c=>{
-    if(!map[c.mn]) map[c.mn]={total:0,avail:0,out:0};
+// ═══════════════════════════════
+//  RENDER MODEL SUMMARY
+// ═══════════════════════════════
+function renderModelSummary() {
+  const map = {};
+  cameras.forEach(c => {
+    if (!map[c.mn]) map[c.mn] = { total:0, avail:0, out:0 };
     map[c.mn].total++;
-    if(c.status==='available') map[c.mn].avail++;
-    else if(c.status==='out'||c.status==='overdue') map[c.mn].out++;
+    if (c.status==='available') map[c.mn].avail++;
+    else if (c.status==='out'||c.status==='overdue') map[c.mn].out++;
   });
-  const tbody=document.getElementById('modelBody');
-  tbody.innerHTML=Object.entries(map).map(([m,v])=>`<tr>
+  const tbody = document.getElementById('modelBody');
+  tbody.innerHTML = Object.entries(map).map(([m,v]) => `<tr>
     <td><span class="pill pill-grey">${m}</span></td><td>${v.total}</td>
     <td><span class="pill ${v.avail>0?'pill-green':'pill-red'}">${v.avail}</span></td>
     <td><span class="pill ${v.out>0?'pill-red':'pill-green'}">${v.out}</span></td>
-  </tr>`).join('')||`<tr><td colspan="4" class="empty-td">없음</td></tr>`;
+  </tr>`).join('') || `<tr><td colspan="4" class="empty-td">없음</td></tr>`;
 }
 
-// ── Render Stats ──
-function renderStats(){
-  document.getElementById('statTotal').textContent=cameras.length;
-  document.getElementById('statAvail').textContent=cameras.filter(c=>c.status==='available').length;
-  document.getElementById('statOut').textContent=cameras.filter(c=>c.status==='out'||c.status==='overdue').length;
-  document.getElementById('statWait').textContent=waitingList.length;
-  document.getElementById('statReturned').textContent=cameras.filter(c=>c.status==='returned').length;
+// ═══════════════════════════════
+//  RENDER STATS
+// ═══════════════════════════════
+function renderStats() {
+  document.getElementById('statTotal').textContent = cameras.length;
+  document.getElementById('statAvail').textContent = cameras.filter(c=>c.status==='available').length;
+  document.getElementById('statOut').textContent = cameras.filter(c=>c.status==='out'||c.status==='overdue').length;
+  document.getElementById('statWait').textContent = waitingList.length;
+  document.getElementById('statReturned').textContent = cameras.filter(c=>c.status==='returned').length;
 }
 
-// ── Datalist ──
-function refreshDatalist(){
-  const mns=[...new Set(cameras.map(c=>c.mn))];
-  ['mnList','mnList2'].forEach(id=>{
-    const dl=document.getElementById(id);
-    if(dl) dl.innerHTML=mns.map(m=>`<option value="${m}">`).join('');
+// ═══════════════════════════════
+//  DATALIST
+// ═══════════════════════════════
+function refreshDatalist() {
+  const mns = [...new Set(cameras.map(c => c.mn))];
+  ['mnList','mnList2'].forEach(id => {
+    const dl = document.getElementById(id);
+    if (dl) dl.innerHTML = mns.map(m => `<option value="${m}">`).join('');
   });
 }
 
-// ── Modal Camera ──
-function openAddModal(){
-  editingId=null;
-  document.getElementById('modalTitle').textContent='카메라 추가';
-  ['f-pn','f-sn','f-mn','f-location','f-out','f-in','f-lastupdate','f-note'].forEach(id=>document.getElementById(id).value='');
-  ['f-body','f-power','f-comm'].forEach(id=>document.getElementById(id).checked=true);
-  document.getElementById('f-status').value='available';
-  ['f-pn','f-sn','f-mn','f-location'].forEach(id=>document.getElementById(id).classList.remove('err'));
+// ═══════════════════════════════
+//  MODAL - CAMERA
+// ═══════════════════════════════
+function openAddModal() {
+  editingId = null;
+  pendingPdfs = [];
+  document.getElementById('modalTitle').textContent = '카메라 추가';
+  ['f-pn','f-sn','f-mn','f-location','f-out','f-in','f-lastupdate','f-note'].forEach(id => document.getElementById(id).value='');
+  ['f-body','f-power','f-comm'].forEach(id => document.getElementById(id).checked=true);
+  document.getElementById('f-status').value = 'available';
+  ['f-pn','f-sn','f-mn','f-location'].forEach(id => document.getElementById(id).classList.remove('err'));
+  renderPendingPdfs();
   refreshDatalist();
   document.getElementById('cameraModal').classList.remove('hidden');
 }
-function openEditModal(id){
-  const c=cameras.find(x=>x.id===id); if(!c) return;
-  editingId=id;
-  document.getElementById('modalTitle').textContent='카메라 수정';
-  document.getElementById('f-pn').value=c.pn;
-  document.getElementById('f-sn').value=c.sn;
-  document.getElementById('f-mn').value=c.mn;
-  document.getElementById('f-location').value=c.location;
-  document.getElementById('f-body').checked=c.body;
-  document.getElementById('f-power').checked=c.power;
-  document.getElementById('f-comm').checked=c.comm;
-  document.getElementById('f-out').value=c.out||'';
-  document.getElementById('f-in').value=c.inn||'';
-  document.getElementById('f-lastupdate').value=c.lastUpdate||'';
-  document.getElementById('f-status').value=c.status;
-  document.getElementById('f-note').value=c.note||'';
+
+function openEditModal(id) {
+  const c = cameras.find(x => x.id===id); if (!c) return;
+  editingId = id;
+  pendingPdfs = [];
+  document.getElementById('modalTitle').textContent = '카메라 수정';
+  document.getElementById('f-pn').value = c.pn;
+  document.getElementById('f-sn').value = c.sn;
+  document.getElementById('f-mn').value = c.mn;
+  document.getElementById('f-location').value = c.location;
+  document.getElementById('f-body').checked = c.body;
+  document.getElementById('f-power').checked = c.power;
+  document.getElementById('f-comm').checked = c.comm;
+  document.getElementById('f-out').value = c.out || '';
+  document.getElementById('f-in').value = c.inn || '';
+  document.getElementById('f-lastupdate').value = c.lastUpdate || '';
+  document.getElementById('f-status').value = c.status;
+  document.getElementById('f-note').value = c.note || '';
+  renderPendingPdfs();
   refreshDatalist();
   document.getElementById('cameraModal').classList.remove('hidden');
 }
-function saveCamera(){
-  const pn=document.getElementById('f-pn').value.trim();
-  const sn=document.getElementById('f-sn').value.trim();
-  const mn=document.getElementById('f-mn').value.trim();
-  const location=document.getElementById('f-location').value.trim();
-  let ok=true;
-  [['f-pn',pn],['f-sn',sn],['f-mn',mn],['f-location',location]].forEach(([id,v])=>{
-    const el=document.getElementById(id);
-    if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err');
+
+function saveCamera() {
+  const pn = document.getElementById('f-pn').value.trim();
+  const sn = document.getElementById('f-sn').value.trim();
+  const mn = document.getElementById('f-mn').value.trim();
+  const location = document.getElementById('f-location').value.trim();
+  let ok = true;
+  [['f-pn',pn],['f-sn',sn],['f-mn',mn],['f-location',location]].forEach(([id,v]) => {
+    const el = document.getElementById(id);
+    if (!v) { el.classList.add('err'); ok=false; } else el.classList.remove('err');
   });
-  if(!ok){showToast('필수 항목을 입력해주세요.','err');return;}
-  const data={pn,sn,mn,location,
-    body:document.getElementById('f-body').checked,
-    power:document.getElementById('f-power').checked,
-    comm:document.getElementById('f-comm').checked,
-    out:document.getElementById('f-out').value,
-    inn:document.getElementById('f-in').value,
-    lastUpdate:document.getElementById('f-lastupdate').value||new Date().toISOString().slice(0,10),
-    status:document.getElementById('f-status').value,
-    note:document.getElementById('f-note').value.trim(),
+  if (!ok) { showToast('필수 항목을 입력해주세요.', 'err'); return; }
+
+  const data = {
+    pn, sn, mn, location,
+    body:  document.getElementById('f-body').checked,
+    power: document.getElementById('f-power').checked,
+    comm:  document.getElementById('f-comm').checked,
+    out:   document.getElementById('f-out').value,
+    inn:   document.getElementById('f-in').value,
+    lastUpdate: document.getElementById('f-lastupdate').value || new Date().toISOString().slice(0,10),
+    status: document.getElementById('f-status').value,
+    note:  document.getElementById('f-note').value.trim(),
   };
-  if(editingId){
-    const idx=cameras.findIndex(x=>x.id===editingId);
-    cameras[idx]={...cameras[idx],...data};
-    showToast('수정되었습니다.','success');
+
+  if (editingId) {
+    const idx = cameras.findIndex(x => x.id===editingId);
+    const existing = cameras[idx].pdfs || [];
+    cameras[idx] = { ...cameras[idx], ...data, pdfs: [...existing, ...pendingPdfs] };
+    showToast('수정되었습니다.', 'success');
   } else {
-    cameras.push({id:nextCamId++,...data});
-    showToast('카메라가 추가되었습니다.','success');
+    cameras.push({ id: nextCamId++, ...data, pdfs: [...pendingPdfs] });
+    showToast('카메라가 추가되었습니다.', 'success');
   }
+  pendingPdfs = [];
   closeModal('cameraModal');
   renderAll();
 }
-function deleteCamera(id){
-  if(!confirm('삭제하시겠습니까?')) return;
-  cameras=cameras.filter(c=>c.id!==id);
-  showToast('삭제되었습니다.','success');
+
+function deleteCamera(id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  cameras = cameras.filter(c => c.id!==id);
+  showToast('삭제되었습니다.', 'success');
   renderAll();
 }
 
-// ── Modal Waiting ──
-function openWaitModal(){
-  ['w-mn','w-company','w-start','w-return'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('w-prio').value='high';
+// ═══════════════════════════════
+//  MODAL - WAITING
+// ═══════════════════════════════
+function openWaitModal() {
+  ['w-mn','w-company','w-start','w-return'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('w-prio').value = 'high';
   refreshDatalist();
   document.getElementById('waitModal').classList.remove('hidden');
 }
-function saveWaiting(){
-  const mn=document.getElementById('w-mn').value.trim();
-  const company=document.getElementById('w-company').value.trim();
-  if(!mn||!company){showToast('모델과 회사명은 필수입니다.','err');return;}
-  waitingList.push({id:nextWaitId++,mn,company,
-    start:document.getElementById('w-start').value||'미정',
-    returnPlan:document.getElementById('w-return').value||'미정',
-    prio:document.getElementById('w-prio').value,
+function saveWaiting() {
+  const mn = document.getElementById('w-mn').value.trim();
+  const company = document.getElementById('w-company').value.trim();
+  if (!mn||!company) { showToast('모델과 회사명은 필수입니다.', 'err'); return; }
+  waitingList.push({ id:nextWaitId++, mn, company,
+    start: document.getElementById('w-start').value||'미정',
+    returnPlan: document.getElementById('w-return').value||'미정',
+    prio: document.getElementById('w-prio').value,
   });
-  showToast('대기 목록에 추가되었습니다.','success');
+  showToast('대기 목록에 추가되었습니다.', 'success');
   closeModal('waitModal');
   renderAll();
 }
-function deleteWaiting(id){
-  waitingList=waitingList.filter(w=>w.id!==id);
-  showToast('삭제되었습니다.','success');
+function deleteWaiting(id) {
+  waitingList = waitingList.filter(w => w.id!==id);
+  showToast('삭제되었습니다.', 'success');
   renderAll();
 }
-function closeModal(id){document.getElementById(id).classList.add('hidden');}
-document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{if(e.target===el)el.classList.add('hidden');});
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target===el) el.classList.add('hidden'); });
 });
 
-// ── Calendar ──
-function renderCalFilterBtns(){
-  const mns=['ALL',...new Set(cameras.map(c=>c.mn))];
-  document.getElementById('calFilterRow').innerHTML=mns.map(m=>
+// ═══════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════
+function renderCalFilterBtns() {
+  const mns = ['ALL', ...new Set(cameras.map(c=>c.mn))];
+  document.getElementById('calFilterRow').innerHTML = mns.map(m =>
     `<button class="filter-btn ${calFilter===m?'active':''}" onclick="setCalFilter('${m}',this)">${m==='ALL'?'전체':m}</button>`
   ).join('');
 }
-function setCalFilter(f,btn){
+function setCalFilter(f, btn) {
   calFilter=f;
   document.querySelectorAll('#calFilterRow .filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderCalendar();
 }
-function changeMonth(d){
+function changeMonth(d) {
   currentMonth+=d;
-  if(currentMonth>11){currentMonth=0;currentYear++;}
-  if(currentMonth<0){currentMonth=11;currentYear--;}
+  if (currentMonth>11){currentMonth=0;currentYear++;}
+  if (currentMonth<0){currentMonth=11;currentYear--;}
   renderCalendar();
 }
 function goToday(){currentYear=TODAY.getFullYear();currentMonth=TODAY.getMonth();renderCalendar();}
 function isSameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
-function renderCalendar(){
+function renderCalendar() {
   const months=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('calLabel').textContent=currentYear+'년 '+months[currentMonth];
-  const loans=cameras.filter(c=>c.out&&(calFilter==='ALL'||c.mn===calFilter)).map(c=>({
-    sn:c.sn,mn:c.mn,company:c.location,
-    start:new Date(c.out),
-    end:c.inn?new Date(c.inn):null,
+  const loans = cameras.filter(c=>c.out&&(calFilter==='ALL'||c.mn===calFilter)).map(c=>({
+    sn:c.sn, mn:c.mn, company:c.location,
+    start:new Date(c.out), end:c.inn?new Date(c.inn):null,
     type:c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
   }));
   const firstDay=new Date(currentYear,currentMonth,1).getDay();
@@ -638,17 +862,22 @@ function renderCalendar(){
   for(let i=0;i<rem;i++){const d=document.createElement('div');d.className='cal-day empty';container.appendChild(d);}
 }
 
-// ── Toast ──
+// ═══════════════════════════════
+//  TOAST
+// ═══════════════════════════════
 function showToast(msg,type='success'){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className=`toast ${type} show`;
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ── Render All ──
+// ═══════════════════════════════
+//  INIT & RENDER ALL
+// ═══════════════════════════════
 function renderAll(){
   renderStats();renderInventory();renderWaiting();renderModelSummary();renderCalFilterBtns();renderCalendar();
 }
+initPdfUpload();
 renderAll();
 </script>
 </body>
