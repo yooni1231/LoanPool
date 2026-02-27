@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; color: #172B4D; background: #fff; }
+
+  /* ── Info Box ── */
+  .info-box {
+    background: #DEEBFF; border-left: 4px solid #0052CC;
+    border-radius: 4px; padding: 14px 18px; margin-bottom: 20px;
+    font-size: 13px; line-height: 1.7; color: #172B4D;
+  }
+  .info-box p + p { margin-top: 6px; }
+  em { font-style: italic; }
+  strong { font-weight: 600; }
+
+  /* ── Stats ── */
+  .stats-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat-card {
+    border: 1px solid #DFE1E6; border-radius: 6px; padding: 14px 20px;
+    min-width: 140px; flex: 1;
+  }
+  .stat-num { font-size: 32px; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 11px; color: #5E6C84; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+  .num-blue { color: #0052CC; }
+  .num-green { color: #00875A; }
+  .num-red { color: #DE350B; }
+  .num-orange { color: #FF8B00; }
+
+  /* ── Section heading ── */
+  .section-h { font-size: 16px; font-weight: 700; color: #172B4D; margin: 24px 0 10px; padding-bottom: 6px; border-bottom: 2px solid #DFE1E6; }
+
+  /* ── Table ── */
+  .tbl-wrap { border: 1px solid #DFE1E6; border-radius: 6px; overflow: hidden; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: #F4F5F7; padding: 9px 12px;
+    text-align: left; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px;
+    color: #5E6C84; border-bottom: 1px solid #DFE1E6; white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #DFE1E6; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F4F5F7; }
+  tbody td { padding: 9px 12px; vertical-align: middle; }
+  .mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; }
+
+  /* ── Status badges ── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+  }
+  .pill-green { background: #E3FCEF; color: #00875A; }
+  .pill-red   { background: #FFEBE6; color: #DE350B; }
+  .pill-blue  { background: #DEEBFF; color: #0052CC; }
+  .pill-grey  { background: #F4F5F7; color: #5E6C84; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dot-green { background: #00875A; }
+  .dot-red { background: #DE350B; }
+
+  /* ── Calendar ── */
+  .cal-controls {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .cal-controls button {
+    background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px;
+    padding: 5px 12px; cursor: pointer; font-size: 13px; color: #172B4D;
+    font-family: inherit;
+  }
+  .cal-controls button:hover { background: #DEEBFF; border-color: #0052CC; color: #0052CC; }
+  .cal-month-label { font-size: 15px; font-weight: 700; min-width: 140px; text-align: center; }
+
+  /* Model filter */
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filter-btn {
+    padding: 4px 12px; border-radius: 12px; border: 1px solid #DFE1E6;
+    background: #fff; cursor: pointer; font-size: 12px; font-family: inherit;
+    color: #5E6C84; transition: all .15s;
+  }
+  .filter-btn.active { background: #0052CC; color: #fff; border-color: #0052CC; }
+
+  /* Calendar grid */
+  .cal-grid { border: 1px solid #DFE1E6; border-radius: 6px; overflow: hidden; }
+  .cal-weekdays {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    background: #F4F5F7; border-bottom: 1px solid #DFE1E6;
+  }
+  .cal-wd {
+    text-align: center; padding: 7px 4px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; color: #5E6C84;
+  }
+  .cal-days {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+  }
+  .cal-day {
+    border-right: 1px solid #DFE1E6; border-bottom: 1px solid #DFE1E6;
+    min-height: 90px; padding: 5px 6px; position: relative;
+    vertical-align: top;
+  }
+  .cal-day:nth-child(7n) { border-right: none; }
+  .cal-day.empty { background: #FAFBFC; }
+  .cal-day.today { background: #FFFAE6; }
+  .cal-day-num {
+    font-size: 12px; font-weight: 600; color: #172B4D; margin-bottom: 4px;
+  }
+  .cal-day.today .cal-day-num {
+    background: #0052CC; color: #fff; width: 22px; height: 22px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+  .cal-day.empty .cal-day-num { color: #B3BAC5; }
+
+  /* Loan bars inside calendar */
+  .loan-bar {
+    display: flex; align-items: center;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 6px; border-radius: 3px; margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    cursor: default; position: relative;
+  }
+  .loan-bar.start { border-radius: 10px 3px 3px 10px; }
+  .loan-bar.end   { border-radius: 3px 10px 10px 3px; }
+  .loan-bar.start.end { border-radius: 10px; }
+  .loan-bar.middle { border-radius: 0; margin-left: -6px; margin-right: -6px; padding-left: 0; padding-right: 0; overflow: hidden; }
+
+  .bar-available   { background: #E3FCEF; color: #00875A; border: 1px solid #ABF5D1; }
+  .bar-loan        { background: #DEEBFF; color: #0052CC; border: 1px solid #B3D4FF; }
+  .bar-rental      { background: #EAE6FF; color: #6554C0; border: 1px solid #C0B6F2; }
+  .bar-waiting     { background: #FFF0B3; color: #FF8B00; border: 1px dashed #FFD700; }
+  .bar-overdue     { background: #FFEBE6; color: #DE350B; border: 1px solid #FFBDAD; }
+
+  /* Tooltip */
+  .loan-bar:hover::after {
+    content: attr(data-tip);
+    position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+    background: #172B4D; color: #fff; font-size: 11px; padding: 5px 8px;
+    border-radius: 4px; white-space: nowrap; z-index: 99; pointer-events: none;
+    font-weight: 400;
+  }
+
+  /* ── Waiting list table ── */
+  .waiting-priority { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .prio-high { background: #DE350B; }
+  .prio-med  { background: #FF8B00; }
+  .prio-low  { background: #00875A; }
+
+  /* ── Legend ── */
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+
+  /* Two col layout */
+  .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- ── Info ── -->
+<div class="info-box">
+  <p>이 개요는 Snipe-It 데이터베이스에서 주문 유형이 <strong>Loan</strong> 및 <strong>Loan (Eval)</strong>으로 표시된 카메라를 나타냅니다.</p>
+  <p>이 개요는 Zivid가 보유한 카메라 "대출 풀(loan pool)"과 각 카메라의 대출 여부 또는 사내 보관 여부를 보여줍니다.</p>
+  <p>데이터베이스에서 카메라가 <em>체크아웃</em>되면, 체크아웃 위치와 예상 반납일이 정보 필드에 표시됩니다.</p>
+  <p>카메라가 <em>반납</em>되면 위치가 Zivid Oslo로 업데이트되고 "마지막 체크아웃 날짜"는 <strong>공란</strong>이 됩니다.</p>
+</div>
+
+<!-- ── Stats ── -->
+<div class="stats-row">
+  <div class="stat-card"><div class="stat-num num-blue">9</div><div class="stat-label">시리얼 번호 수</div></div>
+  <div class="stat-card"><div class="stat-num num-green">3</div><div class="stat-label">대출 가능</div></div>
+  <div class="stat-card"><div class="stat-num num-red">6</div><div class="stat-label">대출 불가</div></div>
+  <div class="stat-card"><div class="stat-num num-orange">4</div><div class="stat-label">대기 목록</div></div>
+</div>
+
+<!-- ── Inventory Table + Waiting List ── -->
+<div class="two-col">
+  <div>
+    <div class="section-h">📦 카메라 재고 현황</div>
+    <div class="tbl-wrap">
+      <table id="inventoryTable">
+        <thead>
+          <tr>
+            <th>시리얼</th>
+            <th>모델</th>
+            <th>Rev</th>
+            <th>마지막 체크아웃</th>
+            <th>위치</th>
+            <th>예상 반납일</th>
+            <th>대출 가능 여부</th>
+            <th>대출 유형</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">24406963</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0</td>
+            <td>01-12-25</td><td>Zivid Oslo</td><td>—</td>
+            <td><span class="pill pill-green"><span class="dot dot-green"></span>대출 가능</span></td>
+            <td>Loan</td>
+          </tr>
+          <tr>
+            <td class="mono">244079A3</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0X</td>
+            <td>16-05-25</td><td>Zivid Oslo</td><td>—</td>
+            <td><span class="pill pill-green"><span class="dot dot-green"></span>대출 가능</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">2447CBG7</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0</td>
+            <td>16-01-26</td><td>Zivid Oslo</td><td>—</td>
+            <td><span class="pill pill-green"><span class="dot dot-green"></span>대출 가능</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">23222702</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0</td>
+            <td>25-04-25</td><td>SIS STEMMER IMAGING Services GmbH</td><td>06-03-26</td>
+            <td><span class="pill pill-red"><span class="dot dot-red"></span>대출 불가</span></td>
+            <td>Rental</td>
+          </tr>
+          <tr>
+            <td class="mono">23222742</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0</td>
+            <td>18-12-25</td><td>Blueprint Inspections LLC</td><td>20-02-26</td>
+            <td><span class="pill pill-red"><span class="dot dot-red"></span>대출 불가</span></td>
+            <td>Loan</td>
+          </tr>
+          <tr>
+            <td class="mono">23222862</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0X</td>
+            <td>23-03-26</td><td>ISP Aquitaine</td><td>30-03-26</td>
+            <td><span class="pill pill-red"><span class="dot dot-red"></span>대출 불가</span></td>
+            <td>Loan</td>
+          </tr>
+          <tr>
+            <td class="mono">2437954F</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0X</td>
+            <td>16-01-26</td><td>Westgate Technology Corporation</td><td>05-03-26</td>
+            <td><span class="pill pill-red"><span class="dot dot-red"></span>대출 불가</span></td>
+            <td>Loan</td>
+          </tr>
+          <tr>
+            <td class="mono">2451C8DB</td><td><span class="pill pill-grey">Z2+ MR60</span></td><td>A0</td>
+            <td>04-04-25</td><td>Zivid Oslo</td><td>—</td>
+            <td><span class="pill pill-red"><span class="dot dot-red"></span>대출 불가</span></td>
+            <td>Loan</td>
+          </tr>
+          <tr>
+            <td class="mono">254328A5</td><td><span class="pill pill-blue">Z3 XL250</span></td><td>A0</td>
+            <td>16-02-26</td><td>Titan Robotics</td><td>12-03-26</td>
+            <td><span class="pill pill-red"><span class="dot dot-red"></span>대출 불가</span></td>
+            <td>Loan</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Waiting List -->
+  <div>
+    <div class="section-h">⏳ 대출 대기 목록</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>모델</th><th>회사명</th><th>시작 날짜</th><th>반납 예정</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill pill-blue">Z3</span></td>
+            <td><span class="waiting-priority prio-high"></span>Bright Machines</td>
+            <td><span class="pill pill-red" style="font-size:10px">즉시</span></td>
+            <td>3주</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-blue">Z3</span></td>
+            <td><span class="waiting-priority prio-high"></span>IT+</td>
+            <td><span class="pill pill-red" style="font-size:10px">즉시</span></td>
+            <td>2주</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-grey">MR60</span></td>
+            <td><span class="waiting-priority prio-med"></span>Kawasaki Robotics</td>
+            <td>준비되는 대로</td>
+            <td>장기</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-grey">MR60</span></td>
+            <td><span class="waiting-priority prio-high"></span>Pick it (Yaskawa US)</td>
+            <td><span class="pill pill-red" style="font-size:10px">즉시</span></td>
+            <td>장기</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-grey">MR60</span></td>
+            <td><span class="waiting-priority prio-low"></span>University of Porto (FEUP)</td>
+            <td>2026년 3월 23일</td>
+            <td>3주</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Availability Summary -->
+    <div class="section-h" style="margin-top:16px">📊 모델별 가용 현황</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>모델</th><th>총 수량</th><th>대출 가능</th><th>대출 중</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill pill-grey">Z2+ MR60</span></td><td>8</td>
+            <td><span class="pill pill-green">3</span></td><td><span class="pill pill-red">5</span></td></tr>
+          <tr><td><span class="pill pill-blue">Z3 XL250</span></td><td>1</td>
+            <td><span class="pill pill-red">0</span></td><td><span class="pill pill-red">1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Calendar ── -->
+<div class="section-h">📅 대출 캘린더</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#DEEBFF;border:1px solid #B3D4FF"></div> 대출</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#EAE6FF;border:1px solid #C0B6F2"></div> 렌탈</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#E3FCEF;border:1px solid #ABF5D1"></div> 대출 가능</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#FFF0B3;border:1px dashed #FFD700"></div> 대기 목록</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#FFEBE6;border:1px solid #FFBDAD"></div> 반납 연체</div>
+</div>
+
+<!-- Model Filter -->
+<div class="filter-row" id="filterRow">
+  <button class="filter-btn active" onclick="setFilter('ALL',this)">전체 모델</button>
+  <button class="filter-btn" onclick="setFilter('Z2+ MR60',this)">Z2+ MR60</button>
+  <button class="filter-btn" onclick="setFilter('Z3 XL250',this)">Z3 XL250</button>
+  <button class="filter-btn" onclick="setFilter('Z3',this)">Z3 (대기)</button>
+</div>
+
+<!-- Month Nav -->
+<div class="cal-controls">
+  <button onclick="changeMonth(-1)">&#8249; 이전</button>
+  <div class="cal-month-label" id="calLabel"></div>
+  <button onclick="changeMonth(1)">다음 &#8250;</button>
+  <button onclick="goToday()" style="margin-left:8px">오늘</button>
+</div>
+
+<div class="cal-grid">
+  <div class="cal-weekdays">
+    <div class="cal-wd">일</div><div class="cal-wd">월</div><div class="cal-wd">화</div>
+    <div class="cal-wd">수</div><div class="cal-wd">목</div><div class="cal-wd">금</div>
+    <div class="cal-wd">토</div>
+  </div>
+  <div class="cal-days" id="calDays"></div>
+</div>
+
+<script>
+// ── Data ──
+const TODAY = new Date(2026, 1, 27); // Feb 27 2026
+const LOANS = [
+  // active loans / rentals
+  { serial:'23222702', model:'Z2+ MR60', company:'SIS STEMMER',   start:new Date(2025,3,25),  end:new Date(2026,2,6),  type:'rental' },
+  { serial:'23222742', model:'Z2+ MR60', company:'Blueprint LLC', start:new Date(2025,11,18), end:new Date(2026,1,20), type:'loan', overdue:true },
+  { serial:'23222862', model:'Z2+ MR60', company:'ISP Aquitaine', start:new Date(2026,2,23),  end:new Date(2026,2,30), type:'loan' },
+  { serial:'2437954F', model:'Z2+ MR60', company:'Westgate Tech', start:new Date(2026,0,16),  end:new Date(2026,2,5),  type:'loan' },
+  { serial:'2451C8DB', model:'Z2+ MR60', company:'Zivid Oslo',    start:new Date(2025,3,4),   end:null,                type:'loan' },
+  { serial:'254328A5', model:'Z3 XL250', company:'Titan Robotics',start:new Date(2026,1,16),  end:new Date(2026,2,12), type:'loan' },
+  // waiting list (estimated future)
+  { serial:'WAIT-1',   model:'Z3',       company:'Bright Machines',start:new Date(2026,2,1),   end:new Date(2026,2,21), type:'waiting' },
+  { serial:'WAIT-2',   model:'Z3',       company:'IT+',            start:new Date(2026,2,1),   end:new Date(2026,2,14), type:'waiting' },
+  { serial:'WAIT-3',   model:'MR60',     company:'Univ. Porto',    start:new Date(2026,2,23),  end:new Date(2026,3,13), type:'waiting' },
+];
+
+let currentYear = 2026;
+let currentMonth = 1; // 0-indexed (1 = Feb)
+let activeFilter = 'ALL';
+
+function setFilter(model, btn) {
+  activeFilter = model;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCalendar();
+}
+
+function changeMonth(delta) {
+  currentMonth += delta;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+  renderCalendar();
+}
+
+function goToday() {
+  currentYear = TODAY.getFullYear();
+  currentMonth = TODAY.getMonth();
+  renderCalendar();
+}
+
+function isSameDay(a, b) {
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+
+function barClass(type, isOverdue) {
+  if (isOverdue) return 'bar-overdue';
+  if (type==='rental') return 'bar-rental';
+  if (type==='waiting') return 'bar-waiting';
+  return 'bar-loan';
+}
+
+function renderCalendar() {
+  const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('calLabel').textContent = currentYear + '년 ' + months[currentMonth];
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth+1, 0).getDate();
+  const container = document.getElementById('calDays');
+  container.innerHTML = '';
+
+  // filter loans
+  const filtered = LOANS.filter(l => {
+    if (activeFilter === 'ALL') return true;
+    return l.model === activeFilter;
+  });
+
+  for (let i = 0; i < firstDay; i++) {
+    const d = document.createElement('div');
+    d.className = 'cal-day empty';
+    container.appendChild(d);
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(currentYear, currentMonth, day);
+    const cell = document.createElement('div');
+    const isToday = isSameDay(date, TODAY);
+    cell.className = 'cal-day' + (isToday ? ' today' : '');
+
+    // Day number
+    const numEl = document.createElement('div');
+    numEl.className = 'cal-day-num';
+    numEl.textContent = day;
+    cell.appendChild(numEl);
+
+    // Loans for this day
+    filtered.forEach(loan => {
+      const s = loan.start;
+      const e = loan.end || new Date(currentYear, currentMonth+3, 1);
+      if (date < s || date > e) return;
+
+      const isStart = isSameDay(date, s);
+      const isEnd = loan.end ? isSameDay(date, loan.end) : false;
+      const cls = barClass(loan.type, loan.overdue);
+
+      const bar = document.createElement('div');
+      bar.className = 'loan-bar ' + cls;
+      if (isStart && isEnd) bar.className += ' start end';
+      else if (isStart) bar.className += ' start';
+      else if (isEnd) bar.className += ' end';
+      else bar.className += ' middle';
+
+      const tip = loan.serial.startsWith('WAIT')
+        ? `${loan.company} | ${loan.model} 대기 중`
+        : `${loan.serial} · ${loan.company}`;
+      bar.setAttribute('data-tip', tip);
+
+      if (isStart) {
+        bar.textContent = loan.company.length > 12 ? loan.company.slice(0,11)+'…' : loan.company;
+      }
+      cell.appendChild(bar);
+    });
+
+    container.appendChild(cell);
+  }
+
+  // Fill remaining cells
+  const total = firstDay + daysInMonth;
+  const remaining = (7 - (total % 7)) % 7;
+  for (let i = 0; i < remaining; i++) {
+    const d = document.createElement('div');
+    d.className = 'cal-day empty';
+    container.appendChild(d);
+  }
+}
+
+renderCalendar();
+</script>
+</body>
+</html>
