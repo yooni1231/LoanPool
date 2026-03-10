@@ -1,1510 +1,865 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zivid 카메라 대여 관리</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 13px;
-      color: #172B4D;
-      background: #F4F5F7;
-    }
-
-    .topbar {
-      background: #0747A6;
-      padding: 0 24px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-    }
-
-    .topbar-title {
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .topbar-title span {
-      opacity: .6;
-      font-weight: 300;
-      margin-left: 6px;
-      font-size: 13px;
-    }
-
-    .page {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 24px 20px 60px;
-    }
-
-    /* Stats */
-    .stats-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .stat-card {
-      background: #fff;
-      border: 1px solid #DFE1E6;
-      border-radius: 8px;
-      padding: 16px 20px;
-      flex: 1;
-      min-width: 120px;
-    }
-
-    .stat-num {
-      font-size: 34px;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: #5E6C84;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-top: 5px;
-    }
-
-    .num-blue {
-      color: #0052CC
-    }
-
-    .num-green {
-      color: #00875A
-    }
-
-    .num-red {
-      color: #DE350B
-    }
-
-    .num-orange {
-      color: #FF8B00
-    }
-
-    .num-purple {
-      color: #6554C0
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid #DFE1E6;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-
-    .section-h {
-      font-size: 15px;
-      font-weight: 700;
-      margin: 0 0 14px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #DFE1E6;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    /* Table */
-    .tbl-wrap {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .main-table {
-      min-width: 1300px;
-    }
-
-    thead th {
-      background: #F4F5F7;
-      padding: 9px 10px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-      color: #5E6C84;
-      border-bottom: 2px solid #DFE1E6;
-      white-space: nowrap;
-    }
-
-    th.center,
-    td.center {
-      text-align: center;
-    }
-
-    tbody tr {
-      border-bottom: 1px solid #DFE1E6;
-      transition: background .1s;
-    }
-
-    tbody tr:last-child {
-      border-bottom: none;
-    }
-
-    tbody tr:hover {
-      background: #F8F9FA;
-    }
-
-    tbody tr.returned-row {
-      background: #F3FFF8;
-    }
-
-    tbody td {
-      padding: 9px 10px;
-      vertical-align: top;
-    }
-
-    .vmid {
-      vertical-align: middle !important;
-    }
-
-    .num-cell {
-      text-align: center;
-      color: #97A0AF;
-      font-size: 12px;
-      width: 36px;
-    }
-
-    .mono {
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    /* Item cell */
-    .item-cell {
-      min-width: 200px;
-      max-width: 260px;
-    }
-
-    .item-tag-list {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .item-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: #172B4D;
-      line-height: 1.4;
-      padding: 1px 0;
-    }
-
-    .item-tag .itick {
-      color: #00875A;
-      font-weight: 700;
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-
-    .item-tag.special {
-      color: #FF8B00;
-      font-style: italic;
-    }
-
-    .item-tag.special .itick {
-      color: #FF8B00;
-    }
-
-    /* Note + PDF cell */
-    .note-cell {
-      min-width: 240px;
-      max-width: 320px;
-    }
-
-    .note-text {
-      font-size: 12px;
-      color: #172B4D;
-      white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.6;
-      margin-bottom: 6px;
-    }
-
-    .note-text:empty {
-      display: none;
-    }
-
-    .pdf-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .pdf-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #FFEBE6;
-      border: 1px solid #FFBDAD;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 11px;
-      cursor: pointer;
-      max-width: 260px;
-      transition: background .15s;
-    }
-
-    .pdf-chip:hover {
-      background: #FFBDAD;
-    }
-
-    .pdf-chip .pdf-icon {
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-
-    .pdf-chip .pdf-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: #172B4D;
-      font-weight: 500;
-      flex: 1;
-    }
-
-    .pdf-chip .pdf-del {
-      color: #97A0AF;
-      font-size: 14px;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .pdf-chip .pdf-del:hover {
-      color: #DE350B;
-    }
-
-    /* Pills */
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 9px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .pill-green {
-      background: #E3FCEF;
-      color: #00875A
-    }
-
-    .pill-red {
-      background: #FFEBE6;
-      color: #DE350B
-    }
-
-    .pill-blue {
-      background: #DEEBFF;
-      color: #0052CC
-    }
-
-    .pill-grey {
-      background: #F4F5F7;
-      color: #5E6C84
-    }
-
-    .pill-orange {
-      background: #FFFAE6;
-      color: #FF8B00
-    }
-
-    .pill-purple {
-      background: #EAE6FF;
-      color: #6554C0
-    }
-
-    .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      display: inline-block
-    }
-
-    .dot-green {
-      background: #00875A
-    }
-
-    .dot-red {
-      background: #DE350B
-    }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 14px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      font-family: inherit;
-      transition: all .15s;
-    }
-
-    .btn-primary {
-      background: #0052CC;
-      color: #fff
-    }
-
-    .btn-primary:hover {
-      background: #0747A6
-    }
-
-    .btn-danger {
-      background: #FFEBE6;
-      color: #DE350B
-    }
-
-    .btn-danger:hover {
-      background: #FFBDAD
-    }
-
-    .btn-edit {
-      background: #F4F5F7;
-      color: #172B4D;
-      border: 1px solid #DFE1E6
-    }
-
-    .btn-edit:hover {
-      background: #DEEBFF;
-      color: #0052CC;
-      border-color: #0052CC
-    }
-
-    .btn-return {
-      background: #E3FCEF;
-      color: #00875A;
-      border: 1px solid #ABF5D1
-    }
-
-    .btn-return:hover {
-      background: #ABF5D1
-    }
-
-    .btn-sm {
-      padding: 4px 9px;
-      font-size: 12px
-    }
-
-    .action-cell {
-      display: flex;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    /* Tabs */
-    .tab-row {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      padding: 5px 14px;
-      border-radius: 4px;
-      border: 1px solid #DFE1E6;
-      background: #fff;
-      cursor: pointer;
-      font-size: 12px;
-      font-family: inherit;
-      color: #5E6C84;
-    }
-
-    .tab-btn.active {
-      background: #0052CC;
-      color: #fff;
-      border-color: #0052CC;
-    }
-
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(9, 30, 66, .5);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .modal-overlay.hidden {
-      display: none;
-    }
-
-    .modal {
-      background: #fff;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 640px;
-      box-shadow: 0 8px 32px rgba(9, 30, 66, .25);
-      max-height: 93vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      padding: 18px 22px 14px;
-      border-bottom: 1px solid #DFE1E6;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      background: #fff;
-      z-index: 1;
-    }
-
-    .modal-header h3 {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #5E6C84;
-    }
-
-    .modal-body {
-      padding: 18px 22px;
-    }
-
-    .modal-footer {
-      padding: 14px 22px;
-      border-top: 1px solid #DFE1E6;
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      position: sticky;
-      bottom: 0;
-      background: #fff;
-    }
-
-    /* Form */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .form-group.full {
-      grid-column: 1/-1;
-    }
-
-    .form-group label {
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .form-group label .req {
-      color: #DE350B;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      border: 2px solid #DFE1E6;
-      border-radius: 4px;
-      padding: 8px 10px;
-      font-size: 13px;
-      font-family: inherit;
-      color: #172B4D;
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: #0052CC;
-    }
-
-    .form-group input.err {
-      border-color: #DE350B;
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-
-    .fsec {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: #5E6C84;
-      grid-column: 1/-1;
-      padding-top: 10px;
-      border-top: 1px solid #DFE1E6;
-    }
-
-    .fsec:first-child {
-      border-top: none;
-      padding-top: 0;
-    }
-
-    /* Items checklist in modal */
-    .items-grid {
-      grid-column: 1/-1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px 16px;
-      background: #F8F9FA;
-      border: 1px solid #DFE1E6;
-      border-radius: 6px;
-      padding: 14px 16px;
-    }
-
-    .item-check-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #172B4D;
-      cursor: pointer;
-      padding: 4px 6px;
-      border-radius: 4px;
-      transition: background .1s;
-    }
-
-    .item-check-label:hover {
-      background: #DEEBFF;
-    }
-
-    .item-check-label input[type=checkbox] {
-      width: 14px;
-      height: 14px;
-      accent-color: #0052CC;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .item-check-label.special-item {
-      color: #FF8B00;
-    }
-
-    .item-check-label.special-item input[type=checkbox] {
-      accent-color: #FF8B00;
-    }
-
-    /* PDF Upload */
-    .pdf-upload-area {
-      grid-column: 1/-1;
-      border: 2px dashed #B3D4FF;
-      border-radius: 6px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-      background: #F8FBFF;
-    }
-
-    .pdf-upload-area:hover,
-    .pdf-upload-area.drag-over {
-      border-color: #0052CC;
-      background: #DEEBFF;
-    }
-
-    .pdf-upload-area input[type=file] {
-      display: none;
-    }
-
-    .pdf-upload-label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-    }
-
-    .pdf-upload-icon {
-      font-size: 26px;
-    }
-
-    .pdf-upload-text {
-      font-size: 13px;
-      font-weight: 600;
-      color: #0052CC;
-    }
-
-    .pdf-upload-sub {
-      font-size: 11px;
-      color: #5E6C84;
-    }
-
-    .pending-pdfs {
-      grid-column: 1/-1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .pending-pdf-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #F4F5F7;
-      border: 1px solid #DFE1E6;
-      border-radius: 4px;
-      padding: 7px 10px;
-    }
-
-    .pending-pdf-item .pdf-icon {
-      font-size: 16px;
-      color: #DE350B;
-    }
-
-    .pending-pdf-item .pdf-fname {
-      flex: 1;
-      font-size: 12px;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .pending-pdf-item .pdf-size {
-      font-size: 11px;
-      color: #97A0AF;
-    }
-
-    .pending-pdf-item .pdf-rm {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #97A0AF;
-      font-size: 16px;
-      padding: 0 2px;
-    }
-
-    .pending-pdf-item .pdf-rm:hover {
-      color: #DE350B;
-    }
-
-    /* PDF Viewer */
-    .pdf-viewer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(9, 30, 66, .7);
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .pdf-viewer-overlay.hidden {
-      display: none;
-    }
-
-    .pdf-viewer-box {
-      background: #fff;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 900px;
-      height: 85vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .pdf-viewer-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid #DFE1E6;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .pdf-viewer-header span {
-      font-size: 14px;
-      font-weight: 700;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 700px;
-    }
-
-    .pdf-viewer-close {
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      color: #5E6C84;
-    }
-
-    .pdf-viewer-close:hover {
-      color: #172B4D;
-    }
-
-    .pdf-viewer-body {
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .pdf-viewer-body iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    /* Calendar */
-    .cal-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .cal-nav-btn {
-      background: #F4F5F7;
-      border: 1px solid #DFE1E6;
-      border-radius: 4px;
-      padding: 5px 14px;
-      cursor: pointer;
-      font-size: 13px;
-      font-family: inherit;
-    }
-
-    .cal-nav-btn:hover {
-      background: #DEEBFF;
-      border-color: #0052CC;
-      color: #0052CC;
-    }
-
-    .cal-month-label {
-      font-size: 15px;
-      font-weight: 700;
-      min-width: 120px;
-      text-align: center;
-    }
-
-    .filter-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .filter-btn {
-      padding: 4px 12px;
-      border-radius: 12px;
-      border: 1px solid #DFE1E6;
-      background: #fff;
-      cursor: pointer;
-      font-size: 12px;
-      font-family: inherit;
-      color: #5E6C84;
-    }
-
-    .filter-btn.active {
-      background: #0052CC;
-      color: #fff;
-      border-color: #0052CC;
-    }
-
-    .cal-grid {
-      border: 1px solid #DFE1E6;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .cal-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      background: #F4F5F7;
-      border-bottom: 1px solid #DFE1E6;
-    }
-
-    .cal-wd {
-      text-align: center;
-      padding: 7px 4px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #5E6C84;
-    }
-
-    .cal-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-    }
-
-    .cal-day {
-      border-right: 1px solid #DFE1E6;
-      border-bottom: 1px solid #DFE1E6;
-      min-height: 90px;
-      padding: 5px 6px;
-    }
-
-    .cal-day:nth-child(7n) {
-      border-right: none;
-    }
-
-    .cal-day.empty {
-      background: #FAFBFC;
-    }
-
-    .cal-day.today {
-      background: #FFFAE6;
-    }
-
-    .cal-day-num {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #172B4D;
-    }
-
-    .cal-day.today .cal-day-num {
-      background: #0052CC;
-      color: #fff;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-    }
-
-    .cal-day.empty .cal-day-num {
-      color: #B3BAC5;
-    }
-
-    .loan-bar {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 3px;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      cursor: default;
-      position: relative;
-    }
-
-    .loan-bar.start {
-      border-radius: 10px 3px 3px 10px;
-    }
-
-    .loan-bar.end {
-      border-radius: 3px 10px 10px 3px;
-    }
-
-    .loan-bar.start.end {
-      border-radius: 10px;
-    }
-
-    .loan-bar.middle {
-      border-radius: 0;
-    }
-
-    .bar-loan {
-      background: #DEEBFF;
-      color: #0052CC;
-      border: 1px solid #B3D4FF;
-    }
-
-    .bar-returned {
-      background: #E3FCEF;
-      color: #00875A;
-      border: 1px solid #ABF5D1;
-    }
-
-    .bar-overdue {
-      background: #FFEBE6;
-      color: #DE350B;
-      border: 1px solid #FFBDAD;
-    }
-
-    .loan-bar:hover::after {
-      content: attr(data-tip);
-      position: absolute;
-      bottom: calc(100% + 4px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: #172B4D;
-      color: #fff;
-      font-size: 11px;
-      padding: 5px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      z-index: 99;
-      pointer-events: none;
-    }
-
-    .legend {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-      font-size: 12px;
-      align-items: center;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .legend-swatch {
-      width: 13px;
-      height: 13px;
-      border-radius: 3px;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 20px;
-    }
-
-    @media(max-width:1000px) {
-      .two-col {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #172B4D;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      z-index: 400;
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all .3s;
-      pointer-events: none;
-    }
-
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .toast.success {
-      background: #00875A;
-    }
-
-    .toast.err {
-      background: #DE350B;
-    }
-
-    .empty-td {
-      text-align: center;
-      color: #97A0AF;
-      padding: 28px !important;
-      font-size: 13px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zivid 카메라 대여 관리</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; color: #172B4D; background: #F4F5F7; }
+
+.topbar { background: #0747A6; padding: 0 24px; height: 48px; display: flex; align-items: center; justify-content: space-between; }
+.topbar-title { color: #fff; font-size: 15px; font-weight: 700; }
+.topbar-title span { opacity: .6; font-weight: 300; margin-left: 6px; font-size: 13px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.sync-status { font-size: 12px; color: rgba(255,255,255,.7); display: flex; align-items: center; gap: 5px; }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #97A0AF; flex-shrink: 0; }
+.sync-dot.connected { background: #57D9A3; }
+.sync-dot.syncing { background: #FFD700; animation: pulse 1s infinite; }
+.sync-dot.error { background: #FF5630; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.btn-setup { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.btn-setup:hover { background: rgba(255,255,255,.25); }
+
+.page { max-width: 1600px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* Setup banner */
+.setup-banner { background: #FFFAE6; border: 1px solid #FFE380; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
+.setup-banner.hidden { display: none; }
+.setup-banner-icon { font-size: 20px; flex-shrink: 0; }
+.setup-banner-body { flex: 1; }
+.setup-banner-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.setup-banner-desc { font-size: 12px; color: #5E6C84; line-height: 1.6; }
+.setup-banner-close { background: none; border: none; cursor: pointer; color: #97A0AF; font-size: 18px; }
+
+/* Stats */
+.stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.stat-card { background: #fff; border: 1px solid #DFE1E6; border-radius: 8px; padding: 16px 20px; flex: 1; min-width: 120px; }
+.stat-num { font-size: 34px; font-weight: 700; line-height: 1; }
+.stat-label { font-size: 11px; color: #5E6C84; text-transform: uppercase; letter-spacing: .5px; margin-top: 5px; }
+.num-blue{color:#0052CC} .num-green{color:#00875A} .num-red{color:#DE350B} .num-orange{color:#FF8B00} .num-purple{color:#6554C0}
+
+.card { background: #fff; border: 1px solid #DFE1E6; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+.section-h { font-size: 15px; font-weight: 700; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+/* Table */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.main-table { min-width: 1200px; }
+thead th { background: #F4F5F7; padding: 9px 10px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #5E6C84; border-bottom: 2px solid #DFE1E6; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid #DFE1E6; transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #F8F9FA; }
+tbody tr.returned-row { background: #F3FFF8; }
+tbody td { padding: 9px 10px; vertical-align: top; }
+.vmid { vertical-align: middle !important; }
+.num-cell { text-align: center; color: #97A0AF; font-size: 12px; width: 36px; }
+.mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; font-weight: 600; }
+
+/* Name badge cell */
+.name-cell { min-width: 160px; }
+.name-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px 4px 8px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; color: #fff;
+  white-space: nowrap; max-width: 200px;
+}
+.name-badge .nb-sn {
+  font-size: 10px; font-weight: 400; opacity: .75;
+  font-family: "SFMono-Regular", monospace;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.name-no-badge { display: flex; flex-direction: column; gap: 2px; }
+.name-no-badge .nb-sn-plain { font-family: monospace; font-size: 12px; font-weight: 600; color: #5E6C84; }
+.name-no-badge .nb-hint { font-size: 11px; color: #B3BAC5; }
+
+/* Name filter pills */
+.name-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+.name-filter-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #DFE1E6; background: #fff; cursor: pointer; font-size: 12px; font-family: inherit; font-weight: 600; color: #5E6C84; transition: all .15s; }
+.name-filter-btn:hover { border-color: #0052CC; color: #0052CC; }
+.name-filter-btn.active-name { color: #fff; border-color: transparent; }
+
+/* Item cell */
+.item-cell { min-width: 200px; max-width: 260px; }
+.item-tag-list { display: flex; flex-direction: column; gap: 3px; }
+.item-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #172B4D; line-height: 1.4; padding: 1px 0; }
+.item-tag .itick { color: #00875A; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+.item-tag.special { color: #FF8B00; font-style: italic; }
+.item-tag.special .itick { color: #FF8B00; }
+
+/* Note + PDF cell */
+.note-cell { min-width: 220px; max-width: 300px; }
+.note-text { font-size: 12px; color: #172B4D; white-space: pre-wrap; word-break: break-word; line-height: 1.6; margin-bottom: 6px; }
+.note-text:empty { display: none; }
+.pdf-list { display: flex; flex-direction: column; gap: 4px; }
+.pdf-chip { display: inline-flex; align-items: center; gap: 6px; background: #FFEBE6; border: 1px solid #FFBDAD; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; max-width: 260px; transition: background .15s; }
+.pdf-chip:hover { background: #FFBDAD; }
+.pdf-chip .pdf-icon { font-size: 13px; flex-shrink: 0; }
+.pdf-chip .pdf-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #172B4D; font-weight: 500; flex: 1; }
+.pdf-chip .pdf-del { color: #97A0AF; font-size: 14px; line-height: 1; flex-shrink: 0; }
+.pdf-chip .pdf-del:hover { color: #DE350B; }
+
+/* Pills */
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.pill-green{background:#E3FCEF;color:#00875A} .pill-red{background:#FFEBE6;color:#DE350B}
+.pill-blue{background:#DEEBFF;color:#0052CC} .pill-grey{background:#F4F5F7;color:#5E6C84}
+.pill-orange{background:#FFFAE6;color:#FF8B00} .pill-purple{background:#EAE6FF;color:#6554C0}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-green{background:#00875A} .dot-red{background:#DE350B}
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all .15s; }
+.btn-primary{background:#0052CC;color:#fff} .btn-primary:hover{background:#0747A6}
+.btn-danger{background:#FFEBE6;color:#DE350B} .btn-danger:hover{background:#FFBDAD}
+.btn-edit{background:#F4F5F7;color:#172B4D;border:1px solid #DFE1E6} .btn-edit:hover{background:#DEEBFF;color:#0052CC;border-color:#0052CC}
+.btn-return{background:#E3FCEF;color:#00875A;border:1px solid #ABF5D1} .btn-return:hover{background:#ABF5D1}
+.btn-sm{padding:4px 9px;font-size:12px}
+.action-cell { display: flex; gap: 4px; white-space: nowrap; }
+
+/* Tabs */
+.tab-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.tab-btn { padding: 5px 14px; border-radius: 4px; border: 1px solid #DFE1E6; background: #fff; cursor: pointer; font-size: 12px; font-family: inherit; color: #5E6C84; }
+.tab-btn.active { background: #0052CC; color: #fff; border-color: #0052CC; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.hidden { display: none; }
+.modal { background: #fff; border-radius: 8px; width: 100%; max-width: 640px; box-shadow: 0 8px 32px rgba(9,30,66,.25); max-height: 93vh; overflow-y: auto; }
+.modal-header { padding: 18px 22px 14px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #fff; z-index: 1; }
+.modal-header h3 { font-size: 16px; font-weight: 700; }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #5E6C84; }
+.modal-body { padding: 18px 22px; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid #DFE1E6; display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: #fff; }
+
+/* Form */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-group label { font-size: 12px; font-weight: 700; }
+.form-group label .req { color: #DE350B; }
+.form-group input, .form-group select, .form-group textarea { border: 2px solid #DFE1E6; border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: inherit; color: #172B4D; outline: none; transition: border-color .15s; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #0052CC; }
+.form-group input.err { border-color: #DE350B; }
+.form-group textarea { resize: vertical; min-height: 90px; }
+.fsec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #5E6C84; grid-column: 1/-1; padding-top: 10px; border-top: 1px solid #DFE1E6; }
+
+/* Color picker row (for name badge color) */
+.color-picker-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.color-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform .1s; flex-shrink: 0; }
+.color-swatch:hover { transform: scale(1.2); }
+.color-swatch.selected { border-color: #172B4D; }
+
+/* Items checklist */
+.items-grid { grid-column: 1/-1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; background: #F8F9FA; border: 1px solid #DFE1E6; border-radius: 6px; padding: 14px 16px; }
+.item-check-label { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #172B4D; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: background .1s; }
+.item-check-label:hover { background: #DEEBFF; }
+.item-check-label input[type=checkbox] { width: 14px; height: 14px; accent-color: #0052CC; cursor: pointer; flex-shrink: 0; }
+.item-check-label.special-item { color: #FF8B00; }
+.item-check-label.special-item input[type=checkbox] { accent-color: #FF8B00; }
+
+/* PDF Upload */
+.pdf-upload-area { grid-column: 1/-1; border: 2px dashed #B3D4FF; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all .2s; background: #F8FBFF; }
+.pdf-upload-area:hover, .pdf-upload-area.drag-over { border-color: #0052CC; background: #DEEBFF; }
+.pdf-upload-area input[type=file] { display: none; }
+.pdf-upload-label { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+.pdf-upload-icon { font-size: 26px; }
+.pdf-upload-text { font-size: 13px; font-weight: 600; color: #0052CC; }
+.pdf-upload-sub { font-size: 11px; color: #5E6C84; }
+.pending-pdfs { grid-column: 1/-1; display: flex; flex-direction: column; gap: 6px; }
+.pending-pdf-item { display: flex; align-items: center; gap: 8px; background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 7px 10px; }
+.pending-pdf-item .pdf-icon { font-size: 16px; color: #DE350B; }
+.pending-pdf-item .pdf-fname { flex: 1; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pending-pdf-item .pdf-size { font-size: 11px; color: #97A0AF; }
+.pending-pdf-item .pdf-rm { background: none; border: none; cursor: pointer; color: #97A0AF; font-size: 16px; }
+.pending-pdf-item .pdf-rm:hover { color: #DE350B; }
+
+/* PDF Viewer */
+.pdf-viewer-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.7); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.pdf-viewer-overlay.hidden { display: none; }
+.pdf-viewer-box { background: #fff; border-radius: 8px; width: 100%; max-width: 900px; height: 85vh; display: flex; flex-direction: column; }
+.pdf-viewer-header { padding: 14px 18px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; }
+.pdf-viewer-header span { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 700px; }
+.pdf-viewer-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #5E6C84; }
+.pdf-viewer-body { flex: 1; overflow: hidden; }
+.pdf-viewer-body iframe { width: 100%; height: 100%; border: none; }
+
+/* Setup modal */
+.step-list { list-style: none; counter-reset: steps; display: flex; flex-direction: column; gap: 10px; }
+.step-list li { counter-increment: steps; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; }
+.step-list li::before { content: counter(steps); background: #0052CC; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.step-list code { background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
+.step-link { color: #0052CC; text-decoration: underline; cursor: pointer; }
+.url-input-wrap { position: relative; }
+.url-input-wrap input { width: 100%; padding-right: 80px; border: 2px solid #DFE1E6; border-radius: 4px; padding: 8px 80px 8px 10px; font-size: 13px; outline: none; }
+.url-test-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #0052CC; color: #fff; border: none; border-radius: 3px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; }
+.url-test-btn:hover { background: #0747A6; }
+.test-result { font-size: 12px; margin-top: 4px; }
+.test-result.ok { color: #00875A; }
+.test-result.fail { color: #DE350B; }
+
+/* Calendar */
+.cal-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.cal-nav-btn { background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 5px 14px; cursor: pointer; font-size: 13px; font-family: inherit; }
+.cal-nav-btn:hover { background: #DEEBFF; border-color: #0052CC; color: #0052CC; }
+.cal-month-label { font-size: 15px; font-weight: 700; min-width: 120px; text-align: center; }
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.filter-btn { padding: 4px 12px; border-radius: 12px; border: 1px solid #DFE1E6; background: #fff; cursor: pointer; font-size: 12px; font-family: inherit; color: #5E6C84; }
+.filter-btn.active { background: #0052CC; color: #fff; border-color: #0052CC; }
+.cal-grid { border: 1px solid #DFE1E6; border-radius: 6px; overflow: hidden; }
+.cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); background: #F4F5F7; border-bottom: 1px solid #DFE1E6; }
+.cal-wd { text-align: center; padding: 7px 4px; font-size: 11px; font-weight: 700; color: #5E6C84; }
+.cal-days { display: grid; grid-template-columns: repeat(7,1fr); }
+.cal-day { border-right: 1px solid #DFE1E6; border-bottom: 1px solid #DFE1E6; min-height: 90px; padding: 5px 6px; }
+.cal-day:nth-child(7n) { border-right: none; }
+.cal-day.empty { background: #FAFBFC; }
+.cal-day.today { background: #FFFAE6; }
+.cal-day-num { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #172B4D; }
+.cal-day.today .cal-day-num { background: #0052CC; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.cal-day.empty .cal-day-num { color: #B3BAC5; }
+.loan-bar { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default; position: relative; }
+.loan-bar.start { border-radius: 10px 3px 3px 10px; }
+.loan-bar.end   { border-radius: 3px 10px 10px 3px; }
+.loan-bar.start.end { border-radius: 10px; }
+.loan-bar.middle { border-radius: 0; }
+.bar-loan    { background: #DEEBFF; color: #0052CC; border: 1px solid #B3D4FF; }
+.bar-returned{ background: #E3FCEF; color: #00875A; border: 1px solid #ABF5D1; }
+.bar-overdue { background: #FFEBE6; color: #DE350B; border: 1px solid #FFBDAD; }
+.loan-bar:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: #172B4D; color: #fff; font-size: 11px; padding: 5px 8px; border-radius: 4px; white-space: nowrap; z-index: 99; pointer-events: none; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; font-size: 12px; align-items: center; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-swatch { width: 13px; height: 13px; border-radius: 3px; }
+
+.two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+@media(max-width:1000px){ .two-col { grid-template-columns: 1fr; } }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: #172B4D; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; z-index: 400; transform: translateY(80px); opacity: 0; transition: all .3s; pointer-events: none; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: #00875A; }
+.toast.err { background: #DE350B; }
+.toast.info { background: #0052CC; }
+.empty-td { text-align: center; color: #97A0AF; padding: 28px !important; font-size: 13px; }
+.loading-overlay { position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:500;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#0052CC;gap:10px; }
+.loading-overlay.hidden { display:none; }
+.spinner { width:20px;height:20px;border:3px solid #DEEBFF;border-top-color:#0052CC;border-radius:50%;animation:spin .7s linear infinite; }
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
-
 <body>
 
-  <div class="topbar">
-    <div class="topbar-title">📷 Zivid <span>카메라 대여 관리 시스템</span></div>
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="spinner"></div> 데이터 불러오는 중...
+</div>
+
+<div class="topbar">
+  <div class="topbar-title">📷 Zivid <span>카메라 대여 관리 시스템</span></div>
+  <div class="topbar-right">
+    <div class="sync-status">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">연결 안 됨</span>
+    </div>
+    <button class="btn-setup" onclick="openSetupModal()">⚙ Google Sheets 설정</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="setup-banner" id="setupBanner">
+    <div class="setup-banner-icon">☁️</div>
+    <div class="setup-banner-body">
+      <div class="setup-banner-title">Google Sheets 연동이 설정되지 않았습니다</div>
+      <div class="setup-banner-desc">지금은 브라우저 메모리에만 저장됩니다. 새로고침하면 데이터가 초기화돼요.<br>
+        <strong>⚙ Google Sheets 설정</strong> 버튼을 눌러 영구 저장을 활성화하세요.</div>
+    </div>
+    <button class="setup-banner-close" onclick="document.getElementById('setupBanner').classList.add('hidden')">✕</button>
   </div>
 
-  <div class="page">
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num num-blue"   id="statTotal">0</div><div class="stat-label">전체 카메라</div></div>
+    <div class="stat-card"><div class="stat-num num-green"  id="statAvail">0</div><div class="stat-label">대여 가능</div></div>
+    <div class="stat-card"><div class="stat-num num-red"    id="statOut">0</div><div class="stat-label">대여 중</div></div>
+    <div class="stat-card"><div class="stat-num num-orange" id="statWait">0</div><div class="stat-label">대기 목록</div></div>
+    <div class="stat-card"><div class="stat-num num-purple" id="statReturned">0</div><div class="stat-label">반납 완료</div></div>
+  </div>
 
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-num num-blue" id="statTotal">0</div>
-        <div class="stat-label">전체 카메라</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num num-green" id="statAvail">0</div>
-        <div class="stat-label">대여 가능</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num num-red" id="statOut">0</div>
-        <div class="stat-label">대여 중</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num num-orange" id="statWait">0</div>
-        <div class="stat-label">대기 목록</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num num-purple" id="statReturned">0</div>
-        <div class="stat-label">반납 완료</div>
-      </div>
-    </div>
-
-    <!-- Inventory + Sidebar -->
-    <div class="two-col">
-      <div>
-        <div class="card">
-          <div class="section-h">
-            <span>📦 카메라 재고 현황</span>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <div class="tab-row">
-                <button class="tab-btn active" onclick="setViewFilter('all',this)">전체</button>
-                <button class="tab-btn" onclick="setViewFilter('out',this)">대여 중</button>
-                <button class="tab-btn" onclick="setViewFilter('avail',this)">대여 가능</button>
-                <button class="tab-btn" onclick="setViewFilter('returned',this)">반납 완료</button>
-              </div>
-              <button class="btn btn-primary" onclick="openAddModal()">＋ 카메라 추가</button>
+  <!-- Inventory + Sidebar -->
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="section-h">
+          <span>📦 카메라 재고 현황</span>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="tab-row">
+              <button class="tab-btn active" onclick="setViewFilter('all',this)">전체</button>
+              <button class="tab-btn" onclick="setViewFilter('out',this)">대여 중</button>
+              <button class="tab-btn" onclick="setViewFilter('avail',this)">대여 가능</button>
+              <button class="tab-btn" onclick="setViewFilter('returned',this)">반납 완료</button>
             </div>
-          </div>
-          <div class="tbl-wrap">
-            <table class="main-table">
-              <thead>
-                <tr>
-                  <th class="num-cell">#</th>
-                  <th>P/N</th>
-                  <th>S/N</th>
-                  <th>M/N</th>
-                  <th>Item</th>
-                  <th>Current Location</th>
-                  <th>Last Update</th>
-                  <th>Out</th>
-                  <th>In</th>
-                  <th>Note &amp; Files</th>
-                  <th>상태</th>
-                  <th>관리</th>
-                </tr>
-              </thead>
-              <tbody id="inventoryBody"></tbody>
-            </table>
+            <button class="btn btn-primary" onclick="openAddModal()">＋ 카메라 추가</button>
           </div>
         </div>
-      </div>
-
-      <!-- Sidebar -->
-      <div>
-        <div class="card">
-          <div class="section-h">
-            <span>⏳ 대여 대기 목록</span>
-            <button class="btn btn-primary btn-sm" onclick="openWaitModal()">＋ 추가</button>
-          </div>
-          <div class="tbl-wrap">
-            <table style="min-width:unset">
-              <thead>
-                <tr>
-                  <th>M/N</th>
-                  <th>회사명</th>
-                  <th>시작</th>
-                  <th>반납 예정</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="waitingBody"></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="card">
-          <div class="section-h"><span>📊 모델별 현황</span></div>
-          <div class="tbl-wrap">
-            <table style="min-width:unset">
-              <thead>
-                <tr>
-                  <th>M/N</th>
-                  <th>전체</th>
-                  <th>가능</th>
-                  <th>대여 중</th>
-                </tr>
-              </thead>
-              <tbody id="modelBody"></tbody>
-            </table>
-          </div>
+        <!-- Name filter -->
+        <div class="name-filter-row" id="nameFilterRow"></div>
+        <div class="tbl-wrap">
+          <table class="main-table">
+            <thead>
+              <tr>
+                <th class="num-cell">#</th>
+                <th>이름 / S/N</th>
+                <th>M/N</th>
+                <th>Item</th>
+                <th>Current Location</th>
+                <th>Last Update</th>
+                <th>Out</th>
+                <th>In</th>
+                <th>Note &amp; Files</th>
+                <th>상태</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryBody"></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- Calendar -->
-    <div class="card">
-      <div class="section-h"><span>📅 대여 캘린더</span></div>
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-swatch" style="background:#DEEBFF;border:1px solid #B3D4FF"></div>대여 중
+    <!-- Sidebar -->
+    <div>
+      <div class="card">
+        <div class="section-h">
+          <span>⏳ 대여 대기 목록</span>
+          <button class="btn btn-primary btn-sm" onclick="openWaitModal()">＋ 추가</button>
         </div>
-        <div class="legend-item">
-          <div class="legend-swatch" style="background:#E3FCEF;border:1px solid #ABF5D1"></div>반납 완료
-        </div>
-        <div class="legend-item">
-          <div class="legend-swatch" style="background:#FFEBE6;border:1px solid #FFBDAD"></div>반납 연체
-        </div>
-      </div>
-      <div class="filter-row" id="calFilterRow"></div>
-      <div class="cal-controls">
-        <button class="cal-nav-btn" onclick="changeMonth(-1)">&#8249; 이전</button>
-        <div class="cal-month-label" id="calLabel"></div>
-        <button class="cal-nav-btn" onclick="changeMonth(1)">다음 &#8250;</button>
-        <button class="cal-nav-btn" onclick="goToday()">오늘</button>
-      </div>
-      <div class="cal-grid">
-        <div class="cal-weekdays">
-          <div class="cal-wd">일</div>
-          <div class="cal-wd">월</div>
-          <div class="cal-wd">화</div>
-          <div class="cal-wd">수</div>
-          <div class="cal-wd">목</div>
-          <div class="cal-wd">금</div>
-          <div class="cal-wd">토</div>
-        </div>
-        <div class="cal-days" id="calDays"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ══ CAMERA MODAL ══ -->
-  <div class="modal-overlay hidden" id="cameraModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 id="modalTitle">카메라 추가</h3>
-        <button class="modal-close" onclick="closeModal('cameraModal')">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-grid">
-
-          <div class="fsec" style="border-top:none;padding-top:0">📋 기본 정보</div>
-          <div class="form-group">
-            <label>P/N (Part Number) <span class="req">*</span></label>
-            <input type="text" id="f-pn" placeholder="예: 810-00002-B">
-          </div>
-          <div class="form-group">
-            <label>S/N (Serial Number) <span class="req">*</span></label>
-            <input type="text" id="f-sn" placeholder="예: 19446EB4">
-          </div>
-          <div class="form-group">
-            <label>M/N (Model Number) <span class="req">*</span></label>
-            <input type="text" id="f-mn" placeholder="예: ZVD1P-S" list="mnList">
-            <datalist id="mnList"></datalist>
-          </div>
-          <div class="form-group">
-            <label>Current Location <span class="req">*</span></label>
-            <input type="text" id="f-location" placeholder="예: Zivid Oslo">
-          </div>
-
-          <div class="fsec">📦 구성품 포함 여부 (복수 선택 가능)</div>
-          <div class="items-grid" id="itemsGrid">
-            <!-- rendered by JS -->
-          </div>
-
-          <div class="fsec">📅 대여 기간 &amp; 상태</div>
-          <div class="form-group">
-            <label>Out (체크아웃 날짜)</label>
-            <input type="date" id="f-out">
-          </div>
-          <div class="form-group">
-            <label>In (반납 예정일)</label>
-            <input type="date" id="f-in">
-          </div>
-          <div class="form-group">
-            <label>Last Update</label>
-            <input type="date" id="f-lastupdate">
-          </div>
-          <div class="form-group">
-            <label>상태 <span class="req">*</span></label>
-            <select id="f-status">
-              <option value="available">✅ 대여 가능</option>
-              <option value="out">📤 대여 중</option>
-              <option value="overdue">⚠️ 반납 연체</option>
-              <option value="returned">✔️ 반납 완료</option>
-            </select>
-          </div>
-
-          <div class="form-group full">
-            <label>Note</label>
-            <textarea id="f-note" placeholder="예: 반납 요청 완료 (2023/8/1) / 특이사항 메모"></textarea>
-          </div>
-
-          <div class="fsec">📎 PDF 첨부파일</div>
-          <div class="pdf-upload-area full" id="pdfDropZone">
-            <label class="pdf-upload-label" for="pdfFileInput">
-              <span class="pdf-upload-icon">📄</span>
-              <span class="pdf-upload-text">PDF 파일을 여기에 드래그하거나 클릭하여 업로드</span>
-              <span class="pdf-upload-sub">PDF 파일만 가능 · 여러 파일 동시 업로드 가능</span>
-            </label>
-            <input type="file" id="pdfFileInput" accept=".pdf" multiple>
-          </div>
-          <div class="pending-pdfs" id="pendingPdfs"></div>
-
+        <div class="tbl-wrap">
+          <table style="min-width:unset">
+            <thead><tr><th>M/N</th><th>회사명</th><th>시작</th><th>반납 예정</th><th></th></tr></thead>
+            <tbody id="waitingBody"></tbody>
+          </table>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-edit" onclick="closeModal('cameraModal')">취소</button>
-        <button class="btn btn-primary" onclick="saveCamera()">저장</button>
+      <div class="card">
+        <div class="section-h"><span>📊 모델별 현황</span></div>
+        <div class="tbl-wrap">
+          <table style="min-width:unset">
+            <thead><tr><th>M/N</th><th>전체</th><th>가능</th><th>대여 중</th></tr></thead>
+            <tbody id="modelBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ══ WAITING MODAL ══ -->
-  <div class="modal-overlay hidden" id="waitModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>대여 대기 목록 추가</h3>
-        <button class="modal-close" onclick="closeModal('waitModal')">✕</button>
+  <!-- Calendar -->
+  <div class="card">
+    <div class="section-h"><span>📅 대여 캘린더</span></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#DEEBFF;border:1px solid #B3D4FF"></div>대여 중</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#E3FCEF;border:1px solid #ABF5D1"></div>반납 완료</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#FFEBE6;border:1px solid #FFBDAD"></div>연체</div>
+    </div>
+    <div class="filter-row" id="calFilterRow"></div>
+    <div class="cal-controls">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">&#8249; 이전</button>
+      <div class="cal-month-label" id="calLabel"></div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">다음 &#8250;</button>
+      <button class="cal-nav-btn" onclick="goToday()">오늘</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-weekdays">
+        <div class="cal-wd">일</div><div class="cal-wd">월</div><div class="cal-wd">화</div>
+        <div class="cal-wd">수</div><div class="cal-wd">목</div><div class="cal-wd">금</div>
+        <div class="cal-wd">토</div>
       </div>
-      <div class="modal-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>M/N (모델) <span class="req">*</span></label>
-            <input type="text" id="w-mn" placeholder="예: ZVD1P-S" list="mnList2">
-            <datalist id="mnList2"></datalist>
-          </div>
-          <div class="form-group">
-            <label>회사명 <span class="req">*</span></label>
-            <input type="text" id="w-company" placeholder="예: Kawasaki Robotics">
-          </div>
-          <div class="form-group">
-            <label>시작 날짜</label>
-            <input type="text" id="w-start" placeholder="예: 즉시 / 2026-04-01">
-          </div>
-          <div class="form-group">
-            <label>반납 예정</label>
-            <input type="text" id="w-return" placeholder="예: 3주 / 장기">
-          </div>
-          <div class="form-group full">
-            <label>우선순위</label>
-            <select id="w-prio">
-              <option value="high">🔴 높음 (즉시)</option>
-              <option value="med">🟠 보통</option>
-              <option value="low">🟢 낮음 (날짜 확정)</option>
-            </select>
-          </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ CAMERA MODAL ══ -->
+<div class="modal-overlay hidden" id="cameraModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">카메라 추가</h3>
+      <button class="modal-close" onclick="closeModal('cameraModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fsec" style="border-top:none;padding-top:0">📋 기본 정보</div>
+
+        <div class="form-group full">
+          <label>이름 (Name) <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="예: Alpha, Blue Star, Z2-001">
+          <span style="font-size:11px;color:#5E6C84;margin-top:2px">카메라를 구분하는 고유한 이름입니다. 표에 배지로 표시됩니다.</span>
+        </div>
+        <div class="form-group">
+          <label>뱃지 색상</label>
+          <div class="color-picker-row" id="colorPickerRow"></div>
+        </div>
+        <div class="form-group">
+          <label>S/N (Serial Number) <span class="req">*</span></label>
+          <input type="text" id="f-sn" placeholder="예: 19446EB4">
+        </div>
+        <div class="form-group">
+          <label>M/N (Model Number) <span class="req">*</span></label>
+          <input type="text" id="f-mn" placeholder="예: ZVD1P-S" list="mnList">
+          <datalist id="mnList"></datalist>
+        </div>
+        <div class="form-group">
+          <label>Current Location <span class="req">*</span></label>
+          <input type="text" id="f-location" placeholder="예: Zivid Oslo">
+        </div>
+
+        <div class="fsec">📦 구성품 포함 여부 (복수 선택)</div>
+        <div class="items-grid" id="itemsGrid"></div>
+
+        <div class="fsec">📅 대여 기간 &amp; 상태</div>
+        <div class="form-group">
+          <label>Out (체크아웃 날짜)</label>
+          <input type="date" id="f-out">
+        </div>
+        <div class="form-group">
+          <label>In (반납 예정일)</label>
+          <input type="date" id="f-in">
+        </div>
+        <div class="form-group">
+          <label>Last Update</label>
+          <input type="date" id="f-lastupdate">
+        </div>
+        <div class="form-group">
+          <label>상태 <span class="req">*</span></label>
+          <select id="f-status">
+            <option value="available">✅ 대여 가능</option>
+            <option value="out">📤 대여 중</option>
+            <option value="overdue">⚠️ 반납 연체</option>
+            <option value="returned">✔️ 반납 완료</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Note</label>
+          <textarea id="f-note" placeholder="예: 반납 요청 완료 (2023/8/1) / 특이사항"></textarea>
+        </div>
+
+        <div class="fsec">📎 PDF 첨부파일</div>
+        <div class="pdf-upload-area full" id="pdfDropZone">
+          <label class="pdf-upload-label" for="pdfFileInput">
+            <span class="pdf-upload-icon">📄</span>
+            <span class="pdf-upload-text">PDF 드래그 또는 클릭하여 업로드</span>
+            <span class="pdf-upload-sub">PDF만 가능 · 복수 업로드 가능</span>
+          </label>
+          <input type="file" id="pdfFileInput" accept=".pdf" multiple>
+        </div>
+        <div class="pending-pdfs" id="pendingPdfs"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-edit" onclick="closeModal('cameraModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveCamera()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WAITING MODAL ══ -->
+<div class="modal-overlay hidden" id="waitModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>대여 대기 목록 추가</h3>
+      <button class="modal-close" onclick="closeModal('waitModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>M/N (모델) <span class="req">*</span></label>
+          <input type="text" id="w-mn" placeholder="예: ZVD1P-S" list="mnList2">
+          <datalist id="mnList2"></datalist>
+        </div>
+        <div class="form-group">
+          <label>회사명 <span class="req">*</span></label>
+          <input type="text" id="w-company" placeholder="예: Kawasaki Robotics">
+        </div>
+        <div class="form-group">
+          <label>시작 날짜</label>
+          <input type="text" id="w-start" placeholder="즉시 / 2026-04-01">
+        </div>
+        <div class="form-group">
+          <label>반납 예정</label>
+          <input type="text" id="w-return" placeholder="3주 / 장기">
+        </div>
+        <div class="form-group full">
+          <label>우선순위</label>
+          <select id="w-prio">
+            <option value="high">🔴 높음 (즉시)</option>
+            <option value="med">🟠 보통</option>
+            <option value="low">🟢 낮음 (날짜 확정)</option>
+          </select>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-edit" onclick="closeModal('waitModal')">취소</button>
-        <button class="btn btn-primary" onclick="saveWaiting()">저장</button>
-      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-edit" onclick="closeModal('waitModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveWaiting()">저장</button>
     </div>
   </div>
+</div>
 
-  <!-- ══ PDF VIEWER ══ -->
-  <div class="pdf-viewer-overlay hidden" id="pdfViewer">
-    <div class="pdf-viewer-box">
-      <div class="pdf-viewer-header">
-        <span id="pdfViewerTitle">PDF 파일</span>
-        <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
-      </div>
-      <div class="pdf-viewer-body">
-        <iframe id="pdfViewerFrame" src=""></iframe>
+<!-- ══ SETUP MODAL ══ -->
+<div class="modal-overlay hidden" id="setupModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3>☁️ Google Sheets 연동 설정</h3>
+      <button class="modal-close" onclick="closeModal('setupModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#F4F5F7;border-radius:8px;padding:16px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:12px">📋 설치 순서</div>
+          <ol class="step-list">
+            <li><span><a class="step-link" href="https://sheets.google.com" target="_blank">Google Sheets</a>에서 새 스프레드시트 생성</span></li>
+            <li><span>상단 메뉴 <strong>확장 프로그램 → Apps Script</strong> 클릭</span></li>
+            <li><span>기존 코드 전체 삭제 후 제공된 <code>Code.gs</code> 내용 붙여넣기</span></li>
+            <li><span>💾 저장 → <strong>배포 → 새 배포</strong> 클릭</span></li>
+            <li><span>유형: <code>웹 앱</code> / 실행: <code>나</code> / 액세스: <code>모든 사용자</code> → <strong>배포</strong></span></li>
+            <li><span>표시된 <strong>웹 앱 URL</strong> 복사 → 아래에 붙여넣기</span></li>
+          </ol>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px">Apps Script 웹 앱 URL <span style="color:#DE350B">*</span></label>
+          <div class="url-input-wrap">
+            <input type="text" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/...">
+            <button class="url-test-btn" onclick="testConnection()">연결 테스트</button>
+          </div>
+          <div class="test-result" id="testResult"></div>
+        </div>
+        <div style="background:#E3FCEF;border:1px solid #ABF5D1;border-radius:6px;padding:12px;font-size:12px;color:#00875A">
+          ✅ 연동 후 모든 변경사항이 자동으로 구글 시트에 저장됩니다.<br>
+          📱 여러 기기, 여러 사람이 동시에 사용할 수 있습니다.
+        </div>
       </div>
     </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="disconnectSheet()" id="disconnectBtn" style="margin-right:auto;display:none">연결 해제</button>
+      <button class="btn btn-edit" onclick="closeModal('setupModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveSheetUrl()">저장 &amp; 데이터 불러오기</button>
+    </div>
   </div>
+</div>
 
-  <div class="toast" id="toast"></div>
+<!-- ══ PDF VIEWER ══ -->
+<div class="pdf-viewer-overlay hidden" id="pdfViewer">
+  <div class="pdf-viewer-box">
+    <div class="pdf-viewer-header">
+      <span id="pdfViewerTitle">PDF 파일</span>
+      <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
+    </div>
+    <div class="pdf-viewer-body">
+      <iframe id="pdfViewerFrame" src=""></iframe>
+    </div>
+  </div>
+</div>
 
-  <script>
-    // ═══════════════════════════════
-    //  CONSTANTS
-    // ═══════════════════════════════
-    const ITEMS = [
-      { id: 'camera_body', label: 'Camera Body', special: false },
-      { id: 'power_supply', label: 'Power Supply', special: false },
-      { id: 'ethernet_cable', label: 'Ethernet cable (5m)', special: false },
-      { id: 'power_ext', label: 'Power Extension (5m)', special: false },
-      { id: 'cal_board_big', label: 'Calibration board (Big)', special: false },
-      { id: 'cal_board_small', label: 'Calibration board (Small)', special: false },
-      { id: 'tripod_mount', label: 'Tripod mount', special: false },
-      { id: 'robot_mount', label: 'Robot mount', special: false },
-      { id: 'stationary_mount', label: 'Stationary mount', special: false },
-      { id: 'power_ext_ra', label: 'Power Extension RA (3m)', special: false },
-      { id: 'eth_ext_ra', label: 'Ethernet Extension RA (3m)', special: false },
-      { id: 'check_note', label: 'Need to check Note or Files', special: true },
-    ];
+<div class="toast" id="toast"></div>
 
-    // ═══════════════════════════════
-    //  DATA
-    // ═══════════════════════════════
-    let cameras = [
-      {
-        id: 1, pn: '810-00002-B', sn: '19446EB4', mn: 'ZVD1P-S',
-        items: ['camera_body', 'power_supply', 'ethernet_cable'],
-        location: 'Hansero', lastUpdate: '2023-11-18',
-        out: '2025-05-19', inn: '2025-05-19',
-        status: 'returned',
-        note: '반납 요청 완료 (2023/8/1)',
-        pdfs: [{ name: 'Loan Request Form_20250519_Hansero_Z1pS.pdf', dataUrl: null }]
-      },
-    ];
-    let waitingList = [
-      { id: 1, mn: 'Z3', company: 'Bright Machines', start: '즉시', returnPlan: '3주', prio: 'high' },
-      { id: 2, mn: 'Z3', company: 'IT+', start: '즉시', returnPlan: '2주', prio: 'high' },
-      { id: 3, mn: 'MR60', company: 'Kawasaki Robotics', start: '준비되는 대로', returnPlan: '장기', prio: 'med' },
-      { id: 4, mn: 'MR60', company: 'Pick it (Yaskawa US)', start: '즉시', returnPlan: '장기', prio: 'high' },
-      { id: 5, mn: 'MR60', company: 'Univ. Porto (FEUP)', start: '2026-03-23', returnPlan: '3주', prio: 'low' },
-    ];
-    let nextCamId = 2, nextWaitId = 6, editingId = null;
-    let viewFilter = 'all', calFilter = 'ALL';
-    let currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth();
-    const TODAY = new Date();
-    let pendingPdfs = [];
+<script>
+// ════════════════════════════════════════════
+//  CONSTANTS
+// ════════════════════════════════════════════
+const ITEMS = [
+  { id:'camera_body',      label:'Camera Body',                special:false },
+  { id:'power_supply',     label:'Power Supply',               special:false },
+  { id:'ethernet_cable',   label:'Ethernet cable (5m)',        special:false },
+  { id:'power_ext',        label:'Power Extension (5m)',       special:false },
+  { id:'cal_board_big',    label:'Calibration board (Big)',    special:false },
+  { id:'cal_board_small',  label:'Calibration board (Small)',  special:false },
+  { id:'tripod_mount',     label:'Tripod mount',               special:false },
+  { id:'robot_mount',      label:'Robot mount',                special:false },
+  { id:'stationary_mount', label:'Stationary mount',           special:false },
+  { id:'power_ext_ra',     label:'Power Extension RA (3m)',    special:false },
+  { id:'eth_ext_ra',       label:'Ethernet Extension RA (3m)', special:false },
+  { id:'check_note',       label:'Need to check Note or Files',special:true  },
+];
 
-    // ═══════════════════════════════
-    //  BUILD ITEMS CHECKLIST
-    // ═══════════════════════════════
-    function buildItemsGrid(selectedIds = []) {
-      const grid = document.getElementById('itemsGrid');
-      grid.innerHTML = ITEMS.map((item, i) => `
-    <label class="item-check-label ${item.special ? 'special-item' : ''}" title="${i + 1}. ${item.label}">
-      <input type="checkbox" id="item_${item.id}" value="${item.id}"
-        ${selectedIds.includes(item.id) ? 'checked' : ''}>
-      <span>${i + 1}. ${item.label}</span>
+const BADGE_COLORS = [
+  '#0052CC','#00875A','#DE350B','#6554C0',
+  '#FF8B00','#008DA6','#403294','#BF2600',
+  '#00C7E6','#3D7317'
+];
+
+// ════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════
+let cameras     = [];
+let waitingList = [];
+let nextCamId   = 1;
+let nextWaitId  = 1;
+let editingId   = null;
+let pendingPdfs = [];
+let viewFilter  = 'all';
+let nameFilter  = 'ALL';
+let calFilter   = 'ALL';
+let selectedColor = BADGE_COLORS[0];
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth();
+const TODAY = new Date();
+let SHEET_API_URL = localStorage.getItem('zivid_sheet_url') || '';
+
+// ════════════════════════════════════════════
+//  GOOGLE SHEETS SYNC
+// ════════════════════════════════════════════
+function setSyncStatus(status, label) {
+  document.getElementById('syncDot').className = 'sync-dot ' + status;
+  document.getElementById('syncLabel').textContent = label;
+}
+async function apiCall(action, data=null) {
+  if (!SHEET_API_URL) return null;
+  setSyncStatus('syncing','동기화 중...');
+  try {
+    let res;
+    if (data === null) {
+      res = await fetch(`${SHEET_API_URL}?action=${action}`);
+    } else {
+      res = await fetch(SHEET_API_URL, { method:'POST', body: JSON.stringify({action,data}) });
+    }
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    setSyncStatus('connected','동기화 완료');
+    return json;
+  } catch(e) {
+    setSyncStatus('error','동기화 오류');
+    return null;
+  }
+}
+async function loadFromSheet() {
+  if (!SHEET_API_URL) return;
+  showLoading(true);
+  const result = await apiCall('getAll');
+  showLoading(false);
+  if (!result) return;
+  if (result.cameras)  { cameras = result.cameras; nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1; }
+  if (result.waiting)  { waitingList = result.waiting; nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1; }
+  renderAll();
+  showToast('구글 시트에서 데이터를 불러왔습니다.','success');
+}
+function openSetupModal() {
+  document.getElementById('sheetUrlInput').value = SHEET_API_URL;
+  document.getElementById('testResult').textContent = '';
+  document.getElementById('disconnectBtn').style.display = SHEET_API_URL ? 'flex' : 'none';
+  document.getElementById('setupModal').classList.remove('hidden');
+}
+async function testConnection() {
+  const url = document.getElementById('sheetUrlInput').value.trim();
+  const res = document.getElementById('testResult');
+  if (!url) { res.textContent='URL을 입력해주세요.'; res.className='test-result fail'; return; }
+  res.textContent='연결 테스트 중...'; res.className='test-result';
+  try {
+    const r = await fetch(`${url}?action=getAll`);
+    const j = await r.json();
+    if (j.cameras !== undefined) {
+      res.textContent = '✅ 연결 성공! 카메라 '+j.cameras.length+'개 확인됨';
+      res.className = 'test-result ok';
+    } else throw new Error();
+  } catch(e) {
+    res.textContent = '❌ 연결 실패. URL을 확인해주세요.';
+    res.className = 'test-result fail';
+  }
+}
+async function saveSheetUrl() {
+  const url = document.getElementById('sheetUrlInput').value.trim();
+  if (!url) { showToast('URL을 입력해주세요.','err'); return; }
+  SHEET_API_URL = url;
+  localStorage.setItem('zivid_sheet_url', url);
+  document.getElementById('setupBanner').classList.add('hidden');
+  closeModal('setupModal');
+  await loadFromSheet();
+}
+function disconnectSheet() {
+  if (!confirm('연결을 해제하시겠습니까?')) return;
+  SHEET_API_URL = '';
+  localStorage.removeItem('zivid_sheet_url');
+  setSyncStatus('','연결 안 됨');
+  document.getElementById('setupBanner').classList.remove('hidden');
+  closeModal('setupModal');
+  showToast('연결이 해제됐습니다.','info');
+}
+
+// ════════════════════════════════════════════
+//  COLOR PICKER
+// ════════════════════════════════════════════
+function buildColorPicker(currentColor) {
+  selectedColor = currentColor || BADGE_COLORS[0];
+  document.getElementById('colorPickerRow').innerHTML =
+    BADGE_COLORS.map(c =>
+      `<div class="color-swatch ${c===selectedColor?'selected':''}"
+            style="background:${c}" title="${c}"
+            onclick="selectColor('${c}')"></div>`
+    ).join('');
+}
+function selectColor(c) {
+  selectedColor = c;
+  document.querySelectorAll('.color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.title === c);
+  });
+}
+
+// ════════════════════════════════════════════
+//  NAME FILTER ROW
+// ════════════════════════════════════════════
+function renderNameFilterRow() {
+  const row = document.getElementById('nameFilterRow');
+  const named = cameras.filter(c => c.name);
+  if (!named.length) { row.innerHTML = ''; return; }
+  const unique = [];
+  named.forEach(c => { if (!unique.find(x=>x.name===c.name)) unique.push(c); });
+  row.innerHTML =
+    `<button class="name-filter-btn ${nameFilter==='ALL'?'active-name':''}" onclick="setNameFilter('ALL',this,'')">전체</button>` +
+    unique.map(c => {
+      const color = c.color || BADGE_COLORS[0];
+      const isActive = nameFilter === c.name;
+      const style = isActive ? `background:${color};color:#fff;border-color:${color}` : '';
+      return `<button class="name-filter-btn ${isActive?'active-name':''}" style="${style}"
+        onclick="setNameFilter('${c.name.replace(/'/g,"\\'")}',this,'${color}')">${c.name}</button>`;
+    }).join('');
+}
+function setNameFilter(key, btn, color) {
+  nameFilter = key;
+  document.querySelectorAll('.name-filter-btn').forEach(b => {
+    b.classList.remove('active-name');
+    b.style.background=''; b.style.color=''; b.style.borderColor='';
+  });
+  btn.classList.add('active-name');
+  if (key !== 'ALL') { btn.style.background=color; btn.style.color='#fff'; btn.style.borderColor=color; }
+  renderInventory();
+}
+
+// ════════════════════════════════════════════
+//  ITEMS CHECKLIST
+// ════════════════════════════════════════════
+function buildItemsGrid(selectedIds=[]) {
+  document.getElementById('itemsGrid').innerHTML = ITEMS.map((item,i) =>
+    `<label class="item-check-label ${item.special?'special-item':''}">
+      <input type="checkbox" id="item_${item.id}" ${selectedIds.includes(item.id)?'checked':''}>
+      <span>${i+1}. ${item.label}</span>
     </label>`).join('');
-    }
+}
+function getSelectedItems() {
+  return ITEMS.map(it=>it.id).filter(id=>{ const el=document.getElementById('item_'+id); return el&&el.checked; });
+}
 
-    function getSelectedItems() {
-      return ITEMS.map(it => it.id).filter(id => {
-        const el = document.getElementById('item_' + id);
-        return el && el.checked;
-      });
-    }
-
-    // ═══════════════════════════════
-    //  PDF HANDLING
-    // ═══════════════════════════════
-    function initPdfUpload() {
-      const input = document.getElementById('pdfFileInput');
-      const zone = document.getElementById('pdfDropZone');
-      input.addEventListener('change', e => { handleFiles([...e.target.files]); input.value = ''; });
-      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-      zone.addEventListener('drop', e => {
-        e.preventDefault(); zone.classList.remove('drag-over');
-        handleFiles([...e.dataTransfer.files].filter(f => f.type === 'application/pdf'));
-      });
-    }
-    function handleFiles(files) {
-      files.forEach(file => {
-        if (file.type !== 'application/pdf') { showToast('PDF 파일만 업로드 가능합니다.', 'err'); return; }
-        const reader = new FileReader();
-        reader.onload = e => { pendingPdfs.push({ name: file.name, dataUrl: e.target.result, size: file.size }); renderPendingPdfs(); };
-        reader.readAsDataURL(file);
-      });
-    }
-    function renderPendingPdfs() {
-      const c = document.getElementById('pendingPdfs');
-      c.innerHTML = pendingPdfs.map((p, i) => `
-    <div class="pending-pdf-item">
+// ════════════════════════════════════════════
+//  PDF HANDLING
+// ════════════════════════════════════════════
+function initPdfUpload() {
+  const input = document.getElementById('pdfFileInput');
+  const zone  = document.getElementById('pdfDropZone');
+  input.addEventListener('change', e => { handleFiles([...e.target.files]); input.value=''; });
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    handleFiles([...e.dataTransfer.files].filter(f=>f.type==='application/pdf'));
+  });
+}
+function handleFiles(files) {
+  files.forEach(file => {
+    if (file.type!=='application/pdf') { showToast('PDF 파일만 업로드 가능합니다.','err'); return; }
+    const reader = new FileReader();
+    reader.onload = e => { pendingPdfs.push({name:file.name, dataUrl:e.target.result, size:file.size}); renderPendingPdfs(); };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPendingPdfs() {
+  document.getElementById('pendingPdfs').innerHTML = pendingPdfs.map((p,i)=>
+    `<div class="pending-pdf-item">
       <span class="pdf-icon">📄</span>
       <span class="pdf-fname">${p.name}</span>
       <span class="pdf-size">${fmtSize(p.size)}</span>
       <button class="pdf-rm" onclick="removePending(${i})">✕</button>
     </div>`).join('');
-    }
-    function removePending(i) { pendingPdfs.splice(i, 1); renderPendingPdfs(); }
-    function fmtSize(b) { if (!b) return ''; if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; }
+}
+function removePending(i) { pendingPdfs.splice(i,1); renderPendingPdfs(); }
+function fmtSize(b) { if(!b)return''; if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
+function openPdf(camId,pi) {
+  const cam=cameras.find(c=>c.id===camId); if(!cam||!cam.pdfs[pi])return;
+  const pdf=cam.pdfs[pi];
+  if(!pdf.dataUrl){showToast('파일 데이터가 없습니다.','err');return;}
+  document.getElementById('pdfViewerTitle').textContent=pdf.name;
+  document.getElementById('pdfViewerFrame').src=pdf.dataUrl;
+  document.getElementById('pdfViewer').classList.remove('hidden');
+}
+function closePdfViewer() { document.getElementById('pdfViewer').classList.add('hidden'); document.getElementById('pdfViewerFrame').src=''; }
+async function deletePdf(camId,pi) {
+  const cam=cameras.find(c=>c.id===camId); if(!cam)return;
+  cam.pdfs.splice(pi,1);
+  await apiCall('saveCamera',cam);
+  renderInventory(); showToast('파일이 삭제됐습니다.','success');
+}
 
-    function openPdf(camId, pdfIdx) {
-      const cam = cameras.find(c => c.id === camId);
-      if (!cam || !cam.pdfs[pdfIdx]) return;
-      const pdf = cam.pdfs[pdfIdx];
-      if (!pdf.dataUrl) { showToast('파일 데이터가 없습니다. 파일을 다시 업로드해주세요.', 'err'); return; }
-      document.getElementById('pdfViewerTitle').textContent = pdf.name;
-      document.getElementById('pdfViewerFrame').src = pdf.dataUrl;
-      document.getElementById('pdfViewer').classList.remove('hidden');
-    }
-    function closePdfViewer() { document.getElementById('pdfViewer').classList.add('hidden'); document.getElementById('pdfViewerFrame').src = ''; }
-    function deletePdf(camId, pdfIdx) {
-      const cam = cameras.find(c => c.id === camId); if (!cam) return;
-      cam.pdfs.splice(pdfIdx, 1); renderInventory(); showToast('파일이 삭제되었습니다.', 'success');
-    }
+// ════════════════════════════════════════════
+//  FILTERS
+// ════════════════════════════════════════════
+function setViewFilter(f,btn){
+  viewFilter=f;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderInventory();
+}
+function filteredCams(){
+  let list = cameras;
+  if(viewFilter==='out')      list=list.filter(c=>c.status==='out'||c.status==='overdue');
+  else if(viewFilter==='avail')    list=list.filter(c=>c.status==='available');
+  else if(viewFilter==='returned') list=list.filter(c=>c.status==='returned');
+  if(nameFilter!=='ALL') list=list.filter(c=>c.name===nameFilter);
+  return list;
+}
 
-    // ═══════════════════════════════
-    //  VIEW FILTER
-    // ═══════════════════════════════
-    function setViewFilter(f, btn) {
-      viewFilter = f;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderInventory();
-    }
-    function filteredCams() {
-      if (viewFilter === 'out') return cameras.filter(c => c.status === 'out' || c.status === 'overdue');
-      if (viewFilter === 'avail') return cameras.filter(c => c.status === 'available');
-      if (viewFilter === 'returned') return cameras.filter(c => c.status === 'returned');
-      return cameras;
-    }
+// ════════════════════════════════════════════
+//  RENDER INVENTORY
+// ════════════════════════════════════════════
+function renderInventory(){
+  const tbody=document.getElementById('inventoryBody');
+  const list=filteredCams();
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="11" class="empty-td">해당하는 카메라가 없습니다.</td></tr>`;return;}
 
-    // ═══════════════════════════════
-    //  RENDER INVENTORY
-    // ═══════════════════════════════
-    function renderInventory() {
-      const tbody = document.getElementById('inventoryBody');
-      const list = filteredCams();
-      if (!list.length) { tbody.innerHTML = `<tr><td colspan="12" class="empty-td">해당하는 카메라가 없습니다.</td></tr>`; return; }
+  const sp=s=>{
+    if(s==='available') return`<span class="pill pill-green"><span class="dot dot-green"></span>대여 가능</span>`;
+    if(s==='out')       return`<span class="pill pill-red"><span class="dot dot-red"></span>대여 중</span>`;
+    if(s==='overdue')   return`<span class="pill pill-orange">⚠️ 연체</span>`;
+    if(s==='returned')  return`<span class="pill pill-purple">✔️ 반납 완료</span>`;
+    return'';
+  };
+  const fd=d=>d||'—';
 
-      const sp = s => {
-        if (s === 'available') return `<span class="pill pill-green"><span class="dot dot-green"></span>대여 가능</span>`;
-        if (s === 'out') return `<span class="pill pill-red"><span class="dot dot-red"></span>대여 중</span>`;
-        if (s === 'overdue') return `<span class="pill pill-orange">⚠️ 연체</span>`;
-        if (s === 'returned') return `<span class="pill pill-purple">✔️ 반납 완료</span>`;
-        return '';
-      };
-      const fd = d => d || '—';
+  tbody.innerHTML=list.map((c,i)=>{
+    // Name/SN cell
+    const color = c.color || BADGE_COLORS[0];
+    const nameHtml = c.name
+      ? `<div class="name-badge" style="background:${color}">
+           ${c.name}
+           <span class="nb-sn">${c.sn}</span>
+         </div>`
+      : `<div class="name-no-badge">
+           <span class="nb-sn-plain">${c.sn}</span>
+           <span class="nb-hint">이름 없음</span>
+         </div>`;
 
-      tbody.innerHTML = list.map((c, i) => {
-        // Items column
-        const itemsHtml = (c.items && c.items.length)
-          ? `<div class="item-tag-list">${c.items.map(id => {
-            const def = ITEMS.find(x => x.id === id);
-            if (!def) return '';
-            const idx = ITEMS.indexOf(def) + 1;
-            return `<div class="item-tag ${def.special ? 'special' : ''}"><span class="itick">✓</span>${idx}. ${def.label}</div>`;
-          }).join('')}</div>`
-          : '<span style="color:#B3BAC5;font-size:12px">—</span>';
+    const itemsHtml=(c.items&&c.items.length)
+      ?`<div class="item-tag-list">${c.items.map(id=>{
+          const def=ITEMS.find(x=>x.id===id); if(!def)return'';
+          const idx=ITEMS.indexOf(def)+1;
+          return`<div class="item-tag ${def.special?'special':''}"><span class="itick">✓</span>${idx}. ${def.label}</div>`;
+        }).join('')}</div>`
+      :`<span style="color:#B3BAC5;font-size:12px">—</span>`;
 
-        // Note + PDFs
-        const pdfsHtml = (c.pdfs && c.pdfs.length)
-          ? `<div class="pdf-list">${c.pdfs.map((p, pi) =>
-            `<div class="pdf-chip" onclick="openPdf(${c.id},${pi})">
+    const pdfsHtml=(c.pdfs&&c.pdfs.length)
+      ?`<div class="pdf-list">${c.pdfs.map((p,pi)=>
+          `<div class="pdf-chip" onclick="openPdf(${c.id},${pi})">
             <span class="pdf-icon">📄</span>
             <span class="pdf-name">${p.name}</span>
-            <span class="pdf-del" onclick="event.stopPropagation();deletePdf(${c.id},${pi})" title="삭제">✕</span>
-          </div>`).join('')}</div>` : '';
+            <span class="pdf-del" onclick="event.stopPropagation();deletePdf(${c.id},${pi})">✕</span>
+          </div>`).join('')}</div>`:'' ;
 
-        return `<tr class="${c.status === 'returned' ? 'returned-row' : ''}">
-      <td class="num-cell vmid">${i + 1}</td>
-      <td class="mono vmid">${c.pn}</td>
-      <td class="mono vmid">${c.sn}</td>
+    return`<tr class="${c.status==='returned'?'returned-row':''}">
+      <td class="num-cell vmid">${i+1}</td>
+      <td class="name-cell vmid">${nameHtml}</td>
       <td class="vmid"><span class="pill pill-grey">${c.mn}</span></td>
       <td class="item-cell">${itemsHtml}</td>
       <td class="vmid">${c.location}</td>
@@ -1512,254 +867,272 @@
       <td class="vmid" style="font-size:12px">${fd(c.out)}</td>
       <td class="vmid" style="font-size:12px">${fd(c.inn)}</td>
       <td class="note-cell">
-        <div class="note-text">${c.note || ''}</div>
-        ${pdfsHtml}
+        <div class="note-text">${c.note||''}</div>${pdfsHtml}
       </td>
       <td class="vmid">${sp(c.status)}</td>
       <td class="vmid"><div class="action-cell">
-        ${c.status !== 'returned' ? `<button class="btn btn-return btn-sm" onclick="markReturned(${c.id})" title="반납 완료">✔️</button>` : ''}
+        ${c.status!=='returned'?`<button class="btn btn-return btn-sm" onclick="markReturned(${c.id})" title="반납 완료">✔️</button>`:''}
         <button class="btn btn-edit btn-sm" onclick="openEditModal(${c.id})">✏️</button>
         <button class="btn btn-danger btn-sm" onclick="deleteCamera(${c.id})">🗑️</button>
       </div></td>
     </tr>`;
-      }).join('');
-    }
+  }).join('');
+}
 
-    // ═══════════════════════════════
-    //  MARK RETURNED
-    // ═══════════════════════════════
-    function markReturned(id) {
-      const c = cameras.find(x => x.id === id); if (!c) return;
-      c.status = 'returned'; c.inn = new Date().toISOString().slice(0, 10);
-      c.lastUpdate = new Date().toISOString().slice(0, 10); c.location = 'Zivid Oslo';
-      showToast('반납 완료 처리되었습니다.', 'success'); renderAll();
-    }
+// ════════════════════════════════════════════
+//  MARK RETURNED
+// ════════════════════════════════════════════
+async function markReturned(id){
+  const c=cameras.find(x=>x.id===id); if(!c)return;
+  c.status='returned'; c.inn=new Date().toISOString().slice(0,10);
+  c.lastUpdate=new Date().toISOString().slice(0,10); c.location='Zivid Oslo';
+  await apiCall('saveCamera',c);
+  showToast('반납 완료 처리됐습니다.','success'); renderAll();
+}
 
-    // ═══════════════════════════════
-    //  RENDER WAITING
-    // ═══════════════════════════════
-    function renderWaiting() {
-      const tbody = document.getElementById('waitingBody');
-      if (!waitingList.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-td">대기 없음</td></tr>`; return; }
-      const pi = { high: '🔴', med: '🟠', low: '🟢' };
-      tbody.innerHTML = waitingList.map(w => `<tr>
+// ════════════════════════════════════════════
+//  RENDER WAITING
+// ════════════════════════════════════════════
+function renderWaiting(){
+  const tbody=document.getElementById('waitingBody');
+  if(!waitingList.length){tbody.innerHTML=`<tr><td colspan="5" class="empty-td">대기 없음</td></tr>`;return;}
+  const pi={high:'🔴',med:'🟠',low:'🟢'};
+  tbody.innerHTML=waitingList.map(w=>`<tr>
     <td><span class="pill pill-blue">${w.mn}</span></td>
     <td>${pi[w.prio]} ${w.company}</td>
     <td style="font-size:12px">${w.start}</td>
     <td style="font-size:12px">${w.returnPlan}</td>
     <td><button class="btn btn-danger btn-sm" onclick="deleteWaiting(${w.id})">🗑️</button></td>
   </tr>`).join('');
-    }
+}
 
-    // ═══════════════════════════════
-    //  RENDER MODEL SUMMARY
-    // ═══════════════════════════════
-    function renderModelSummary() {
-      const map = {};
-      cameras.forEach(c => {
-        if (!map[c.mn]) map[c.mn] = { total: 0, avail: 0, out: 0 };
-        map[c.mn].total++;
-        if (c.status === 'available') map[c.mn].avail++;
-        else if (c.status === 'out' || c.status === 'overdue') map[c.mn].out++;
-      });
-      const tbody = document.getElementById('modelBody');
-      tbody.innerHTML = Object.entries(map).map(([m, v]) => `<tr>
+// ════════════════════════════════════════════
+//  RENDER MODEL SUMMARY
+// ════════════════════════════════════════════
+function renderModelSummary(){
+  const map={};
+  cameras.forEach(c=>{
+    if(!map[c.mn])map[c.mn]={total:0,avail:0,out:0};
+    map[c.mn].total++;
+    if(c.status==='available')map[c.mn].avail++;
+    else if(c.status==='out'||c.status==='overdue')map[c.mn].out++;
+  });
+  const tbody=document.getElementById('modelBody');
+  tbody.innerHTML=Object.entries(map).map(([m,v])=>`<tr>
     <td><span class="pill pill-grey">${m}</span></td><td>${v.total}</td>
-    <td><span class="pill ${v.avail > 0 ? 'pill-green' : 'pill-red'}">${v.avail}</span></td>
-    <td><span class="pill ${v.out > 0 ? 'pill-red' : 'pill-green'}">${v.out}</span></td>
-  </tr>`).join('') || `<tr><td colspan="4" class="empty-td">없음</td></tr>`;
-    }
+    <td><span class="pill ${v.avail>0?'pill-green':'pill-red'}">${v.avail}</span></td>
+    <td><span class="pill ${v.out>0?'pill-red':'pill-green'}">${v.out}</span></td>
+  </tr>`).join('')||`<tr><td colspan="4" class="empty-td">없음</td></tr>`;
+}
 
-    // ═══════════════════════════════
-    //  RENDER STATS
-    // ═══════════════════════════════
-    function renderStats() {
-      document.getElementById('statTotal').textContent = cameras.length;
-      document.getElementById('statAvail').textContent = cameras.filter(c => c.status === 'available').length;
-      document.getElementById('statOut').textContent = cameras.filter(c => c.status === 'out' || c.status === 'overdue').length;
-      document.getElementById('statWait').textContent = waitingList.length;
-      document.getElementById('statReturned').textContent = cameras.filter(c => c.status === 'returned').length;
-    }
+// ════════════════════════════════════════════
+//  RENDER STATS
+// ════════════════════════════════════════════
+function renderStats(){
+  document.getElementById('statTotal').textContent=cameras.length;
+  document.getElementById('statAvail').textContent=cameras.filter(c=>c.status==='available').length;
+  document.getElementById('statOut').textContent=cameras.filter(c=>c.status==='out'||c.status==='overdue').length;
+  document.getElementById('statWait').textContent=waitingList.length;
+  document.getElementById('statReturned').textContent=cameras.filter(c=>c.status==='returned').length;
+}
 
-    // ═══════════════════════════════
-    //  DATALIST
-    // ═══════════════════════════════
-    function refreshDatalist() {
-      const mns = [...new Set(cameras.map(c => c.mn))];
-      ['mnList', 'mnList2'].forEach(id => {
-        const dl = document.getElementById(id);
-        if (dl) dl.innerHTML = mns.map(m => `<option value="${m}">`).join('');
-      });
-    }
+// ════════════════════════════════════════════
+//  DATALIST
+// ════════════════════════════════════════════
+function refreshDatalist(){
+  const mns=[...new Set(cameras.map(c=>c.mn))];
+  ['mnList','mnList2'].forEach(id=>{
+    const dl=document.getElementById(id);
+    if(dl)dl.innerHTML=mns.map(m=>`<option value="${m}">`).join('');
+  });
+}
 
-    // ═══════════════════════════════
-    //  MODAL - CAMERA
-    // ═══════════════════════════════
-    function openAddModal() {
-      editingId = null; pendingPdfs = [];
-      document.getElementById('modalTitle').textContent = '카메라 추가';
-      ['f-pn', 'f-sn', 'f-mn', 'f-location', 'f-out', 'f-in', 'f-lastupdate', 'f-note'].forEach(id => document.getElementById(id).value = '');
-      ['f-pn', 'f-sn', 'f-mn', 'f-location'].forEach(id => document.getElementById(id).classList.remove('err'));
-      document.getElementById('f-status').value = 'available';
-      buildItemsGrid([]);
-      renderPendingPdfs();
-      refreshDatalist();
-      document.getElementById('cameraModal').classList.remove('hidden');
-    }
-    function openEditModal(id) {
-      const c = cameras.find(x => x.id === id); if (!c) return;
-      editingId = id; pendingPdfs = [];
-      document.getElementById('modalTitle').textContent = '카메라 수정';
-      document.getElementById('f-pn').value = c.pn;
-      document.getElementById('f-sn').value = c.sn;
-      document.getElementById('f-mn').value = c.mn;
-      document.getElementById('f-location').value = c.location;
-      document.getElementById('f-out').value = c.out || '';
-      document.getElementById('f-in').value = c.inn || '';
-      document.getElementById('f-lastupdate').value = c.lastUpdate || '';
-      document.getElementById('f-status').value = c.status;
-      document.getElementById('f-note').value = c.note || '';
-      buildItemsGrid(c.items || []);
-      renderPendingPdfs();
-      refreshDatalist();
-      document.getElementById('cameraModal').classList.remove('hidden');
-    }
-    function saveCamera() {
-      const pn = document.getElementById('f-pn').value.trim();
-      const sn = document.getElementById('f-sn').value.trim();
-      const mn = document.getElementById('f-mn').value.trim();
-      const location = document.getElementById('f-location').value.trim();
-      let ok = true;
-      [['f-pn', pn], ['f-sn', sn], ['f-mn', mn], ['f-location', location]].forEach(([id, v]) => {
-        const el = document.getElementById(id);
-        if (!v) { el.classList.add('err'); ok = false; } else el.classList.remove('err');
-      });
-      if (!ok) { showToast('필수 항목을 입력해주세요.', 'err'); return; }
-      const data = {
-        pn, sn, mn, location,
-        items: getSelectedItems(),
-        out: document.getElementById('f-out').value,
-        inn: document.getElementById('f-in').value,
-        lastUpdate: document.getElementById('f-lastupdate').value || new Date().toISOString().slice(0, 10),
-        status: document.getElementById('f-status').value,
-        note: document.getElementById('f-note').value.trim(),
-      };
-      if (editingId) {
-        const idx = cameras.findIndex(x => x.id === editingId);
-        const existing = cameras[idx].pdfs || [];
-        cameras[idx] = { ...cameras[idx], ...data, pdfs: [...existing, ...pendingPdfs] };
-        showToast('수정되었습니다.', 'success');
-      } else {
-        cameras.push({ id: nextCamId++, ...data, pdfs: [...pendingPdfs] });
-        showToast('카메라가 추가되었습니다.', 'success');
+// ════════════════════════════════════════════
+//  MODAL - CAMERA
+// ════════════════════════════════════════════
+function openAddModal(){
+  editingId=null; pendingPdfs=[];
+  document.getElementById('modalTitle').textContent='카메라 추가';
+  ['f-name','f-sn','f-mn','f-location','f-out','f-in','f-lastupdate','f-note'].forEach(id=>document.getElementById(id).value='');
+  ['f-sn','f-mn','f-location'].forEach(id=>document.getElementById(id).classList.remove('err'));
+  document.getElementById('f-status').value='available';
+  buildItemsGrid([]); buildColorPicker(BADGE_COLORS[0]);
+  renderPendingPdfs(); refreshDatalist();
+  document.getElementById('cameraModal').classList.remove('hidden');
+}
+function openEditModal(id){
+  const c=cameras.find(x=>x.id===id); if(!c)return;
+  editingId=id; pendingPdfs=[];
+  document.getElementById('modalTitle').textContent='카메라 수정';
+  document.getElementById('f-name').value=c.name||'';
+  document.getElementById('f-sn').value=c.sn;
+  document.getElementById('f-mn').value=c.mn;
+  document.getElementById('f-location').value=c.location;
+  document.getElementById('f-out').value=c.out||'';
+  document.getElementById('f-in').value=c.inn||'';
+  document.getElementById('f-lastupdate').value=c.lastUpdate||'';
+  document.getElementById('f-status').value=c.status;
+  document.getElementById('f-note').value=c.note||'';
+  buildItemsGrid(c.items||[]); buildColorPicker(c.color||BADGE_COLORS[0]);
+  renderPendingPdfs(); refreshDatalist();
+  document.getElementById('cameraModal').classList.remove('hidden');
+}
+async function saveCamera(){
+  const name=document.getElementById('f-name').value.trim();
+  const sn=document.getElementById('f-sn').value.trim();
+  const mn=document.getElementById('f-mn').value.trim();
+  const location=document.getElementById('f-location').value.trim();
+  let ok=true;
+  [['f-sn',sn],['f-mn',mn],['f-location',location]].forEach(([id,v])=>{
+    const el=document.getElementById(id);
+    if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err');
+  });
+  if(!ok){showToast('필수 항목을 입력해주세요.','err');return;}
+
+  const data={
+    name, sn, mn, location,
+    color: selectedColor,
+    items: getSelectedItems(),
+    out:   document.getElementById('f-out').value,
+    inn:   document.getElementById('f-in').value,
+    lastUpdate: document.getElementById('f-lastupdate').value||new Date().toISOString().slice(0,10),
+    status: document.getElementById('f-status').value,
+    note:   document.getElementById('f-note').value.trim(),
+  };
+
+  if(editingId){
+    const idx=cameras.findIndex(x=>x.id===editingId);
+    cameras[idx]={...cameras[idx],...data,pdfs:[...(cameras[idx].pdfs||[]),...pendingPdfs]};
+    await apiCall('saveCamera',cameras[idx]);
+    showToast('수정됐습니다.','success');
+  } else {
+    const newCam={id:nextCamId++,...data,pdfs:[...pendingPdfs]};
+    cameras.push(newCam);
+    await apiCall('saveCamera',newCam);
+    showToast('카메라가 추가됐습니다.','success');
+  }
+  pendingPdfs=[]; closeModal('cameraModal'); renderAll();
+}
+async function deleteCamera(id){
+  if(!confirm('삭제하시겠습니까?'))return;
+  cameras=cameras.filter(c=>c.id!==id);
+  await apiCall('deleteCamera',{id});
+  showToast('삭제됐습니다.','success'); renderAll();
+}
+
+// ════════════════════════════════════════════
+//  MODAL - WAITING
+// ════════════════════════════════════════════
+function openWaitModal(){
+  ['w-mn','w-company','w-start','w-return'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('w-prio').value='high';
+  refreshDatalist(); document.getElementById('waitModal').classList.remove('hidden');
+}
+async function saveWaiting(){
+  const mn=document.getElementById('w-mn').value.trim();
+  const company=document.getElementById('w-company').value.trim();
+  if(!mn||!company){showToast('모델과 회사명은 필수입니다.','err');return;}
+  const item={id:nextWaitId++,mn,company,
+    start:document.getElementById('w-start').value||'미정',
+    returnPlan:document.getElementById('w-return').value||'미정',
+    prio:document.getElementById('w-prio').value,
+  };
+  waitingList.push(item);
+  await apiCall('saveWaiting',item);
+  showToast('대기 목록에 추가됐습니다.','success'); closeModal('waitModal'); renderAll();
+}
+async function deleteWaiting(id){
+  waitingList=waitingList.filter(w=>w.id!==id);
+  await apiCall('deleteWaiting',{id});
+  showToast('삭제됐습니다.','success'); renderAll();
+}
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.add('hidden');});
+});
+
+// ════════════════════════════════════════════
+//  CALENDAR
+// ════════════════════════════════════════════
+function renderCalFilterBtns(){
+  const mns=['ALL',...new Set(cameras.map(c=>c.mn))];
+  document.getElementById('calFilterRow').innerHTML=mns.map(m=>
+    `<button class="filter-btn ${calFilter===m?'active':''}" onclick="setCalFilter('${m}',this)">${m==='ALL'?'전체':m}</button>`
+  ).join('');
+}
+function setCalFilter(f,btn){
+  calFilter=f;
+  document.querySelectorAll('#calFilterRow .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderCalendar();
+}
+function changeMonth(d){ currentMonth+=d; if(currentMonth>11){currentMonth=0;currentYear++;} if(currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(); }
+function goToday(){ currentYear=TODAY.getFullYear(); currentMonth=TODAY.getMonth(); renderCalendar(); }
+function isSameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+function renderCalendar(){
+  const months=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('calLabel').textContent=currentYear+'년 '+months[currentMonth];
+  const loans=cameras.filter(c=>c.out&&(calFilter==='ALL'||c.mn===calFilter)).map(c=>({
+    sn:c.sn, mn:c.mn,
+    label: c.name||c.sn,
+    color: c.color||null,
+    start: new Date(c.out),
+    end:   c.inn?new Date(c.inn):null,
+    type:  c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
+  }));
+  const firstDay=new Date(currentYear,currentMonth,1).getDay();
+  const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+  const container=document.getElementById('calDays'); container.innerHTML='';
+  for(let i=0;i<firstDay;i++){const d=document.createElement('div');d.className='cal-day empty';const n=document.createElement('div');n.className='cal-day-num';d.appendChild(n);container.appendChild(d);}
+  for(let day=1;day<=daysInMonth;day++){
+    const date=new Date(currentYear,currentMonth,day);
+    const cell=document.createElement('div');
+    cell.className='cal-day'+(isSameDay(date,TODAY)?' today':'');
+    const numEl=document.createElement('div');numEl.className='cal-day-num';numEl.textContent=day;
+    cell.appendChild(numEl);
+    loans.forEach(l=>{
+      const s=l.start,e=l.end||new Date(currentYear,currentMonth+3,1);
+      if(date<s||date>e)return;
+      const isS=isSameDay(date,s),isE=l.end?isSameDay(date,l.end):false;
+      const bar=document.createElement('div');
+      const cls=l.type==='returned'?'bar-returned':l.type==='overdue'?'bar-overdue':'bar-loan';
+      bar.className=`loan-bar ${cls}${isS&&isE?' start end':isS?' start':isE?' end':' middle'}`;
+      if(l.color && l.type==='loan'){
+        bar.style.background=l.color+'22'; bar.style.color=l.color; bar.style.borderColor=l.color+'88';
       }
-      pendingPdfs = [];
-      closeModal('cameraModal');
-      renderAll();
-    }
-    function deleteCamera(id) {
-      if (!confirm('삭제하시겠습니까?')) return;
-      cameras = cameras.filter(c => c.id !== id);
-      showToast('삭제되었습니다.', 'success'); renderAll();
-    }
-
-    // ═══════════════════════════════
-    //  MODAL - WAITING
-    // ═══════════════════════════════
-    function openWaitModal() {
-      ['w-mn', 'w-company', 'w-start', 'w-return'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('w-prio').value = 'high';
-      refreshDatalist();
-      document.getElementById('waitModal').classList.remove('hidden');
-    }
-    function saveWaiting() {
-      const mn = document.getElementById('w-mn').value.trim();
-      const company = document.getElementById('w-company').value.trim();
-      if (!mn || !company) { showToast('모델과 회사명은 필수입니다.', 'err'); return; }
-      waitingList.push({
-        id: nextWaitId++, mn, company,
-        start: document.getElementById('w-start').value || '미정',
-        returnPlan: document.getElementById('w-return').value || '미정',
-        prio: document.getElementById('w-prio').value,
-      });
-      showToast('대기 목록에 추가되었습니다.', 'success');
-      closeModal('waitModal'); renderAll();
-    }
-    function deleteWaiting(id) { waitingList = waitingList.filter(w => w.id !== id); showToast('삭제되었습니다.', 'success'); renderAll(); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-    document.querySelectorAll('.modal-overlay').forEach(el => {
-      el.addEventListener('click', e => { if (e.target === el) el.classList.add('hidden'); });
+      bar.setAttribute('data-tip',`${l.label} (${l.sn})`);
+      if(isS) bar.textContent=l.label.length>12?l.label.slice(0,11)+'…':l.label;
+      cell.appendChild(bar);
     });
+    container.appendChild(cell);
+  }
+  const rem=(7-(firstDay+daysInMonth)%7)%7;
+  for(let i=0;i<rem;i++){const d=document.createElement('div');d.className='cal-day empty';container.appendChild(d);}
+}
 
-    // ═══════════════════════════════
-    //  CALENDAR
-    // ═══════════════════════════════
-    function renderCalFilterBtns() {
-      const mns = ['ALL', ...new Set(cameras.map(c => c.mn))];
-      document.getElementById('calFilterRow').innerHTML = mns.map(m =>
-        `<button class="filter-btn ${calFilter === m ? 'active' : ''}" onclick="setCalFilter('${m}',this)">${m === 'ALL' ? '전체' : m}</button>`
-      ).join('');
-    }
-    function setCalFilter(f, btn) {
-      calFilter = f;
-      document.querySelectorAll('#calFilterRow .filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active'); renderCalendar();
-    }
-    function changeMonth(d) { currentMonth += d; if (currentMonth > 11) { currentMonth = 0; currentYear++; } if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
-    function goToday() { currentYear = TODAY.getFullYear(); currentMonth = TODAY.getMonth(); renderCalendar(); }
-    function isSameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
-    function renderCalendar() {
-      const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-      document.getElementById('calLabel').textContent = currentYear + '년 ' + months[currentMonth];
-      const loans = cameras.filter(c => c.out && (calFilter === 'ALL' || c.mn === calFilter)).map(c => ({
-        sn: c.sn, mn: c.mn, company: c.location,
-        start: new Date(c.out), end: c.inn ? new Date(c.inn) : null,
-        type: c.status === 'returned' ? 'returned' : c.status === 'overdue' ? 'overdue' : 'loan',
-      }));
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const container = document.getElementById('calDays');
-      container.innerHTML = '';
-      for (let i = 0; i < firstDay; i++) { const d = document.createElement('div'); d.className = 'cal-day empty'; const n = document.createElement('div'); n.className = 'cal-day-num'; d.appendChild(n); container.appendChild(d); }
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentYear, currentMonth, day);
-        const cell = document.createElement('div');
-        cell.className = 'cal-day' + (isSameDay(date, TODAY) ? ' today' : '');
-        const numEl = document.createElement('div'); numEl.className = 'cal-day-num'; numEl.textContent = day;
-        cell.appendChild(numEl);
-        loans.forEach(l => {
-          const s = l.start, e = l.end || new Date(currentYear, currentMonth + 3, 1);
-          if (date < s || date > e) return;
-          const isS = isSameDay(date, s), isE = l.end ? isSameDay(date, l.end) : false;
-          const cls = l.type === 'returned' ? 'bar-returned' : l.type === 'overdue' ? 'bar-overdue' : 'bar-loan';
-          const bar = document.createElement('div');
-          bar.className = `loan-bar ${cls}${isS && isE ? ' start end' : isS ? ' start' : isE ? ' end' : ' middle'}`;
-          bar.setAttribute('data-tip', `${l.sn} · ${l.company}`);
-          if (isS) bar.textContent = l.company.length > 12 ? l.company.slice(0, 11) + '…' : l.company;
-          cell.appendChild(bar);
-        });
-        container.appendChild(cell);
-      }
-      const rem = (7 - (firstDay + daysInMonth) % 7) % 7;
-      for (let i = 0; i < rem; i++) { const d = document.createElement('div'); d.className = 'cal-day empty'; container.appendChild(d); }
-    }
+// ════════════════════════════════════════════
+//  UTILITIES
+// ════════════════════════════════════════════
+function showLoading(v){ document.getElementById('loadingOverlay').classList.toggle('hidden',!v); }
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+function renderAll(){ renderStats();renderNameFilterRow();renderInventory();renderWaiting();renderModelSummary();renderCalFilterBtns();renderCalendar(); }
 
-    // ═══════════════════════════════
-    //  TOAST
-    // ═══════════════════════════════
-    function showToast(msg, type = 'success') {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.className = `toast ${type} show`;
-      setTimeout(() => t.classList.remove('show'), 2800);
-    }
-
-    // ═══════════════════════════════
-    //  INIT
-    // ═══════════════════════════════
-    function renderAll() { renderStats(); renderInventory(); renderWaiting(); renderModelSummary(); renderCalFilterBtns(); renderCalendar(); }
-    initPdfUpload();
-    renderAll();
-  </script>
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
+initPdfUpload();
+buildColorPicker(BADGE_COLORS[0]);
+if(SHEET_API_URL){
+  document.getElementById('setupBanner').classList.add('hidden');
+  setSyncStatus('syncing','연결 중...');
+  loadFromSheet();
+} else {
+  setSyncStatus('','연결 안 됨');
+}
+renderAll();
+</script>
 </body>
-
 </html>
