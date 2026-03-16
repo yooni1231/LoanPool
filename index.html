@@ -711,9 +711,29 @@ async function loadFromSheet() {
   if (result.cameras)  { cameras = result.cameras; nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1; }
   if (result.waiting)  { waitingList = result.waiting; nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1; }
   if (result.history)  { loanHistory = result.history || {}; }
+  saveLocal();
   updateLiveTime();
   renderAll();
   showToast('구글 시트에서 데이터를 불러왔습니다.','success');
+}
+
+// ── Local persistence ──────────────────────
+function saveLocal() {
+  try {
+    localStorage.setItem('zivid_cameras',   JSON.stringify(cameras));
+    localStorage.setItem('zivid_waiting',   JSON.stringify(waitingList));
+    localStorage.setItem('zivid_history',   JSON.stringify(loanHistory));
+  } catch(e) {}
+}
+function loadLocal() {
+  try {
+    const c = localStorage.getItem('zivid_cameras');
+    const w = localStorage.getItem('zivid_waiting');
+    const h = localStorage.getItem('zivid_history');
+    if (c) { cameras     = JSON.parse(c); nextCamId  = cameras.length     ? Math.max(...cameras.map(x=>x.id))+1     : 1; }
+    if (w) { waitingList = JSON.parse(w); nextWaitId = waitingList.length  ? Math.max(...waitingList.map(x=>x.id))+1 : 1; }
+    if (h)   loanHistory = JSON.parse(h);
+  } catch(e) {}
 }
 
 function updateLiveTime() {
@@ -888,6 +908,7 @@ async function deletePdf(camId,pi) {
   const cam=cameras.find(c=>c.id===camId); if(!cam)return;
   cam.pdfs.splice(pi,1);
   await apiCall('saveCamera',cam);
+  saveLocal();
   renderInventory(); showToast('파일이 삭제됐습니다.','success');
 }
 
@@ -985,25 +1006,19 @@ function renderInventory(){
 async function markReturned(id){
   const c=cameras.find(x=>x.id===id); if(!c)return;
   const today=new Date().toISOString().slice(0,10);
-  // Record history entry for the completed loan
   addHistoryEntry(c.id, {
-    type:'returned',
-    date: today,
-    outDate: c.out||'',
-    company: c.location||'',
-    note: c.note||'',
+    type:'returned', date: today, outDate: c.out||'', company: c.location||'', note: c.note||'',
   });
   c.status='returned'; c.inn=today;
   c.lastUpdate=today; c.location='Zivid Oslo';
   await apiCall('saveCamera',c);
+  saveLocal();
   showToast('반납 완료 처리됐습니다.','success'); renderAll();
 }
 
 function addHistoryEntry(camId, entry) {
   if (!loanHistory[camId]) loanHistory[camId] = [];
-  loanHistory[camId].unshift(entry); // newest first
-  // persist to localStorage as backup
-  try { localStorage.setItem('zivid_history', JSON.stringify(loanHistory)); } catch(e){}
+  loanHistory[camId].unshift(entry);
 }
 
 // ════════════════════════════════════════════
@@ -1164,12 +1179,14 @@ async function saveCamera(){
     await apiCall('saveCamera',newCam);
     showToast('카메라가 추가됐습니다.','success');
   }
+  saveLocal();
   pendingPdfs=[]; closeModal('cameraModal'); renderAll();
 }
 async function deleteCamera(id){
   if(!confirm('삭제하시겠습니까?'))return;
   cameras=cameras.filter(c=>c.id!==id);
   await apiCall('deleteCamera',{id});
+  saveLocal();
   showToast('삭제됐습니다.','success'); renderAll();
 }
 
@@ -1194,11 +1211,13 @@ async function saveWaiting(){
   };
   waitingList.push(item);
   await apiCall('saveWaiting',item);
+  saveLocal();
   showToast('대기 목록에 추가됐습니다.','success'); closeModal('waitModal'); renderAll();
 }
 async function deleteWaiting(id){
   waitingList=waitingList.filter(w=>w.id!==id);
   await apiCall('deleteWaiting',{id});
+  saveLocal();
   showToast('삭제됐습니다.','success'); renderAll();
 }
 function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
@@ -1210,15 +1229,31 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
 //  CALENDAR
 // ════════════════════════════════════════════
 function renderCalFilterBtns(){
-  const mns=['ALL',...new Set(cameras.map(c=>c.mn))];
-  document.getElementById('calFilterRow').innerHTML=mns.map(m=>
-    `<button class="filter-btn ${calFilter===m?'active':''}" onclick="setCalFilter('${m}',this)">${m==='ALL'?'전체':m}</button>`
-  ).join('');
+  const row = document.getElementById('calFilterRow');
+  // Build unique list: first "전체", then each camera by name/sn
+  const items = [{ key:'ALL', label:'전체', color:null }];
+  cameras.forEach(c => {
+    const key  = String(c.id);
+    const label = c.name || c.sn;
+    const color = c.color || null;
+    if (!items.find(x=>x.key===key)) items.push({ key, label, color });
+  });
+  row.innerHTML = items.map(it => {
+    const isActive = calFilter === it.key;
+    const style = isActive && it.color ? `background:${it.color};color:#fff;border-color:${it.color}` : '';
+    return `<button class="filter-btn ${isActive?'active':''}" style="${style}"
+      onclick="setCalFilter('${it.key}',this,'${it.color||''}')">${it.label}</button>`;
+  }).join('');
 }
-function setCalFilter(f,btn){
-  calFilter=f;
-  document.querySelectorAll('#calFilterRow .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); renderCalendar();
+function setCalFilter(f, btn, color){
+  calFilter = f;
+  document.querySelectorAll('#calFilterRow .filter-btn').forEach(b=>{
+    b.classList.remove('active');
+    b.style.background=''; b.style.color=''; b.style.borderColor='';
+  });
+  btn.classList.add('active');
+  if(f!=='ALL' && color){ btn.style.background=color; btn.style.color='#fff'; btn.style.borderColor=color; }
+  renderCalendar();
 }
 function changeMonth(d){ currentMonth+=d; if(currentMonth>11){currentMonth=0;currentYear++;} if(currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(); }
 function goToday(){ currentYear=TODAY.getFullYear(); currentMonth=TODAY.getMonth(); renderCalendar(); }
@@ -1226,14 +1261,21 @@ function isSameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()=
 function renderCalendar(){
   const months=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('calLabel').textContent=currentYear+'년 '+months[currentMonth];
-  const loans=cameras.filter(c=>c.out&&(calFilter==='ALL'||c.mn===calFilter)).map(c=>({
-    sn:c.sn, mn:c.mn,
-    label: c.name||c.sn,
-    color: c.color||null,
-    start: new Date(c.out),
-    end:   c.inn?new Date(c.inn):null,
-    type:  c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
-  }));
+
+  // Filter: ALL = all cameras with out date, else specific camera id
+  const loans=cameras
+    .filter(c=>c.out && (calFilter==='ALL' || String(c.id)===calFilter))
+    .map(c=>({
+      id:   c.id,
+      sn:   c.sn,
+      mn:   c.mn,
+      label: c.name||c.sn,
+      color: c.color||null,
+      start: new Date(c.out),
+      end:   c.inn?new Date(c.inn):null,
+      type:  c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
+    }));
+
   const firstDay=new Date(currentYear,currentMonth,1).getDay();
   const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
   const container=document.getElementById('calDays'); container.innerHTML='';
@@ -1254,7 +1296,7 @@ function renderCalendar(){
       if(l.color && l.type==='loan'){
         bar.style.background=l.color+'22'; bar.style.color=l.color; bar.style.borderColor=l.color+'88';
       }
-      bar.setAttribute('data-tip',`${l.label} (${l.sn})`);
+      bar.setAttribute('data-tip',`${l.label}${l.sn!==l.label?' ('+l.sn+')':''} · ${l.mn}`);
       if(isS) bar.textContent=l.label.length>12?l.label.slice(0,11)+'…':l.label;
       cell.appendChild(bar);
     });
@@ -1329,8 +1371,8 @@ function renderAll(){ renderStats();renderNameFilterRow();renderInventory();rend
 // ════════════════════════════════════════════
 initPdfUpload();
 buildColorPicker(BADGE_COLORS[0]);
-// Restore history from localStorage
-try { const h=localStorage.getItem('zivid_history'); if(h) loanHistory=JSON.parse(h); } catch(e){}
+// Restore data from localStorage (works without Google Sheets too)
+loadLocal();
 updateLiveTime();
 if(SHEET_API_URL){
   document.getElementById('setupBanner').classList.add('hidden');
