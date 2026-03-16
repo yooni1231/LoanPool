@@ -628,27 +628,37 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 //  CONSTANTS
 // ════════════════════════════════════════════
 const ITEMS = [
-  { id:'camera_body',      label:'Camera Body',                special:false },
-  { id:'power_supply',     label:'Power Supply',               special:false },
-  { id:'ethernet_cable',   label:'Ethernet cable (5m)',        special:false },
-  { id:'power_ext',        label:'Power Extension (5m)',       special:false },
-  { id:'cal_board_big',    label:'Calibration board (Big)',    special:false },
-  { id:'cal_board_small',  label:'Calibration board (Small)',  special:false },
-  { id:'tripod_mount',     label:'Tripod mount',               special:false },
-  { id:'robot_mount',      label:'Robot mount',                special:false },
-  { id:'stationary_mount', label:'Stationary mount',           special:false },
-  { id:'power_ext_ra',     label:'Power Extension RA (3m)',    special:false },
-  { id:'eth_ext_ra',       label:'Ethernet Extension RA (3m)', special:false },
-  { id:'check_note',       label:'Need to check Note or Files',          special:true  },
-  // ── 추가 액세서리 ──
-  { id:'eth_cable_std',    label:'Data cable - Ethernet (Zivid 2/2+)',   special:false },
-  { id:'eth_ext_ra_3m',    label:'Data Extension cable Ethernet RA (3m)',special:false },
-  { id:'pwr_ext_std',      label:'Power Extension Cable',                special:false },
-  { id:'pwr_ext_ra_z2',    label:'Power Extension RA (3m) Zivid 2/2+',  special:false },
-  { id:'pwr_ext_ra_z3',    label:'Power Extension RA (3m) Zivid 3',     special:false },
-  { id:'psu_z2',           label:'PSU (External AC-DC) Zivid 2/2+',     special:false },
-  { id:'psu_z3',           label:'PSU (External AC-DC) Zivid 3',        special:false },
-  { id:'data_cable_one',   label:'Data cable - Zivid One+',              special:false },
+  // ── 본체 & 전원 ──────────────────────────────────────────
+  { id:'camera_body',       label:'Camera Body',                        special:false },
+  { id:'psu_z2',            label:'PSU (External AC-DC) Zivid 2/2+',   special:false },
+  { id:'psu_z3',            label:'PSU (External AC-DC) Zivid 3',      special:false },
+
+  // ── Power Extension (직선, 한쪽 둥근) ────────────────────
+  { id:'pwr_ext_5m',        label:'Power Extension 5m',                 special:false },
+  { id:'pwr_ext_10m',       label:'Power Extension 10m',                special:false },
+  { id:'pwr_ext_20m',       label:'Power Extension 20m',                special:false },
+
+  // ── Power Extension RA (꺽임 연장선, 3m 한 종류) ─────────
+  { id:'pwr_ext_ra_3m',     label:'Power Extension RA 3m (꺽임)',       special:false },
+
+  // ── Data cable / Ethernet (직선, 한쪽 둥근+RJ45) ─────────
+  { id:'eth_cable_5m',      label:'Data cable Ethernet 5m',             special:false },
+  { id:'eth_cable_10m',     label:'Data cable Ethernet 10m',            special:false },
+  { id:'eth_cable_25m',     label:'Data cable Ethernet 25m',            special:false },
+
+  // ── Data Extension RA (꺽임 연장선, 3m 한 종류) ──────────
+  { id:'eth_ext_ra_3m',     label:'Data Extension Ethernet RA 3m (꺽임)',special:false },
+
+  // ── 마운트 & 캘리브레이션 ────────────────────────────────
+  { id:'cal_board_big',     label:'Calibration board (Big)',            special:false },
+  { id:'cal_board_small',   label:'Calibration board (Small)',          special:false },
+  { id:'tripod_mount',      label:'Tripod mount',                       special:false },
+  { id:'robot_mount',       label:'Robot mount',                        special:false },
+  { id:'stationary_mount',  label:'Stationary mount',                   special:false },
+
+  // ── 기타 ─────────────────────────────────────────────────
+  { id:'data_cable_one',    label:'Data cable - Zivid One+',            special:false },
+  { id:'check_note',        label:'Need to check Note or Files',        special:true  },
 ];
 
 const BADGE_COLORS = [
