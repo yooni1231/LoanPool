@@ -721,21 +721,41 @@ async function loadFromSheet() {
   if (!result) return;
 
   if (result.cameras) {
-    // 시트에 name/color 컬럼이 없거나 비어 있으면 localStorage 값으로 보완
     const localCams = JSON.parse(localStorage.getItem('zivid_cameras') || '[]');
-    cameras = result.cameras.map(c => {
-      const local = localCams.find(l => l.id === c.id);
-      return {
-        ...c,
-        name:  (c.name  && String(c.name).trim())  ? String(c.name).trim()  : (local ? local.name  || '' : ''),
-        color: (c.color && String(c.color).trim()) ? String(c.color).trim() : (local ? local.color || '' : ''),
+    cameras = result.cameras.map(raw => {
+      const local = localCams.find(l => Number(l.id) === Number(raw.id));
+      // 시트 컬럼 순서에 상관없이 필드명으로 명시적 매핑
+      const c = {
+        id:         Number(raw.id),
+        name:       str(raw.name)  || (local ? str(local.name)  : ''),
+        color:      str(raw.color) || (local ? str(local.color) : ''),
+        sn:         str(raw.sn)    || (local ? str(local.sn)    : ''),
+        mn:         str(raw.mn)    || (local ? str(local.mn)    : ''),
+        location:   str(raw.location),
+        lastUpdate: str(raw.lastUpdate),
+        out:        str(raw.out),
+        inn:        str(raw.inn),
+        status:     str(raw.status) || 'available',
+        note:       str(raw.note),
+        items:      Array.isArray(raw.items) ? raw.items : [],
+        pdfs:       Array.isArray(raw.pdfs)  ? raw.pdfs  : [],
       };
+      return c;
     });
     nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1;
   }
   if (result.waiting) {
-    waitingList = result.waiting;
-    nextWaitId  = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
+    waitingList = result.waiting.map(raw => ({
+      id:         Number(raw.id),
+      mn:         str(raw.mn),
+      company:    str(raw.company),
+      start:      str(raw.start),
+      returnPlan: str(raw.returnPlan),
+      eta:        str(raw.eta),
+      contact:    str(raw.contact),
+      prio:       str(raw.prio) || 'med',
+    }));
+    nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
   }
   if (result.history) loanHistory = result.history || {};
 
@@ -745,6 +765,7 @@ async function loadFromSheet() {
   showToast('구글 시트에서 데이터를 불러왔습니다.','success');
 }
 
+function str(v) { return (v === null || v === undefined) ? '' : String(v).trim(); }
 
 // ── Local persistence ──────────────────────
 function saveLocal() {
