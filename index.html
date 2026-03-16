@@ -724,13 +724,33 @@ async function loadFromSheet() {
     const localCams = JSON.parse(localStorage.getItem('zivid_cameras') || '[]');
     cameras = result.cameras.map(raw => {
       const local = localCams.find(l => Number(l.id) === Number(raw.id));
-      // 시트 컬럼 순서에 상관없이 필드명으로 명시적 매핑
+
+      // 시트 헤더가 예전 구조(pn, nickname)일 수도 있으므로 폴백 처리
+      // name: raw.name → raw.pn → local.name 순으로 시도
+      // color: raw.color → sn이 #으로 시작하면 color였던 것 → local.color 순으로 시도
+      const snRaw   = str(raw.sn);
+      const isColorInSn = snRaw.startsWith('#');  // 예전 구조에서 sn 자리에 color가 들어온 경우
+
+      const name  = str(raw.name)  || str(raw.pn)       || (local ? str(local.name)  : '');
+      const color = str(raw.color) || (isColorInSn ? snRaw : '') || (local ? str(local.color) : '');
+
+      // sn: color가 잘못 들어온 경우 mn에서 찾거나 local에서 복원
+      const sn = isColorInSn
+        ? (local ? str(local.sn) : str(raw.mn))
+        : snRaw;
+
+      // mn: sn이 숫자형으로 잘못 들어온 경우 복원
+      const mnRaw = str(raw.mn);
+      const mn = (isColorInSn && local)
+        ? str(local.mn)
+        : (str(raw.nickname) && !str(raw.mn) ? str(raw.nickname) : mnRaw);
+
       const c = {
         id:         Number(raw.id),
-        name:       str(raw.name)  || (local ? str(local.name)  : ''),
-        color:      str(raw.color) || (local ? str(local.color) : ''),
-        sn:         str(raw.sn)    || (local ? str(local.sn)    : ''),
-        mn:         str(raw.mn)    || (local ? str(local.mn)    : ''),
+        name,
+        color,
+        sn,
+        mn:         mn || str(raw.nickname) || (local ? str(local.mn) : ''),
         location:   str(raw.location),
         lastUpdate: str(raw.lastUpdate),
         out:        str(raw.out),
