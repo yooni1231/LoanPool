@@ -698,7 +698,8 @@ async function apiCall(action, data=null) {
     setSyncStatus('connected','동기화 완료');
     return json;
   } catch(e) {
-    setSyncStatus('error','동기화 오류');
+    setSyncStatus('error','동기화 오류: '+e.message);
+    console.error('[Zivid] API 오류', action, e.message);
     return null;
   }
 }
@@ -708,14 +709,32 @@ async function loadFromSheet() {
   const result = await apiCall('getAll');
   showLoading(false);
   if (!result) return;
-  if (result.cameras)  { cameras = result.cameras; nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1; }
-  if (result.waiting)  { waitingList = result.waiting; nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1; }
-  if (result.history)  { loanHistory = result.history || {}; }
+
+  if (result.cameras) {
+    // 시트에 name/color 컬럼이 없거나 비어 있으면 localStorage 값으로 보완
+    const localCams = JSON.parse(localStorage.getItem('zivid_cameras') || '[]');
+    cameras = result.cameras.map(c => {
+      const local = localCams.find(l => l.id === c.id);
+      return {
+        ...c,
+        name:  (c.name  && String(c.name).trim())  ? String(c.name).trim()  : (local ? local.name  || '' : ''),
+        color: (c.color && String(c.color).trim()) ? String(c.color).trim() : (local ? local.color || '' : ''),
+      };
+    });
+    nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1;
+  }
+  if (result.waiting) {
+    waitingList = result.waiting;
+    nextWaitId  = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
+  }
+  if (result.history) loanHistory = result.history || {};
+
   saveLocal();
   updateLiveTime();
   renderAll();
   showToast('구글 시트에서 데이터를 불러왔습니다.','success');
 }
+
 
 // ── Local persistence ──────────────────────
 function saveLocal() {
