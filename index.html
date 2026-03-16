@@ -229,8 +229,46 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .legend-item { display: flex; align-items: center; gap: 5px; }
 .legend-swatch { width: 13px; height: 13px; border-radius: 3px; }
 
-.two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
-@media(max-width:1000px){ .two-col { grid-template-columns: 1fr; } }
+.bottom-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width:900px){ .bottom-two-col { grid-template-columns: 1fr; } }
+
+/* Live refresh bar */
+.live-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 8px 12px; background: #F8FBFF; border: 1px solid #DEEBFF; border-radius: 6px; font-size: 12px; color: #5E6C84; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #57D9A3; flex-shrink: 0; animation: livepulse 2s infinite; }
+@keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+.live-bar .live-time { margin-left: auto; font-weight: 600; color: #0052CC; }
+.live-bar .btn-refresh { background: #DEEBFF; border: none; border-radius: 4px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: #0052CC; cursor: pointer; }
+.live-bar .btn-refresh:hover { background: #B3D4FF; }
+
+/* Avail match badge in waiting list */
+.avail-match { display: inline-flex; align-items: center; gap: 4px; background: #E3FCEF; border: 1px solid #ABF5D1; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; color: #00875A; white-space: nowrap; }
+.avail-match.none { background: #F4F5F7; border-color: #DFE1E6; color: #97A0AF; }
+.wait-row-matched { background: #F3FFF8 !important; }
+.eta-tag { font-size: 11px; color: #5E6C84; }
+.eta-tag.soon { color: #00875A; font-weight: 700; }
+.eta-tag.overdue-wait { color: #DE350B; font-weight: 700; }
+
+/* History drawer */
+.history-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.5); z-index: 250; display: flex; align-items: flex-end; justify-content: center; }
+.history-overlay.hidden { display: none; }
+.history-drawer { background: #fff; border-radius: 12px 12px 0 0; width: 100%; max-width: 900px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 -4px 24px rgba(9,30,66,.2); }
+.history-header { padding: 16px 22px 12px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; }
+.history-header h3 { font-size: 15px; font-weight: 700; }
+.history-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #5E6C84; }
+.history-body { padding: 16px 22px; overflow-y: auto; flex: 1; }
+.history-empty { text-align: center; color: #97A0AF; padding: 32px; font-size: 13px; }
+.hist-entry { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid #F4F5F7; align-items: flex-start; }
+.hist-entry:last-child { border-bottom: none; }
+.hist-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.hist-icon.out  { background: #FFEBE6; }
+.hist-icon.ret  { background: #E3FCEF; }
+.hist-icon.edit { background: #DEEBFF; }
+.hist-content { flex: 1; }
+.hist-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.hist-meta { font-size: 11px; color: #97A0AF; }
+.hist-detail { font-size: 12px; color: #5E6C84; margin-top: 3px; }
+.btn-hist { background: #F4F5F7; color: #5E6C84; border: 1px solid #DFE1E6; }
+.btn-hist:hover { background: #EAE6FF; color: #6554C0; border-color: #6554C0; }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: #172B4D; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; z-index: 400; transform: translateY(80px); opacity: 0; transition: all .3s; pointer-events: none; }
 .toast.show { transform: translateY(0); opacity: 1; }
@@ -280,71 +318,76 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     <div class="stat-card"><div class="stat-num num-red"    id="statOut">0</div><div class="stat-label">대여 중</div></div>
     <div class="stat-card"><div class="stat-num num-orange" id="statWait">0</div><div class="stat-label">대기 목록</div></div>
     <div class="stat-card"><div class="stat-num num-purple" id="statReturned">0</div><div class="stat-label">반납 완료</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#5E6C84" id="statUnavail">0</div><div class="stat-label">대여 불가</div></div>
   </div>
 
-  <!-- Inventory + Sidebar -->
-  <div class="two-col">
-    <div>
-      <div class="card">
-        <div class="section-h">
-          <span>📦 카메라 재고 현황</span>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <div class="tab-row">
-              <button class="tab-btn active" onclick="setViewFilter('all',this)">전체</button>
-              <button class="tab-btn" onclick="setViewFilter('out',this)">대여 중</button>
-              <button class="tab-btn" onclick="setViewFilter('avail',this)">대여 가능</button>
-              <button class="tab-btn" onclick="setViewFilter('returned',this)">반납 완료</button>
-            </div>
-            <button class="btn btn-primary" onclick="openAddModal()">＋ 카메라 추가</button>
-          </div>
+  <!-- Inventory (full width) -->
+  <div class="card">
+    <div class="section-h">
+      <span>📦 카메라 재고 현황</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="setViewFilter('all',this)">전체</button>
+          <button class="tab-btn" onclick="setViewFilter('out',this)">대여 중</button>
+          <button class="tab-btn" onclick="setViewFilter('avail',this)">대여 가능</button>
+          <button class="tab-btn" onclick="setViewFilter('returned',this)">반납 완료</button>
+          <button class="tab-btn" onclick="setViewFilter('unavail',this)">대여 불가</button>
         </div>
-        <!-- Name filter -->
-        <div class="name-filter-row" id="nameFilterRow"></div>
-        <div class="tbl-wrap">
-          <table class="main-table">
-            <thead>
-              <tr>
-                <th class="num-cell">#</th>
-                <th>이름 / S/N</th>
-                <th>M/N</th>
-                <th>Item</th>
-                <th>Current Location</th>
-                <th>Last Update</th>
-                <th>Out</th>
-                <th>In</th>
-                <th>Note &amp; Files</th>
-                <th>상태</th>
-                <th>관리</th>
-              </tr>
-            </thead>
-            <tbody id="inventoryBody"></tbody>
-          </table>
-        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">＋ 카메라 추가</button>
       </div>
     </div>
+    <!-- Live bar -->
+    <div class="live-bar">
+      <div class="live-dot"></div>
+      <span>실시간 재고 현황</span>
+      <span id="liveTimeLabel" class="live-time">—</span>
+      <button class="btn-refresh" onclick="manualRefresh()">↻ 새로고침</button>
+    </div>
+    <!-- Name filter -->
+    <div class="name-filter-row" id="nameFilterRow"></div>
+    <div class="tbl-wrap">
+      <table class="main-table">
+        <thead>
+          <tr>
+            <th class="num-cell">#</th>
+            <th>이름 / S/N</th>
+            <th>M/N</th>
+            <th>Item</th>
+            <th>Current Location</th>
+            <th>Last Update</th>
+            <th>Out</th>
+            <th>In</th>
+            <th>Note &amp; Files</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryBody"></tbody>
+      </table>
+    </div>
+  </div>
 
-    <!-- Sidebar -->
-    <div>
-      <div class="card">
-        <div class="section-h">
-          <span>⏳ 대여 대기 목록</span>
-          <button class="btn btn-primary btn-sm" onclick="openWaitModal()">＋ 추가</button>
-        </div>
-        <div class="tbl-wrap">
-          <table style="min-width:unset">
-            <thead><tr><th>M/N</th><th>회사명</th><th>시작</th><th>반납 예정</th><th></th></tr></thead>
-            <tbody id="waitingBody"></tbody>
-          </table>
-        </div>
+  <!-- Waiting + Model summary (2-col) -->
+  <div class="bottom-two-col">
+    <div class="card">
+      <div class="section-h">
+        <span>⏳ 대여 대기 목록</span>
+        <button class="btn btn-primary btn-sm" onclick="openWaitModal()">＋ 추가</button>
       </div>
-      <div class="card">
-        <div class="section-h"><span>📊 모델별 현황</span></div>
-        <div class="tbl-wrap">
-          <table style="min-width:unset">
-            <thead><tr><th>M/N</th><th>전체</th><th>가능</th><th>대여 중</th></tr></thead>
-            <tbody id="modelBody"></tbody>
-          </table>
-        </div>
+      <div class="tbl-wrap">
+        <table style="min-width:unset;width:100%">
+          <thead><tr><th>M/N</th><th>회사명</th><th>시작</th><th>반납 예정</th><th>예상 배송일</th><th>가용 재고</th><th></th></tr></thead>
+          <tbody id="waitingBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-h"><span>📊 모델별 현황</span></div>
+      <div class="tbl-wrap">
+        <table style="min-width:unset">
+          <thead><tr><th>M/N</th><th>전체</th><th>가능</th><th>대여 중</th><th>불가</th></tr></thead>
+          <tbody id="modelBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -433,6 +476,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
             <option value="out">📤 대여 중</option>
             <option value="overdue">⚠️ 반납 연체</option>
             <option value="returned">✔️ 반납 완료</option>
+            <option value="unavailable">🚫 대여 불가</option>
           </select>
         </div>
 
@@ -485,6 +529,14 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <div class="form-group">
           <label>반납 예정</label>
           <input type="text" id="w-return" placeholder="3주 / 장기">
+        </div>
+        <div class="form-group">
+          <label>예상 배송일 (Estimated Ship Date)</label>
+          <input type="date" id="w-eta">
+        </div>
+        <div class="form-group">
+          <label>연락처 / 이메일</label>
+          <input type="text" id="w-contact" placeholder="예: john@company.com">
         </div>
         <div class="form-group full">
           <label>우선순위</label>
@@ -560,6 +612,17 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 
 <div class="toast" id="toast"></div>
 
+<!-- ══ HISTORY DRAWER ══ -->
+<div class="history-overlay hidden" id="historyOverlay" onclick="if(event.target===this)closeHistory()">
+  <div class="history-drawer">
+    <div class="history-header">
+      <h3 id="historyTitle">📋 대여 기록</h3>
+      <button class="history-close" onclick="closeHistory()">✕</button>
+    </div>
+    <div class="history-body" id="historyBody"></div>
+  </div>
+</div>
+
 <script>
 // ════════════════════════════════════════════
 //  CONSTANTS
@@ -576,7 +639,16 @@ const ITEMS = [
   { id:'stationary_mount', label:'Stationary mount',           special:false },
   { id:'power_ext_ra',     label:'Power Extension RA (3m)',    special:false },
   { id:'eth_ext_ra',       label:'Ethernet Extension RA (3m)', special:false },
-  { id:'check_note',       label:'Need to check Note or Files',special:true  },
+  { id:'check_note',       label:'Need to check Note or Files',          special:true  },
+  // ── 추가 액세서리 ──
+  { id:'eth_cable_std',    label:'Data cable - Ethernet (Zivid 2/2+)',   special:false },
+  { id:'eth_ext_ra_3m',    label:'Data Extension cable Ethernet RA (3m)',special:false },
+  { id:'pwr_ext_std',      label:'Power Extension Cable',                special:false },
+  { id:'pwr_ext_ra_z2',    label:'Power Extension RA (3m) Zivid 2/2+',  special:false },
+  { id:'pwr_ext_ra_z3',    label:'Power Extension RA (3m) Zivid 3',     special:false },
+  { id:'psu_z2',           label:'PSU (External AC-DC) Zivid 2/2+',     special:false },
+  { id:'psu_z3',           label:'PSU (External AC-DC) Zivid 3',        special:false },
+  { id:'data_cable_one',   label:'Data cable - Zivid One+',              special:false },
 ];
 
 const BADGE_COLORS = [
@@ -590,6 +662,7 @@ const BADGE_COLORS = [
 // ════════════════════════════════════════════
 let cameras     = [];
 let waitingList = [];
+let loanHistory = {}; // { camId: [{type, date, company, location, note}] }
 let nextCamId   = 1;
 let nextWaitId  = 1;
 let editingId   = null;
@@ -637,9 +710,33 @@ async function loadFromSheet() {
   if (!result) return;
   if (result.cameras)  { cameras = result.cameras; nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1; }
   if (result.waiting)  { waitingList = result.waiting; nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1; }
+  if (result.history)  { loanHistory = result.history || {}; }
+  updateLiveTime();
   renderAll();
   showToast('구글 시트에서 데이터를 불러왔습니다.','success');
 }
+
+function updateLiveTime() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+  const el = document.getElementById('liveTimeLabel');
+  if (el) el.textContent = `마지막 업데이트: ${hh}:${mm}:${ss}`;
+}
+
+async function manualRefresh() {
+  if (SHEET_API_URL) {
+    await loadFromSheet();
+  } else {
+    updateLiveTime();
+    renderAll();
+    showToast('재고 현황이 업데이트됐습니다.','info');
+  }
+}
+
+// Auto-refresh every 60 seconds when sheet is connected
+setInterval(()=>{ if(SHEET_API_URL) loadFromSheet(); }, 60000);
 function openSetupModal() {
   document.getElementById('sheetUrlInput').value = SHEET_API_URL;
   document.getElementById('testResult').textContent = '';
@@ -807,6 +904,7 @@ function filteredCams(){
   if(viewFilter==='out')      list=list.filter(c=>c.status==='out'||c.status==='overdue');
   else if(viewFilter==='avail')    list=list.filter(c=>c.status==='available');
   else if(viewFilter==='returned') list=list.filter(c=>c.status==='returned');
+  else if(viewFilter==='unavail')  list=list.filter(c=>c.status==='unavailable');
   if(nameFilter!=='ALL') list=list.filter(c=>c.name===nameFilter);
   return list;
 }
@@ -824,6 +922,7 @@ function renderInventory(){
     if(s==='out')       return`<span class="pill pill-red"><span class="dot dot-red"></span>대여 중</span>`;
     if(s==='overdue')   return`<span class="pill pill-orange">⚠️ 연체</span>`;
     if(s==='returned')  return`<span class="pill pill-purple">✔️ 반납 완료</span>`;
+    if(s==='unavailable') return`<span class="pill pill-grey">🚫 대여 불가</span>`;
     return'';
   };
   const fd=d=>d||'—';
@@ -873,6 +972,7 @@ function renderInventory(){
       <td class="vmid"><div class="action-cell">
         ${c.status!=='returned'?`<button class="btn btn-return btn-sm" onclick="markReturned(${c.id})" title="반납 완료">✔️</button>`:''}
         <button class="btn btn-edit btn-sm" onclick="openEditModal(${c.id})">✏️</button>
+        <button class="btn btn-hist btn-sm" onclick="openHistory(${c.id})" title="대여 기록">📋</button>
         <button class="btn btn-danger btn-sm" onclick="deleteCamera(${c.id})">🗑️</button>
       </div></td>
     </tr>`;
@@ -884,10 +984,26 @@ function renderInventory(){
 // ════════════════════════════════════════════
 async function markReturned(id){
   const c=cameras.find(x=>x.id===id); if(!c)return;
-  c.status='returned'; c.inn=new Date().toISOString().slice(0,10);
-  c.lastUpdate=new Date().toISOString().slice(0,10); c.location='Zivid Oslo';
+  const today=new Date().toISOString().slice(0,10);
+  // Record history entry for the completed loan
+  addHistoryEntry(c.id, {
+    type:'returned',
+    date: today,
+    outDate: c.out||'',
+    company: c.location||'',
+    note: c.note||'',
+  });
+  c.status='returned'; c.inn=today;
+  c.lastUpdate=today; c.location='Zivid Oslo';
   await apiCall('saveCamera',c);
   showToast('반납 완료 처리됐습니다.','success'); renderAll();
+}
+
+function addHistoryEntry(camId, entry) {
+  if (!loanHistory[camId]) loanHistory[camId] = [];
+  loanHistory[camId].unshift(entry); // newest first
+  // persist to localStorage as backup
+  try { localStorage.setItem('zivid_history', JSON.stringify(loanHistory)); } catch(e){}
 }
 
 // ════════════════════════════════════════════
@@ -895,15 +1011,41 @@ async function markReturned(id){
 // ════════════════════════════════════════════
 function renderWaiting(){
   const tbody=document.getElementById('waitingBody');
-  if(!waitingList.length){tbody.innerHTML=`<tr><td colspan="5" class="empty-td">대기 없음</td></tr>`;return;}
+  if(!waitingList.length){tbody.innerHTML=`<tr><td colspan="7" class="empty-td">대기 없음</td></tr>`;return;}
   const pi={high:'🔴',med:'🟠',low:'🟢'};
-  tbody.innerHTML=waitingList.map(w=>`<tr>
-    <td><span class="pill pill-blue">${w.mn}</span></td>
-    <td>${pi[w.prio]} ${w.company}</td>
-    <td style="font-size:12px">${w.start}</td>
-    <td style="font-size:12px">${w.returnPlan}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteWaiting(${w.id})">🗑️</button></td>
-  </tr>`).join('');
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  tbody.innerHTML=waitingList.map((w,idx)=>{
+    // Count available cameras matching this model
+    const availCams = cameras.filter(c=>c.mn===w.mn && c.status==='available');
+    const availBadge = availCams.length>0
+      ? `<span class="avail-match">✓ ${availCams.length}대 가능</span>`
+      : `<span class="avail-match none">대기 중</span>`;
+    const isMatched = availCams.length>0;
+
+    // ETA display
+    let etaHtml = '—';
+    if(w.eta){
+      const etaDate=new Date(w.eta); etaDate.setHours(0,0,0,0);
+      const diff=Math.round((etaDate-today)/(1000*60*60*24));
+      if(diff<0)       etaHtml=`<span class="eta-tag overdue-wait">⚠ ${w.eta} (지남)</span>`;
+      else if(diff===0) etaHtml=`<span class="eta-tag soon">🚀 오늘 발송</span>`;
+      else if(diff<=7)  etaHtml=`<span class="eta-tag soon">📦 ${w.eta} (${diff}일 후)</span>`;
+      else              etaHtml=`<span class="eta-tag">${w.eta}</span>`;
+    } else if(w.start && w.start!=='미정'){
+      etaHtml=`<span class="eta-tag" style="color:#97A0AF">날짜 미정</span>`;
+    }
+
+    return`<tr class="${isMatched?'wait-row-matched':''}">
+      <td><span class="pill pill-blue">${w.mn}</span></td>
+      <td>${pi[w.prio]||'🟠'} <strong>${w.company}</strong>${w.contact?`<br><span style="font-size:11px;color:#97A0AF">${w.contact}</span>`:''}</td>
+      <td style="font-size:12px">${w.start||'미정'}</td>
+      <td style="font-size:12px">${w.returnPlan||'미정'}</td>
+      <td>${etaHtml}</td>
+      <td>${availBadge}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteWaiting(${w.id})">🗑️</button></td>
+    </tr>`;
+  }).join('');
 }
 
 // ════════════════════════════════════════════
@@ -912,17 +1054,19 @@ function renderWaiting(){
 function renderModelSummary(){
   const map={};
   cameras.forEach(c=>{
-    if(!map[c.mn])map[c.mn]={total:0,avail:0,out:0};
+    if(!map[c.mn])map[c.mn]={total:0,avail:0,out:0,unavail:0};
     map[c.mn].total++;
     if(c.status==='available')map[c.mn].avail++;
     else if(c.status==='out'||c.status==='overdue')map[c.mn].out++;
+    else if(c.status==='unavailable')map[c.mn].unavail++;
   });
   const tbody=document.getElementById('modelBody');
   tbody.innerHTML=Object.entries(map).map(([m,v])=>`<tr>
     <td><span class="pill pill-grey">${m}</span></td><td>${v.total}</td>
     <td><span class="pill ${v.avail>0?'pill-green':'pill-red'}">${v.avail}</span></td>
     <td><span class="pill ${v.out>0?'pill-red':'pill-green'}">${v.out}</span></td>
-  </tr>`).join('')||`<tr><td colspan="4" class="empty-td">없음</td></tr>`;
+    <td><span class="pill ${v.unavail>0?'pill-grey':''}">${v.unavail}</span></td>
+  </tr>`).join('')||`<tr><td colspan="5" class="empty-td">없음</td></tr>`;
 }
 
 // ════════════════════════════════════════════
@@ -934,6 +1078,7 @@ function renderStats(){
   document.getElementById('statOut').textContent=cameras.filter(c=>c.status==='out'||c.status==='overdue').length;
   document.getElementById('statWait').textContent=waitingList.length;
   document.getElementById('statReturned').textContent=cameras.filter(c=>c.status==='returned').length;
+  document.getElementById('statUnavail').textContent=cameras.filter(c=>c.status==='unavailable').length;
 }
 
 // ════════════════════════════════════════════
@@ -1002,12 +1147,20 @@ async function saveCamera(){
 
   if(editingId){
     const idx=cameras.findIndex(x=>x.id===editingId);
+    const prev=cameras[idx];
+    // Record history if newly checked out
+    if(prev.status!=='out' && data.status==='out'){
+      addHistoryEntry(editingId, { type:'out', date:data.out||new Date().toISOString().slice(0,10), company:data.location, note:data.note });
+    }
     cameras[idx]={...cameras[idx],...data,pdfs:[...(cameras[idx].pdfs||[]),...pendingPdfs]};
     await apiCall('saveCamera',cameras[idx]);
     showToast('수정됐습니다.','success');
   } else {
     const newCam={id:nextCamId++,...data,pdfs:[...pendingPdfs]};
     cameras.push(newCam);
+    if(data.status==='out'){
+      addHistoryEntry(newCam.id, { type:'out', date:data.out||new Date().toISOString().slice(0,10), company:data.location, note:data.note });
+    }
     await apiCall('saveCamera',newCam);
     showToast('카메라가 추가됐습니다.','success');
   }
@@ -1024,7 +1177,7 @@ async function deleteCamera(id){
 //  MODAL - WAITING
 // ════════════════════════════════════════════
 function openWaitModal(){
-  ['w-mn','w-company','w-start','w-return'].forEach(id=>document.getElementById(id).value='');
+  ['w-mn','w-company','w-start','w-return','w-eta','w-contact'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('w-prio').value='high';
   refreshDatalist(); document.getElementById('waitModal').classList.remove('hidden');
 }
@@ -1035,6 +1188,8 @@ async function saveWaiting(){
   const item={id:nextWaitId++,mn,company,
     start:document.getElementById('w-start').value||'미정',
     returnPlan:document.getElementById('w-return').value||'미정',
+    eta:document.getElementById('w-eta').value||'',
+    contact:document.getElementById('w-contact').value.trim()||'',
     prio:document.getElementById('w-prio').value,
   };
   waitingList.push(item);
@@ -1110,6 +1265,55 @@ function renderCalendar(){
 }
 
 // ════════════════════════════════════════════
+//  HISTORY DRAWER
+// ════════════════════════════════════════════
+function openHistory(camId){
+  const cam=cameras.find(c=>c.id===camId); if(!cam)return;
+  const label=cam.name||(cam.sn);
+  document.getElementById('historyTitle').textContent=`📋 대여 기록 — ${label}`;
+  const entries=(loanHistory[camId]||[]);
+
+  // Also show current active loan if status is 'out'
+  let currentEntry='';
+  if(cam.status==='out'||cam.status==='overdue'){
+    currentEntry=`<div class="hist-entry">
+      <div class="hist-icon out">📤</div>
+      <div class="hist-content">
+        <div class="hist-title">현재 대여 중</div>
+        <div class="hist-meta">${cam.out||'날짜 미상'} → 반납 예정: ${cam.inn||'미정'}</div>
+        <div class="hist-detail">위치: ${cam.location||'—'}${cam.note?` · ${cam.note}`:''}</div>
+      </div>
+      <span class="pill pill-red" style="flex-shrink:0;align-self:center">대여 중</span>
+    </div>`;
+  }
+
+  const histHtml=entries.map(e=>{
+    const iconClass=e.type==='returned'?'ret':e.type==='out'?'out':'edit';
+    const icon=e.type==='returned'?'✔️':e.type==='out'?'📤':'✏️';
+    const typeLabel=e.type==='returned'?'반납 완료':e.type==='out'?'대여 시작':'수정';
+    const detailParts=[];
+    if(e.outDate && e.type==='returned') detailParts.push(`대여 기간: ${e.outDate} → ${e.date}`);
+    if(e.company) detailParts.push(`위치: ${e.company}`);
+    if(e.note) detailParts.push(e.note);
+    return`<div class="hist-entry">
+      <div class="hist-icon ${iconClass}">${icon}</div>
+      <div class="hist-content">
+        <div class="hist-title">${typeLabel}</div>
+        <div class="hist-meta">${e.date||'날짜 미상'}</div>
+        ${detailParts.length?`<div class="hist-detail">${detailParts.join(' · ')}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('historyBody').innerHTML=
+    currentEntry + (histHtml||`<div class="history-empty">📭 아직 대여 기록이 없습니다.<br><span style="font-size:12px;color:#B3BAC5">카메라를 대여하거나 반납하면 여기에 기록됩니다.</span></div>`);
+  document.getElementById('historyOverlay').classList.remove('hidden');
+}
+function closeHistory(){
+  document.getElementById('historyOverlay').classList.add('hidden');
+}
+
+// ════════════════════════════════════════════
 //  UTILITIES
 // ════════════════════════════════════════════
 function showLoading(v){ document.getElementById('loadingOverlay').classList.toggle('hidden',!v); }
@@ -1125,6 +1329,9 @@ function renderAll(){ renderStats();renderNameFilterRow();renderInventory();rend
 // ════════════════════════════════════════════
 initPdfUpload();
 buildColorPicker(BADGE_COLORS[0]);
+// Restore history from localStorage
+try { const h=localStorage.getItem('zivid_history'); if(h) loanHistory=JSON.parse(h); } catch(e){}
+updateLiveTime();
 if(SHEET_API_URL){
   document.getElementById('setupBanner').classList.add('hidden');
   setSyncStatus('syncing','연결 중...');
