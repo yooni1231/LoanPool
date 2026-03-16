@@ -715,48 +715,102 @@ async function apiCall(action, data=null) {
 }
 async function loadFromSheet() {
   if (!SHEET_API_URL) return;
+
   showLoading(true);
   const result = await apiCall('getAll');
   showLoading(false);
   if (!result) return;
 
-  if (result.cameras) {
-    cameras = result.cameras.map(raw => ({
-      id:         Number(raw.id),
-      name:       str(raw.name),
-      color:      str(raw.color),
-      sn:         str(raw.sn),
-      mn:         str(raw.mn),
-      location:   str(raw.location),
-      lastUpdate: str(raw.lastUpdate),
-      out:        str(raw.out),
-      inn:        str(raw.inn),
-      status:     str(raw.status) || 'available',
-      note:       str(raw.note),
-      items:      Array.isArray(raw.items) ? raw.items : [],
-      pdfs:       Array.isArray(raw.pdfs)  ? raw.pdfs  : [],
-    }));
-    nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1;
+  // ---- Helper: detect hex color ----
+  const looksLikeColor = v =>
+    typeof v === 'string' && /^#([0-9a-f]{6})$/i.test(v);
+
+  function normalizeCamera(raw) {
+    const cam = { ...raw };
+
+    // --- 1) sn 이 hex 색이면 sn/color 스왑 ---
+    if (looksLikeColor(cam.sn)) {
+      const tmp = cam.sn;
+      cam.sn = cam.color || cam.pn || cam.nickname || '';
+      cam.color = tmp;
+    }
+
+    // --- 2) color 가 비정상이면 기본값 적용 ---
+    if (!looksLikeColor(cam.color)) {
+      cam.color = "#0052CC";
+    }
+
+    // --- 3) mn 이 숫자로 들어온 경우 교정 ---
+    if (typeof cam.mn === 'number') {
+      if (cam.pn) cam.mn = cam.pn;
+      else if (cam.nickname) cam.mn = cam.nickname;
+      else cam.mn = String(cam.mn);
+    }
+
+    // --- 4) name 없으면 pn → nickname → sn 순으로 복원 ---
+    if (!cam.name || cam.name.trim() === '') {
+      cam.name =
+        cam.pn ||
+        cam.nickname ||
+        cam.sn ||
+        "Unnamed";
+    }
+
+    // --- 5) sn 잘못된 경우 보정 ---
+    if (!cam.sn || cam.sn.trim() === '' || looksLikeColor(cam.sn)) {
+      cam.sn = cam.pn || cam.nickname || cam.mn || "UNKNOWN";
+    }
+
+    return {
+      id: Number(cam.id),
+
+      name:       String(cam.name || ''),
+      color:      String(cam.color || '#0052CC'),
+      sn:         String(cam.sn || ''),
+      mn:         String(cam.mn || ''),
+
+      location:   String(cam.location || ''),
+      lastUpdate: String(cam.lastUpdate || ''),
+      out:        String(cam.out || ''),
+      inn:        String(cam.inn || ''),
+      status:     String(cam.status || 'available'),
+      note:       String(cam.note || ''),
+
+      items: Array.isArray(cam.items) ? cam.items : [],
+      pdfs:  Array.isArray(cam.pdfs)  ? cam.pdfs  : [],
+    };
   }
+
+  // ---- Apply normalization ----
+  if (result.cameras) {
+    cameras = result.cameras.map(normalizeCamera);
+    nextCamId =
+      cameras.length ? Math.max(...cameras.map(c => c.id)) + 1 : 1;
+  }
+
   if (result.waiting) {
     waitingList = result.waiting.map(raw => ({
       id:         Number(raw.id),
-      mn:         str(raw.mn),
-      company:    str(raw.company),
-      start:      str(raw.start),
-      returnPlan: str(raw.returnPlan),
-      eta:        str(raw.eta),
-      contact:    str(raw.contact),
-      prio:       str(raw.prio) || 'med',
+      mn:         String(raw.mn || ''),
+      company:    String(raw.company || ''),
+      start:      String(raw.start || ''),
+      returnPlan: String(raw.returnPlan || ''),
+      eta:        String(raw.eta || ''),
+      contact:    String(raw.contact || ''),
+      prio:       String(raw.prio || 'med'),
     }));
-    nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
+    nextWaitId =
+      waitingList.length ? Math.max(...waitingList.map(w => w.id)) + 1 : 1;
   }
-  if (result.history) loanHistory = result.history || {};
+
+  if (result.history) {
+    loanHistory = result.history || {};
+  }
 
   saveLocal();
   updateLiveTime();
   renderAll();
-  showToast('구글 시트에서 데이터를 불러왔습니다.','success');
+  showToast('구글 시트에서 데이터를 불러왔습니다.', 'success');
 }
 
 function str(v) { return (v === null || v === undefined) ? '' : String(v).trim(); }
