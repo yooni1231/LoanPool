@@ -1,6 +1,6 @@
-# 📷 Zivid Camera Loan Management System
+# 📷Camera Loan Management System
 
-A web-based camera inventory and loan tracking system for managing Zivid 3D cameras. Built with a single HTML file for the frontend and Google Apps Script as the backend, with Google Sheets as the database.
+A web-based camera inventory and loan tracking system for managing 3D cameras. Built with a single HTML file for the frontend and Google Apps Script as the backend, with Google Sheets as the database.
 
 ---
 
@@ -24,7 +24,7 @@ A web-based camera inventory and loan tracking system for managing Zivid 3D came
 
 ## Overview
 
-This system helps teams track the location, status, and loan history of Zivid cameras. It supports multiple simultaneous users via Google Sheets sync, works offline with browser localStorage, and requires no server or build tools — just two files.
+This system helps teams track the location, status, and loan history of # cameras. It supports multiple simultaneous users via Google Sheets sync, works offline with browser localStorage, and requires no server or build tools — just two files.
 
 ```
 index.html   ← Frontend (open in any browser)
@@ -55,7 +55,7 @@ Code.gs      ← Backend (paste into Google Apps Script)
 ## File Structure
 
 ```
-zivid-loan-manager/
+#-loan-manager/
 ├── index.html     # Complete single-file frontend (HTML + CSS + JS)
 └── Code.gs        # Google Apps Script backend (paste into Apps Script editor)
 ```
@@ -83,7 +83,7 @@ This is the recommended setup for teams. All data is saved to a Google Sheet and
 ### Step 1 — Create a Google Sheet
 
 1. Go to [sheets.google.com](https://sheets.google.com) and create a new blank spreadsheet
-2. Name it anything (e.g. `Zivid Camera DB`)
+2. Name it anything (e.g. `# Camera DB`)
 3. Leave it open — you'll need its Apps Script editor in the next step
 
 ---
@@ -119,7 +119,7 @@ This is the recommended setup for teams. All data is saved to a Google Sheet and
 
    | Setting | Value |
    |---|---|
-   | Description | `Zivid Camera API` (or anything) |
+   | Description | `# Camera API` (or anything) |
    | Execute as | **Me** |
    | Who has access | **Anyone** |
 
@@ -216,7 +216,7 @@ The Apps Script backend manages two sheets automatically.
 ### Marking a Camera as Returned
 
 - Click the **✔️** button on any active loan row
-- The system automatically sets status to `반납 완료`, sets today as the return date, and resets the location to `Zivid Oslo`
+- The system automatically sets status to `반납 완료`, sets today as the return date, and resets the location to `# Oslo`
 - A return event is logged in the camera's loan history
 
 ### Waiting List
@@ -256,8 +256,8 @@ The Apps Script backend manages two sheets automatically.
 | ID | Label |
 |---|---|
 | `camera_body` | Camera Body |
-| `psu_z2` | PSU (External AC-DC) Zivid 2/2+ |
-| `psu_z3` | PSU (External AC-DC) Zivid 3 |
+| `psu_z2` | PSU (External AC-DC) # 2/2+ |
+| `psu_z3` | PSU (External AC-DC) # 3 |
 | `pwr_ext_5m` | Power Extension 5m |
 | `pwr_ext_10m` | Power Extension 10m |
 | `pwr_ext_20m` | Power Extension 20m |
@@ -271,7 +271,7 @@ The Apps Script backend manages two sheets automatically.
 | `tripod_mount` | Tripod mount |
 | `robot_mount` | Robot mount |
 | `stationary_mount` | Stationary mount |
-| `data_cable_one` | Data cable - Zivid One+ |
+| `data_cable_one` | Data cable - # One+ |
 | `check_note` | ⚠ Need to check Note or Files |
 
 ### Waiting List Priority Values
