@@ -988,7 +988,14 @@ function renderInventory(){
     if(s==='unavailable') return`<span class="pill pill-grey">🚫 대여 불가</span>`;
     return'';
   };
-  const fd=d=>d||'—';
+  // "2024-03-15" → "Mar 15, 2024"
+  const fd=d=>{
+    if(!d||d==='—')return'—';
+    const parts=String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(!parts)return d;
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[parseInt(parts[2],10)-1]+' '+parseInt(parts[3],10)+', '+parts[1];
+  };
   tbody.innerHTML=list.map((c,i)=>{
     const color = c.color || BADGE_COLORS[0];
     const nameHtml = c.name
@@ -1060,16 +1067,25 @@ function renderWaiting(){
       :`<span class="avail-match none">대기 중</span>`;
     const isMatched=availCams.length>0;
 
-    // ETA 표시 텍스트
-    let etaText='날짜 미정';
+  // ETA 날짜 포맷 헬퍼
+  const fmtEta=d=>{
+    if(!d)return d;
+    const parts=String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(!parts)return d;
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[parseInt(parts[2],10)-1]+' '+parseInt(parts[3],10)+', '+parts[1];
+  };
+
+  // ETA 표시 텍스트
+  let etaText='날짜 미정';
     let etaClass='eta-tag';
     if(w.eta){
       const etaDate=new Date(w.eta); etaDate.setHours(0,0,0,0);
       const diff=Math.round((etaDate-today)/(1000*60*60*24));
-      if(diff<0)        { etaText=`⚠ ${w.eta} (지남)`;        etaClass='eta-tag overdue-wait'; }
-      else if(diff===0) { etaText=`🚀 오늘 발송`;              etaClass='eta-tag soon'; }
-      else if(diff<=7)  { etaText=`📦 ${w.eta} (${diff}일 후)`;etaClass='eta-tag soon'; }
-      else              { etaText=w.eta;                        etaClass='eta-tag'; }
+      if(diff<0)        { etaText=`⚠ ${fmtEta(w.eta)} (지남)`;          etaClass='eta-tag overdue-wait'; }
+      else if(diff===0) { etaText=`🚀 오늘 발송`;                         etaClass='eta-tag soon'; }
+      else if(diff<=7)  { etaText=`📦 ${fmtEta(w.eta)} (${diff}일 후)`;  etaClass='eta-tag soon'; }
+      else              { etaText=fmtEta(w.eta);                          etaClass='eta-tag'; }
     }
 
     // ETA 셀: 텍스트 + 수정 버튼 / 인라인 date input
@@ -1209,11 +1225,17 @@ async function saveCamera(){
     if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err');
   });
   if(!ok){showToast('필수 항목을 입력해주세요.','err');return;}
+
+  const formOut        = document.getElementById('f-out').value;
+  const formInn        = document.getElementById('f-in').value;
+  const formLastUpdate = document.getElementById('f-lastupdate').value;
+
   const data={
     name,sn,mn,location,color:selectedColor,items:getSelectedItems(),
-    out:document.getElementById('f-out').value,
-    inn:document.getElementById('f-in').value,
-    lastUpdate:document.getElementById('f-lastupdate').value||new Date().toISOString().slice(0,10),
+    // 날짜 필드: 폼이 비어 있으면 기존 값 유지 (수정 시), 신규면 빈 문자열
+    out:        formOut        || (editingId ? (cameras.find(x=>x.id===editingId)||{}).out        || '' : ''),
+    inn:        formInn        || (editingId ? (cameras.find(x=>x.id===editingId)||{}).inn        || '' : ''),
+    lastUpdate: formLastUpdate || (editingId ? (cameras.find(x=>x.id===editingId)||{}).lastUpdate || '' : '') || new Date().toISOString().slice(0,10),
     status:document.getElementById('f-status').value,
     note:document.getElementById('f-note').value.trim(),
   };
