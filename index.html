@@ -23,7 +23,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; f
 
 .page { max-width: 1600px; margin: 0 auto; padding: 24px 20px 60px; }
 
-/* Setup banner */
 .setup-banner { background: #FFFAE6; border: 1px solid #FFE380; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
 .setup-banner.hidden { display: none; }
 .setup-banner-icon { font-size: 20px; flex-shrink: 0; }
@@ -32,7 +31,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; f
 .setup-banner-desc { font-size: 12px; color: #5E6C84; line-height: 1.6; }
 .setup-banner-close { background: none; border: none; cursor: pointer; color: #97A0AF; font-size: 18px; }
 
-/* Stats */
 .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
 .stat-card { background: #fff; border: 1px solid #DFE1E6; border-radius: 8px; padding: 16px 20px; flex: 1; min-width: 120px; }
 .stat-num { font-size: 34px; font-weight: 700; line-height: 1; }
@@ -42,7 +40,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; f
 .card { background: #fff; border: 1px solid #DFE1E6; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
 .section-h { font-size: 15px; font-weight: 700; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
-/* Table */
 .tbl-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .main-table { min-width: 1200px; }
@@ -56,30 +53,18 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .num-cell { text-align: center; color: #97A0AF; font-size: 12px; width: 36px; }
 .mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; font-weight: 600; }
 
-/* Name badge cell */
 .name-cell { min-width: 160px; }
-.name-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 10px 4px 8px; border-radius: 20px;
-  font-size: 12px; font-weight: 700; color: #fff;
-  white-space: nowrap; max-width: 200px;
-}
-.name-badge .nb-sn {
-  font-size: 10px; font-weight: 400; opacity: .75;
-  font-family: "SFMono-Regular", monospace;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
+.name-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; max-width: 200px; }
+.name-badge .nb-sn { font-size: 10px; font-weight: 400; opacity: .75; font-family: "SFMono-Regular", monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .name-no-badge { display: flex; flex-direction: column; gap: 2px; }
 .name-no-badge .nb-sn-plain { font-family: monospace; font-size: 12px; font-weight: 600; color: #5E6C84; }
 .name-no-badge .nb-hint { font-size: 11px; color: #B3BAC5; }
 
-/* Name filter pills */
 .name-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
 .name-filter-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #DFE1E6; background: #fff; cursor: pointer; font-size: 12px; font-family: inherit; font-weight: 600; color: #5E6C84; transition: all .15s; }
 .name-filter-btn:hover { border-color: #0052CC; color: #0052CC; }
 .name-filter-btn.active-name { color: #fff; border-color: transparent; }
 
-/* Item cell */
 .item-cell { min-width: 200px; max-width: 260px; }
 .item-tag-list { display: flex; flex-direction: column; gap: 3px; }
 .item-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #172B4D; line-height: 1.4; padding: 1px 0; }
@@ -87,7 +72,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .item-tag.special { color: #FF8B00; font-style: italic; }
 .item-tag.special .itick { color: #FF8B00; }
 
-/* Note + PDF cell */
 .note-cell { min-width: 220px; max-width: 300px; }
 .note-text { font-size: 12px; color: #172B4D; white-space: pre-wrap; word-break: break-word; line-height: 1.6; margin-bottom: 6px; }
 .note-text:empty { display: none; }
@@ -99,7 +83,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-chip .pdf-del { color: #97A0AF; font-size: 14px; line-height: 1; flex-shrink: 0; }
 .pdf-chip .pdf-del:hover { color: #DE350B; }
 
-/* Pills */
 .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
 .pill-green{background:#E3FCEF;color:#00875A} .pill-red{background:#FFEBE6;color:#DE350B}
 .pill-blue{background:#DEEBFF;color:#0052CC} .pill-grey{background:#F4F5F7;color:#5E6C84}
@@ -107,7 +90,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .dot-green{background:#00875A} .dot-red{background:#DE350B}
 
-/* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all .15s; }
 .btn-primary{background:#0052CC;color:#fff} .btn-primary:hover{background:#0747A6}
 .btn-danger{background:#FFEBE6;color:#DE350B} .btn-danger:hover{background:#FFBDAD}
@@ -116,12 +98,10 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .btn-sm{padding:4px 9px;font-size:12px}
 .action-cell { display: flex; gap: 4px; white-space: nowrap; }
 
-/* Tabs */
 .tab-row { display: flex; gap: 4px; flex-wrap: wrap; }
 .tab-btn { padding: 5px 14px; border-radius: 4px; border: 1px solid #DFE1E6; background: #fff; cursor: pointer; font-size: 12px; font-family: inherit; color: #5E6C84; }
 .tab-btn.active { background: #0052CC; color: #fff; border-color: #0052CC; }
 
-/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal-overlay.hidden { display: none; }
 .modal { background: #fff; border-radius: 8px; width: 100%; max-width: 640px; box-shadow: 0 8px 32px rgba(9,30,66,.25); max-height: 93vh; overflow-y: auto; }
@@ -131,7 +111,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .modal-body { padding: 18px 22px; }
 .modal-footer { padding: 14px 22px; border-top: 1px solid #DFE1E6; display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: #fff; }
 
-/* Form */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-group.full { grid-column: 1/-1; }
@@ -143,13 +122,11 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .form-group textarea { resize: vertical; min-height: 90px; }
 .fsec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #5E6C84; grid-column: 1/-1; padding-top: 10px; border-top: 1px solid #DFE1E6; }
 
-/* Color picker row (for name badge color) */
 .color-picker-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .color-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform .1s; flex-shrink: 0; }
 .color-swatch:hover { transform: scale(1.2); }
 .color-swatch.selected { border-color: #172B4D; }
 
-/* Items checklist */
 .items-grid { grid-column: 1/-1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; background: #F8F9FA; border: 1px solid #DFE1E6; border-radius: 6px; padding: 14px 16px; }
 .item-check-label { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #172B4D; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: background .1s; }
 .item-check-label:hover { background: #DEEBFF; }
@@ -157,7 +134,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .item-check-label.special-item { color: #FF8B00; }
 .item-check-label.special-item input[type=checkbox] { accent-color: #FF8B00; }
 
-/* PDF Upload */
 .pdf-upload-area { grid-column: 1/-1; border: 2px dashed #B3D4FF; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all .2s; background: #F8FBFF; }
 .pdf-upload-area:hover, .pdf-upload-area.drag-over { border-color: #0052CC; background: #DEEBFF; }
 .pdf-upload-area input[type=file] { display: none; }
@@ -173,7 +149,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pending-pdf-item .pdf-rm { background: none; border: none; cursor: pointer; color: #97A0AF; font-size: 16px; }
 .pending-pdf-item .pdf-rm:hover { color: #DE350B; }
 
-/* PDF Viewer */
 .pdf-viewer-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.7); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .pdf-viewer-overlay.hidden { display: none; }
 .pdf-viewer-box { background: #fff; border-radius: 8px; width: 100%; max-width: 900px; height: 85vh; display: flex; flex-direction: column; }
@@ -183,7 +158,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-viewer-body { flex: 1; overflow: hidden; }
 .pdf-viewer-body iframe { width: 100%; height: 100%; border: none; }
 
-/* Setup modal */
 .step-list { list-style: none; counter-reset: steps; display: flex; flex-direction: column; gap: 10px; }
 .step-list li { counter-increment: steps; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; }
 .step-list li::before { content: counter(steps); background: #0052CC; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
@@ -197,7 +171,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .test-result.ok { color: #00875A; }
 .test-result.fail { color: #DE350B; }
 
-/* Calendar */
 .cal-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .cal-nav-btn { background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 5px 14px; cursor: pointer; font-size: 13px; font-family: inherit; }
 .cal-nav-btn:hover { background: #DEEBFF; border-color: #0052CC; color: #0052CC; }
@@ -232,7 +205,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .bottom-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media(max-width:900px){ .bottom-two-col { grid-template-columns: 1fr; } }
 
-/* Live refresh bar */
 .live-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 8px 12px; background: #F8FBFF; border: 1px solid #DEEBFF; border-radius: 6px; font-size: 12px; color: #5E6C84; }
 .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #57D9A3; flex-shrink: 0; animation: livepulse 2s infinite; }
 @keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
@@ -240,15 +212,77 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .live-bar .btn-refresh { background: #DEEBFF; border: none; border-radius: 4px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: #0052CC; cursor: pointer; }
 .live-bar .btn-refresh:hover { background: #B3D4FF; }
 
-/* Avail match badge in waiting list */
+/* ── 대기 목록 ETA 인라인 수정 ─────────────────────────────── */
 .avail-match { display: inline-flex; align-items: center; gap: 4px; background: #E3FCEF; border: 1px solid #ABF5D1; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; color: #00875A; white-space: nowrap; }
 .avail-match.none { background: #F4F5F7; border-color: #DFE1E6; color: #97A0AF; }
 .wait-row-matched { background: #F3FFF8 !important; }
+
+/* ETA 셀 — 평소엔 텍스트, 호버하면 수정 버튼 노출 */
+.eta-cell { position: relative; min-width: 130px; }
+.eta-display { display: flex; align-items: center; gap: 6px; }
 .eta-tag { font-size: 11px; color: #5E6C84; }
 .eta-tag.soon { color: #00875A; font-weight: 700; }
 .eta-tag.overdue-wait { color: #DE350B; font-weight: 700; }
+.eta-edit-btn {
+  opacity: 0;
+  background: #F4F5F7;
+  border: 1px solid #DFE1E6;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #5E6C84;
+  transition: opacity .15s, background .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.eta-cell:hover .eta-edit-btn,
+.eta-cell:focus-within .eta-edit-btn {
+  opacity: 1;
+}
+.eta-edit-btn:hover { background: #DEEBFF; color: #0052CC; border-color: #0052CC; }
 
-/* History drawer */
+/* ETA 인라인 입력 폼 */
+.eta-inline-form {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+.eta-inline-form.active { display: flex; }
+.eta-inline-input {
+  border: 2px solid #0052CC;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #172B4D;
+  outline: none;
+  width: 130px;
+}
+.eta-inline-save {
+  background: #0052CC;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.eta-inline-save:hover { background: #0747A6; }
+.eta-inline-cancel {
+  background: none;
+  border: none;
+  color: #97A0AF;
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+}
+.eta-inline-cancel:hover { color: #DE350B; }
+
 .history-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.5); z-index: 250; display: flex; align-items: flex-end; justify-content: center; }
 .history-overlay.hidden { display: none; }
 .history-drawer { background: #fff; border-radius: 12px 12px 0 0; width: 100%; max-width: 900px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 -4px 24px rgba(9,30,66,.2); }
@@ -321,7 +355,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     <div class="stat-card"><div class="stat-num" style="color:#5E6C84" id="statUnavail">0</div><div class="stat-label">대여 불가</div></div>
   </div>
 
-  <!-- Inventory (full width) -->
+  <!-- Inventory -->
   <div class="card">
     <div class="section-h">
       <span>📦 카메라 재고 현황</span>
@@ -336,14 +370,12 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <button class="btn btn-primary" onclick="openAddModal()">＋ 카메라 추가</button>
       </div>
     </div>
-    <!-- Live bar -->
     <div class="live-bar">
       <div class="live-dot"></div>
       <span>실시간 재고 현황</span>
       <span id="liveTimeLabel" class="live-time">—</span>
       <button class="btn-refresh" onclick="manualRefresh()">↻ 새로고침</button>
     </div>
-    <!-- Name filter -->
     <div class="name-filter-row" id="nameFilterRow"></div>
     <div class="tbl-wrap">
       <table class="main-table">
@@ -367,7 +399,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     </div>
   </div>
 
-  <!-- Waiting + Model summary (2-col) -->
+  <!-- Waiting + Model summary -->
   <div class="bottom-two-col">
     <div class="card">
       <div class="section-h">
@@ -376,7 +408,17 @@ tbody td { padding: 9px 10px; vertical-align: top; }
       </div>
       <div class="tbl-wrap">
         <table style="min-width:unset;width:100%">
-          <thead><tr><th>M/N</th><th>회사명</th><th>시작</th><th>반납 예정</th><th>예상 배송일</th><th>가용 재고</th><th></th></tr></thead>
+          <thead>
+            <tr>
+              <th>M/N</th>
+              <th>회사명</th>
+              <th>요청</th><!-- ← "시작" → "요청" -->
+              <th>반납 예정</th>
+              <th>예상 배송일</th>
+              <th>가용 재고</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody id="waitingBody"></tbody>
         </table>
       </div>
@@ -429,7 +471,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     <div class="modal-body">
       <div class="form-grid">
         <div class="fsec" style="border-top:none;padding-top:0">📋 기본 정보</div>
-
         <div class="form-group full">
           <label>이름 (Name) <span class="req">*</span></label>
           <input type="text" id="f-name" placeholder="예: Alpha, Blue Star, Z2-001">
@@ -452,10 +493,8 @@ tbody td { padding: 9px 10px; vertical-align: top; }
           <label>Current Location <span class="req">*</span></label>
           <input type="text" id="f-location" placeholder="예: Zivid Oslo">
         </div>
-
         <div class="fsec">📦 구성품 포함 여부 (복수 선택)</div>
         <div class="items-grid" id="itemsGrid"></div>
-
         <div class="fsec">📅 대여 기간 &amp; 상태</div>
         <div class="form-group">
           <label>Out (체크아웃 날짜)</label>
@@ -479,12 +518,10 @@ tbody td { padding: 9px 10px; vertical-align: top; }
             <option value="unavailable">🚫 대여 불가</option>
           </select>
         </div>
-
         <div class="form-group full">
           <label>Note</label>
           <textarea id="f-note" placeholder="예: 반납 요청 완료 (2023/8/1) / 특이사항"></textarea>
         </div>
-
         <div class="fsec">📎 PDF 첨부파일</div>
         <div class="pdf-upload-area full" id="pdfDropZone">
           <label class="pdf-upload-label" for="pdfFileInput">
@@ -508,7 +545,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 <div class="modal-overlay hidden" id="waitModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>대여 대기 목록 추가</h3>
+      <h3 id="waitModalTitle">대여 대기 목록 추가</h3>
       <button class="modal-close" onclick="closeModal('waitModal')">✕</button>
     </div>
     <div class="modal-body">
@@ -523,7 +560,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
           <input type="text" id="w-company" placeholder="예: Kawasaki Robotics">
         </div>
         <div class="form-group">
-          <label>시작 날짜</label>
+          <label>요청</label><!-- ← "시작 날짜" → "요청" -->
           <input type="text" id="w-start" placeholder="즉시 / 2026-04-01">
         </div>
         <div class="form-group">
@@ -628,35 +665,22 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 //  CONSTANTS
 // ════════════════════════════════════════════
 const ITEMS = [
-  // ── 본체 & 전원 ──────────────────────────────────────────
   { id:'camera_body',       label:'Camera Body',                        special:false },
   { id:'psu_z2',            label:'PSU (External AC-DC) Zivid 2/2+',   special:false },
   { id:'psu_z3',            label:'PSU (External AC-DC) Zivid 3',      special:false },
-
-  // ── Power Extension (직선, 한쪽 둥근) ────────────────────
   { id:'pwr_ext_5m',        label:'Power Extension 5m',                 special:false },
   { id:'pwr_ext_10m',       label:'Power Extension 10m',                special:false },
   { id:'pwr_ext_20m',       label:'Power Extension 20m',                special:false },
-
-  // ── Power Extension RA (꺽임 연장선, 3m 한 종류) ─────────
   { id:'pwr_ext_ra_3m',     label:'Power Extension RA 3m (꺽임)',       special:false },
-
-  // ── Data cable / Ethernet (직선, 한쪽 둥근+RJ45) ─────────
   { id:'eth_cable_5m',      label:'Data cable Ethernet 5m',             special:false },
   { id:'eth_cable_10m',     label:'Data cable Ethernet 10m',            special:false },
   { id:'eth_cable_25m',     label:'Data cable Ethernet 25m',            special:false },
-
-  // ── Data Extension RA (꺽임 연장선, 3m 한 종류) ──────────
   { id:'eth_ext_ra_3m',     label:'Data Extension Ethernet RA 3m (꺽임)',special:false },
-
-  // ── 마운트 & 캘리브레이션 ────────────────────────────────
   { id:'cal_board_big',     label:'Calibration board (Big)',            special:false },
   { id:'cal_board_small',   label:'Calibration board (Small)',          special:false },
   { id:'tripod_mount',      label:'Tripod mount',                       special:false },
   { id:'robot_mount',       label:'Robot mount',                        special:false },
   { id:'stationary_mount',  label:'Stationary mount',                   special:false },
-
-  // ── 기타 ─────────────────────────────────────────────────
   { id:'data_cable_one',    label:'Data cable - Zivid One+',            special:false },
   { id:'check_note',        label:'Need to check Note or Files',        special:true  },
 ];
@@ -672,10 +696,11 @@ const BADGE_COLORS = [
 // ════════════════════════════════════════════
 let cameras     = [];
 let waitingList = [];
-let loanHistory = {}; // { camId: [{type, date, company, location, note}] }
+let loanHistory = {};
 let nextCamId   = 1;
 let nextWaitId  = 1;
 let editingId   = null;
+let editingWaitId = null;  // ← 대기 목록 수정용
 let pendingPdfs = [];
 let viewFilter  = 'all';
 let nameFilter  = 'ALL';
@@ -715,107 +740,47 @@ async function apiCall(action, data=null) {
 }
 async function loadFromSheet() {
   if (!SHEET_API_URL) return;
-
   showLoading(true);
   const result = await apiCall('getAll');
   showLoading(false);
   if (!result) return;
 
-  // ---- Helper: detect hex color ----
-  const looksLikeColor = v =>
-    typeof v === 'string' && /^#([0-9a-f]{6})$/i.test(v);
-
+  const looksLikeColor = v => typeof v === 'string' && /^#([0-9a-f]{6})$/i.test(v);
   function normalizeCamera(raw) {
     const cam = { ...raw };
-
-    // --- 1) sn 이 hex 색이면 sn/color 스왑 ---
-    if (looksLikeColor(cam.sn)) {
-      const tmp = cam.sn;
-      cam.sn = cam.color || cam.pn || cam.nickname || '';
-      cam.color = tmp;
-    }
-
-    // --- 2) color 가 비정상이면 기본값 적용 ---
-    if (!looksLikeColor(cam.color)) {
-      cam.color = "#0052CC";
-    }
-
-    // --- 3) mn 이 숫자로 들어온 경우 교정 ---
-    if (typeof cam.mn === 'number') {
-      if (cam.pn) cam.mn = cam.pn;
-      else if (cam.nickname) cam.mn = cam.nickname;
-      else cam.mn = String(cam.mn);
-    }
-
-    // --- 4) name 없으면 pn → nickname → sn 순으로 복원 ---
-    if (!cam.name || cam.name.trim() === '') {
-      cam.name =
-        cam.pn ||
-        cam.nickname ||
-        cam.sn ||
-        "Unnamed";
-    }
-
-    // --- 5) sn 잘못된 경우 보정 ---
-    if (!cam.sn || cam.sn.trim() === '' || looksLikeColor(cam.sn)) {
-      cam.sn = cam.pn || cam.nickname || cam.mn || "UNKNOWN";
-    }
-
+    if (looksLikeColor(cam.sn)) { const tmp=cam.sn; cam.sn=cam.color||''; cam.color=tmp; }
+    if (!looksLikeColor(cam.color)) cam.color = "#0052CC";
+    if (typeof cam.mn === 'number') cam.mn = cam.pn||cam.nickname||String(cam.mn);
+    if (!cam.name||cam.name.trim()==='') cam.name = cam.pn||cam.nickname||cam.sn||"Unnamed";
+    if (!cam.sn||cam.sn.trim()===''||looksLikeColor(cam.sn)) cam.sn = cam.pn||cam.nickname||cam.mn||"UNKNOWN";
     return {
       id: Number(cam.id),
-
-      name:       String(cam.name || ''),
-      color:      String(cam.color || '#0052CC'),
-      sn:         String(cam.sn || ''),
-      mn:         String(cam.mn || ''),
-
-      location:   String(cam.location || ''),
-      lastUpdate: String(cam.lastUpdate || ''),
-      out:        String(cam.out || ''),
-      inn:        String(cam.inn || ''),
-      status:     String(cam.status || 'available'),
-      note:       String(cam.note || ''),
-
-      items: Array.isArray(cam.items) ? cam.items : [],
-      pdfs:  Array.isArray(cam.pdfs)  ? cam.pdfs  : [],
+      name: String(cam.name||''), color: String(cam.color||'#0052CC'),
+      sn: String(cam.sn||''), mn: String(cam.mn||''),
+      location: String(cam.location||''), lastUpdate: String(cam.lastUpdate||''),
+      out: String(cam.out||''), inn: String(cam.inn||''),
+      status: String(cam.status||'available'), note: String(cam.note||''),
+      items: Array.isArray(cam.items)?cam.items:[], pdfs: Array.isArray(cam.pdfs)?cam.pdfs:[],
     };
   }
 
-  // ---- Apply normalization ----
   if (result.cameras) {
     cameras = result.cameras.map(normalizeCamera);
-    nextCamId =
-      cameras.length ? Math.max(...cameras.map(c => c.id)) + 1 : 1;
+    nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1;
   }
-
   if (result.waiting) {
     waitingList = result.waiting.map(raw => ({
-      id:         Number(raw.id),
-      mn:         String(raw.mn || ''),
-      company:    String(raw.company || ''),
-      start:      String(raw.start || ''),
-      returnPlan: String(raw.returnPlan || ''),
-      eta:        String(raw.eta || ''),
-      contact:    String(raw.contact || ''),
-      prio:       String(raw.prio || 'med'),
+      id: Number(raw.id), mn: String(raw.mn||''), company: String(raw.company||''),
+      start: String(raw.start||''), returnPlan: String(raw.returnPlan||''),
+      eta: String(raw.eta||''), contact: String(raw.contact||''), prio: String(raw.prio||'med'),
     }));
-    nextWaitId =
-      waitingList.length ? Math.max(...waitingList.map(w => w.id)) + 1 : 1;
+    nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
   }
-
-  if (result.history) {
-    loanHistory = result.history || {};
-  }
-
-  saveLocal();
-  updateLiveTime();
-  renderAll();
+  if (result.history) loanHistory = result.history || {};
+  saveLocal(); updateLiveTime(); renderAll();
   showToast('구글 시트에서 데이터를 불러왔습니다.', 'success');
 }
 
-function str(v) { return (v === null || v === undefined) ? '' : String(v).trim(); }
-
-// ── Local persistence ──────────────────────
 function saveLocal() {
   try {
     localStorage.setItem('zivid_cameras',   JSON.stringify(cameras));
@@ -828,8 +793,8 @@ function loadLocal() {
     const c = localStorage.getItem('zivid_cameras');
     const w = localStorage.getItem('zivid_waiting');
     const h = localStorage.getItem('zivid_history');
-    if (c) { cameras     = JSON.parse(c); nextCamId  = cameras.length     ? Math.max(...cameras.map(x=>x.id))+1     : 1; }
-    if (w) { waitingList = JSON.parse(w); nextWaitId = waitingList.length  ? Math.max(...waitingList.map(x=>x.id))+1 : 1; }
+    if (c) { cameras     = JSON.parse(c); nextCamId  = cameras.length    ? Math.max(...cameras.map(x=>x.id))+1    : 1; }
+    if (w) { waitingList = JSON.parse(w); nextWaitId = waitingList.length ? Math.max(...waitingList.map(x=>x.id))+1: 1; }
     if (h)   loanHistory = JSON.parse(h);
   } catch(e) {}
 }
@@ -842,19 +807,12 @@ function updateLiveTime() {
   const el = document.getElementById('liveTimeLabel');
   if (el) el.textContent = `마지막 업데이트: ${hh}:${mm}:${ss}`;
 }
-
 async function manualRefresh() {
-  if (SHEET_API_URL) {
-    await loadFromSheet();
-  } else {
-    updateLiveTime();
-    renderAll();
-    showToast('재고 현황이 업데이트됐습니다.','info');
-  }
+  if (SHEET_API_URL) { await loadFromSheet(); }
+  else { updateLiveTime(); renderAll(); showToast('재고 현황이 업데이트됐습니다.','info'); }
 }
-
-// Auto-refresh every 60 seconds when sheet is connected
 setInterval(()=>{ if(SHEET_API_URL) loadFromSheet(); }, 60000);
+
 function openSetupModal() {
   document.getElementById('sheetUrlInput').value = SHEET_API_URL;
   document.getElementById('testResult').textContent = '';
@@ -869,14 +827,9 @@ async function testConnection() {
   try {
     const r = await fetch(`${url}?action=getAll`);
     const j = await r.json();
-    if (j.cameras !== undefined) {
-      res.textContent = '✅ 연결 성공! 카메라 '+j.cameras.length+'개 확인됨';
-      res.className = 'test-result ok';
-    } else throw new Error();
-  } catch(e) {
-    res.textContent = '❌ 연결 실패. URL을 확인해주세요.';
-    res.className = 'test-result fail';
-  }
+    if (j.cameras !== undefined) { res.textContent='✅ 연결 성공! 카메라 '+j.cameras.length+'개 확인됨'; res.className='test-result ok'; }
+    else throw new Error();
+  } catch(e) { res.textContent='❌ 연결 실패. URL을 확인해주세요.'; res.className='test-result fail'; }
 }
 async function saveSheetUrl() {
   const url = document.getElementById('sheetUrlInput').value.trim();
@@ -904,16 +857,12 @@ function buildColorPicker(currentColor) {
   selectedColor = currentColor || BADGE_COLORS[0];
   document.getElementById('colorPickerRow').innerHTML =
     BADGE_COLORS.map(c =>
-      `<div class="color-swatch ${c===selectedColor?'selected':''}"
-            style="background:${c}" title="${c}"
-            onclick="selectColor('${c}')"></div>`
+      `<div class="color-swatch ${c===selectedColor?'selected':''}" style="background:${c}" title="${c}" onclick="selectColor('${c}')"></div>`
     ).join('');
 }
 function selectColor(c) {
   selectedColor = c;
-  document.querySelectorAll('.color-swatch').forEach(s => {
-    s.classList.toggle('selected', s.title === c);
-  });
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.title===c));
 }
 
 // ════════════════════════════════════════════
@@ -937,10 +886,7 @@ function renderNameFilterRow() {
 }
 function setNameFilter(key, btn, color) {
   nameFilter = key;
-  document.querySelectorAll('.name-filter-btn').forEach(b => {
-    b.classList.remove('active-name');
-    b.style.background=''; b.style.color=''; b.style.borderColor='';
-  });
+  document.querySelectorAll('.name-filter-btn').forEach(b => { b.classList.remove('active-name'); b.style.background=''; b.style.color=''; b.style.borderColor=''; });
   btn.classList.add('active-name');
   if (key !== 'ALL') { btn.style.background=color; btn.style.color='#fff'; btn.style.borderColor=color; }
   renderInventory();
@@ -1006,8 +952,7 @@ async function deletePdf(camId,pi) {
   const cam=cameras.find(c=>c.id===camId); if(!cam)return;
   cam.pdfs.splice(pi,1);
   await apiCall('saveCamera',cam);
-  saveLocal();
-  renderInventory(); showToast('파일이 삭제됐습니다.','success');
+  saveLocal(); renderInventory(); showToast('파일이 삭제됐습니다.','success');
 }
 
 // ════════════════════════════════════════════
@@ -1020,10 +965,10 @@ function setViewFilter(f,btn){
 }
 function filteredCams(){
   let list = cameras;
-  if(viewFilter==='out')      list=list.filter(c=>c.status==='out'||c.status==='overdue');
-  else if(viewFilter==='avail')    list=list.filter(c=>c.status==='available');
-  else if(viewFilter==='returned') list=list.filter(c=>c.status==='returned');
-  else if(viewFilter==='unavail')  list=list.filter(c=>c.status==='unavailable');
+  if(viewFilter==='out')       list=list.filter(c=>c.status==='out'||c.status==='overdue');
+  else if(viewFilter==='avail')     list=list.filter(c=>c.status==='available');
+  else if(viewFilter==='returned')  list=list.filter(c=>c.status==='returned');
+  else if(viewFilter==='unavail')   list=list.filter(c=>c.status==='unavailable');
   if(nameFilter!=='ALL') list=list.filter(c=>c.name===nameFilter);
   return list;
 }
@@ -1035,7 +980,6 @@ function renderInventory(){
   const tbody=document.getElementById('inventoryBody');
   const list=filteredCams();
   if(!list.length){tbody.innerHTML=`<tr><td colspan="11" class="empty-td">해당하는 카메라가 없습니다.</td></tr>`;return;}
-
   const sp=s=>{
     if(s==='available') return`<span class="pill pill-green"><span class="dot dot-green"></span>대여 가능</span>`;
     if(s==='out')       return`<span class="pill pill-red"><span class="dot dot-red"></span>대여 중</span>`;
@@ -1045,20 +989,11 @@ function renderInventory(){
     return'';
   };
   const fd=d=>d||'—';
-
   tbody.innerHTML=list.map((c,i)=>{
-    // Name/SN cell
     const color = c.color || BADGE_COLORS[0];
     const nameHtml = c.name
-      ? `<div class="name-badge" style="background:${color}">
-           ${c.name}
-           <span class="nb-sn">${c.sn}</span>
-         </div>`
-      : `<div class="name-no-badge">
-           <span class="nb-sn-plain">${c.sn}</span>
-           <span class="nb-hint">이름 없음</span>
-         </div>`;
-
+      ? `<div class="name-badge" style="background:${color}">${c.name}<span class="nb-sn">${c.sn}</span></div>`
+      : `<div class="name-no-badge"><span class="nb-sn-plain">${c.sn}</span><span class="nb-hint">이름 없음</span></div>`;
     const itemsHtml=(c.items&&c.items.length)
       ?`<div class="item-tag-list">${c.items.map(id=>{
           const def=ITEMS.find(x=>x.id===id); if(!def)return'';
@@ -1066,15 +1001,12 @@ function renderInventory(){
           return`<div class="item-tag ${def.special?'special':''}"><span class="itick">✓</span>${idx}. ${def.label}</div>`;
         }).join('')}</div>`
       :`<span style="color:#B3BAC5;font-size:12px">—</span>`;
-
     const pdfsHtml=(c.pdfs&&c.pdfs.length)
       ?`<div class="pdf-list">${c.pdfs.map((p,pi)=>
           `<div class="pdf-chip" onclick="openPdf(${c.id},${pi})">
-            <span class="pdf-icon">📄</span>
-            <span class="pdf-name">${p.name}</span>
+            <span class="pdf-icon">📄</span><span class="pdf-name">${p.name}</span>
             <span class="pdf-del" onclick="event.stopPropagation();deletePdf(${c.id},${pi})">✕</span>
-          </div>`).join('')}</div>`:'' ;
-
+          </div>`).join('')}</div>`:'';
     return`<tr class="${c.status==='returned'?'returned-row':''}">
       <td class="num-cell vmid">${i+1}</td>
       <td class="name-cell vmid">${nameHtml}</td>
@@ -1084,9 +1016,7 @@ function renderInventory(){
       <td class="vmid" style="font-size:12px;color:#5E6C84">${fd(c.lastUpdate)}</td>
       <td class="vmid" style="font-size:12px">${fd(c.out)}</td>
       <td class="vmid" style="font-size:12px">${fd(c.inn)}</td>
-      <td class="note-cell">
-        <div class="note-text">${c.note||''}</div>${pdfsHtml}
-      </td>
+      <td class="note-cell"><div class="note-text">${c.note||''}</div>${pdfsHtml}</td>
       <td class="vmid">${sp(c.status)}</td>
       <td class="vmid"><div class="action-cell">
         ${c.status!=='returned'?`<button class="btn btn-return btn-sm" onclick="markReturned(${c.id})" title="반납 완료">✔️</button>`:''}
@@ -1104,23 +1034,18 @@ function renderInventory(){
 async function markReturned(id){
   const c=cameras.find(x=>x.id===id); if(!c)return;
   const today=new Date().toISOString().slice(0,10);
-  addHistoryEntry(c.id, {
-    type:'returned', date: today, outDate: c.out||'', company: c.location||'', note: c.note||'',
-  });
-  c.status='returned'; c.inn=today;
-  c.lastUpdate=today; c.location='Zivid Oslo';
+  addHistoryEntry(c.id,{type:'returned',date:today,outDate:c.out||'',company:c.location||'',note:c.note||''});
+  c.status='returned'; c.inn=today; c.lastUpdate=today; c.location='Zivid Oslo';
   await apiCall('saveCamera',c);
-  saveLocal();
-  showToast('반납 완료 처리됐습니다.','success'); renderAll();
+  saveLocal(); showToast('반납 완료 처리됐습니다.','success'); renderAll();
 }
-
 function addHistoryEntry(camId, entry) {
   if (!loanHistory[camId]) loanHistory[camId] = [];
   loanHistory[camId].unshift(entry);
 }
 
 // ════════════════════════════════════════════
-//  RENDER WAITING
+//  RENDER WAITING  (요청 컬럼 + ETA 인라인 수정)
 // ════════════════════════════════════════════
 function renderWaiting(){
   const tbody=document.getElementById('waitingBody');
@@ -1128,37 +1053,75 @@ function renderWaiting(){
   const pi={high:'🔴',med:'🟠',low:'🟢'};
   const today=new Date(); today.setHours(0,0,0,0);
 
-  tbody.innerHTML=waitingList.map((w,idx)=>{
-    // Count available cameras matching this model
-    const availCams = cameras.filter(c=>c.mn===w.mn && c.status==='available');
-    const availBadge = availCams.length>0
-      ? `<span class="avail-match">✓ ${availCams.length}대 가능</span>`
-      : `<span class="avail-match none">대기 중</span>`;
-    const isMatched = availCams.length>0;
+  tbody.innerHTML=waitingList.map((w)=>{
+    const availCams=cameras.filter(c=>c.mn===w.mn&&c.status==='available');
+    const availBadge=availCams.length>0
+      ?`<span class="avail-match">✓ ${availCams.length}대 가능</span>`
+      :`<span class="avail-match none">대기 중</span>`;
+    const isMatched=availCams.length>0;
 
-    // ETA display
-    let etaHtml = '—';
+    // ETA 표시 텍스트
+    let etaText='날짜 미정';
+    let etaClass='eta-tag';
     if(w.eta){
       const etaDate=new Date(w.eta); etaDate.setHours(0,0,0,0);
       const diff=Math.round((etaDate-today)/(1000*60*60*24));
-      if(diff<0)       etaHtml=`<span class="eta-tag overdue-wait">⚠ ${w.eta} (지남)</span>`;
-      else if(diff===0) etaHtml=`<span class="eta-tag soon">🚀 오늘 발송</span>`;
-      else if(diff<=7)  etaHtml=`<span class="eta-tag soon">📦 ${w.eta} (${diff}일 후)</span>`;
-      else              etaHtml=`<span class="eta-tag">${w.eta}</span>`;
-    } else if(w.start && w.start!=='미정'){
-      etaHtml=`<span class="eta-tag" style="color:#97A0AF">날짜 미정</span>`;
+      if(diff<0)        { etaText=`⚠ ${w.eta} (지남)`;        etaClass='eta-tag overdue-wait'; }
+      else if(diff===0) { etaText=`🚀 오늘 발송`;              etaClass='eta-tag soon'; }
+      else if(diff<=7)  { etaText=`📦 ${w.eta} (${diff}일 후)`;etaClass='eta-tag soon'; }
+      else              { etaText=w.eta;                        etaClass='eta-tag'; }
     }
+
+    // ETA 셀: 텍스트 + 수정 버튼 / 인라인 date input
+    const etaCellHtml=`
+      <div class="eta-cell" id="eta-cell-${w.id}">
+        <div class="eta-display" id="eta-display-${w.id}">
+          <span class="${etaClass}">${etaText}</span>
+          <button class="eta-edit-btn" onclick="showEtaInput(${w.id})" title="날짜 수정">✏ 수정</button>
+        </div>
+        <div class="eta-inline-form" id="eta-form-${w.id}">
+          <input type="date" class="eta-inline-input" id="eta-input-${w.id}" value="${w.eta||''}">
+          <button class="eta-inline-save" onclick="saveEta(${w.id})">저장</button>
+          <button class="eta-inline-cancel" onclick="hideEtaInput(${w.id})" title="취소">✕</button>
+        </div>
+      </div>`;
 
     return`<tr class="${isMatched?'wait-row-matched':''}">
       <td><span class="pill pill-blue">${w.mn}</span></td>
       <td>${pi[w.prio]||'🟠'} <strong>${w.company}</strong>${w.contact?`<br><span style="font-size:11px;color:#97A0AF">${w.contact}</span>`:''}</td>
-      <td style="font-size:12px">${w.start||'미정'}</td>
+      <td style="font-size:12px">${w.start||'미정'}</td><!-- ← "요청" 컬럼 -->
       <td style="font-size:12px">${w.returnPlan||'미정'}</td>
-      <td>${etaHtml}</td>
+      <td>${etaCellHtml}</td>
       <td>${availBadge}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteWaiting(${w.id})">🗑️</button></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-edit btn-sm" onclick="openEditWaitModal(${w.id})" title="수정">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteWaiting(${w.id})">🗑️</button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
+}
+
+// ── ETA 인라인 수정 헬퍼 ──────────────────────────────────────
+function showEtaInput(id){
+  document.getElementById('eta-display-'+id).style.display='none';
+  document.getElementById('eta-form-'+id).classList.add('active');
+  document.getElementById('eta-input-'+id).focus();
+}
+function hideEtaInput(id){
+  document.getElementById('eta-form-'+id).classList.remove('active');
+  document.getElementById('eta-display-'+id).style.display='';
+}
+async function saveEta(id){
+  const w=waitingList.find(x=>x.id===id); if(!w)return;
+  const val=document.getElementById('eta-input-'+id).value;
+  w.eta=val;
+  await apiCall('saveWaiting',w);
+  saveLocal();
+  hideEtaInput(id);
+  renderWaiting();
+  showToast('예상 배송일이 업데이트됐습니다.','success');
 }
 
 // ════════════════════════════════════════════
@@ -1246,24 +1209,19 @@ async function saveCamera(){
     if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err');
   });
   if(!ok){showToast('필수 항목을 입력해주세요.','err');return;}
-
   const data={
-    name, sn, mn, location,
-    color: selectedColor,
-    items: getSelectedItems(),
-    out:   document.getElementById('f-out').value,
-    inn:   document.getElementById('f-in').value,
-    lastUpdate: document.getElementById('f-lastupdate').value||new Date().toISOString().slice(0,10),
-    status: document.getElementById('f-status').value,
-    note:   document.getElementById('f-note').value.trim(),
+    name,sn,mn,location,color:selectedColor,items:getSelectedItems(),
+    out:document.getElementById('f-out').value,
+    inn:document.getElementById('f-in').value,
+    lastUpdate:document.getElementById('f-lastupdate').value||new Date().toISOString().slice(0,10),
+    status:document.getElementById('f-status').value,
+    note:document.getElementById('f-note').value.trim(),
   };
-
   if(editingId){
     const idx=cameras.findIndex(x=>x.id===editingId);
     const prev=cameras[idx];
-    // Record history if newly checked out
-    if(prev.status!=='out' && data.status==='out'){
-      addHistoryEntry(editingId, { type:'out', date:data.out||new Date().toISOString().slice(0,10), company:data.location, note:data.note });
+    if(prev.status!=='out'&&data.status==='out'){
+      addHistoryEntry(editingId,{type:'out',date:data.out||new Date().toISOString().slice(0,10),company:data.location,note:data.note});
     }
     cameras[idx]={...cameras[idx],...data,pdfs:[...(cameras[idx].pdfs||[]),...pendingPdfs]};
     await apiCall('saveCamera',cameras[idx]);
@@ -1272,85 +1230,115 @@ async function saveCamera(){
     const newCam={id:nextCamId++,...data,pdfs:[...pendingPdfs]};
     cameras.push(newCam);
     if(data.status==='out'){
-      addHistoryEntry(newCam.id, { type:'out', date:data.out||new Date().toISOString().slice(0,10), company:data.location, note:data.note });
+      addHistoryEntry(newCam.id,{type:'out',date:data.out||new Date().toISOString().slice(0,10),company:data.location,note:data.note});
     }
     await apiCall('saveCamera',newCam);
     showToast('카메라가 추가됐습니다.','success');
   }
-  saveLocal();
-  pendingPdfs=[]; closeModal('cameraModal'); renderAll();
+  saveLocal(); pendingPdfs=[]; closeModal('cameraModal'); renderAll();
 }
 async function deleteCamera(id){
   if(!confirm('삭제하시겠습니까?'))return;
   cameras=cameras.filter(c=>c.id!==id);
   await apiCall('deleteCamera',{id});
-  saveLocal();
-  showToast('삭제됐습니다.','success'); renderAll();
+  saveLocal(); showToast('삭제됐습니다.','success'); renderAll();
 }
 
 // ════════════════════════════════════════════
-//  MODAL - WAITING
+//  MODAL - WAITING  (추가 + 수정 공용)
 // ════════════════════════════════════════════
 function openWaitModal(){
+  editingWaitId = null;
+  document.getElementById('waitModalTitle').textContent = '대여 대기 목록 추가';
   ['w-mn','w-company','w-start','w-return','w-eta','w-contact'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('w-prio').value='high';
-  refreshDatalist(); document.getElementById('waitModal').classList.remove('hidden');
+  refreshDatalist();
+  document.getElementById('waitModal').classList.remove('hidden');
 }
+
+function openEditWaitModal(id){
+  const w=waitingList.find(x=>x.id===id); if(!w)return;
+  editingWaitId = id;
+  document.getElementById('waitModalTitle').textContent = '대여 대기 목록 수정';
+  document.getElementById('w-mn').value      = w.mn||'';
+  document.getElementById('w-company').value = w.company||'';
+  document.getElementById('w-start').value   = w.start||'';
+  document.getElementById('w-return').value  = w.returnPlan||'';
+  document.getElementById('w-eta').value     = w.eta||'';
+  document.getElementById('w-contact').value = w.contact||'';
+  document.getElementById('w-prio').value    = w.prio||'med';
+  refreshDatalist();
+  document.getElementById('waitModal').classList.remove('hidden');
+}
+
 async function saveWaiting(){
   const mn=document.getElementById('w-mn').value.trim();
   const company=document.getElementById('w-company').value.trim();
   if(!mn||!company){showToast('모델과 회사명은 필수입니다.','err');return;}
-  const item={id:nextWaitId++,mn,company,
-    start:document.getElementById('w-start').value||'미정',
-    returnPlan:document.getElementById('w-return').value||'미정',
-    eta:document.getElementById('w-eta').value||'',
-    contact:document.getElementById('w-contact').value.trim()||'',
-    prio:document.getElementById('w-prio').value,
-  };
-  waitingList.push(item);
-  await apiCall('saveWaiting',item);
-  saveLocal();
-  showToast('대기 목록에 추가됐습니다.','success'); closeModal('waitModal'); renderAll();
+
+  if(editingWaitId){
+    // 수정
+    const idx=waitingList.findIndex(x=>x.id===editingWaitId);
+    waitingList[idx]={
+      ...waitingList[idx], mn, company,
+      start:      document.getElementById('w-start').value||'미정',
+      returnPlan: document.getElementById('w-return').value||'미정',
+      eta:        document.getElementById('w-eta').value||'',
+      contact:    document.getElementById('w-contact').value.trim()||'',
+      prio:       document.getElementById('w-prio').value,
+    };
+    await apiCall('saveWaiting', waitingList[idx]);
+    showToast('대기 목록이 수정됐습니다.','success');
+  } else {
+    // 신규 추가
+    const item={
+      id:nextWaitId++, mn, company,
+      start:      document.getElementById('w-start').value||'미정',
+      returnPlan: document.getElementById('w-return').value||'미정',
+      eta:        document.getElementById('w-eta').value||'',
+      contact:    document.getElementById('w-contact').value.trim()||'',
+      prio:       document.getElementById('w-prio').value,
+    };
+    waitingList.push(item);
+    await apiCall('saveWaiting',item);
+    showToast('대기 목록에 추가됐습니다.','success');
+  }
+  saveLocal(); closeModal('waitModal'); renderAll();
 }
+
 async function deleteWaiting(id){
   waitingList=waitingList.filter(w=>w.id!==id);
   await apiCall('deleteWaiting',{id});
-  saveLocal();
-  showToast('삭제됐습니다.','success'); renderAll();
+  saveLocal(); showToast('삭제됐습니다.','success'); renderAll();
 }
+
 function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
 document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{if(e.target===el)el.classList.add('hidden');});
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.add('hidden'); });
 });
 
 // ════════════════════════════════════════════
 //  CALENDAR
 // ════════════════════════════════════════════
 function renderCalFilterBtns(){
-  const row = document.getElementById('calFilterRow');
-  // Build unique list: first "전체", then each camera by name/sn
-  const items = [{ key:'ALL', label:'전체', color:null }];
-  cameras.forEach(c => {
-    const key  = String(c.id);
-    const label = c.name || c.sn;
-    const color = c.color || null;
-    if (!items.find(x=>x.key===key)) items.push({ key, label, color });
+  const row=document.getElementById('calFilterRow');
+  const items=[{key:'ALL',label:'전체',color:null}];
+  cameras.forEach(c=>{
+    const key=String(c.id); const label=c.name||c.sn; const color=c.color||null;
+    if(!items.find(x=>x.key===key)) items.push({key,label,color});
   });
-  row.innerHTML = items.map(it => {
-    const isActive = calFilter === it.key;
-    const style = isActive && it.color ? `background:${it.color};color:#fff;border-color:${it.color}` : '';
-    return `<button class="filter-btn ${isActive?'active':''}" style="${style}"
+  row.innerHTML=items.map(it=>{
+    const isActive=calFilter===it.key;
+    const style=isActive&&it.color?`background:${it.color};color:#fff;border-color:${it.color}`:'';
+    return`<button class="filter-btn ${isActive?'active':''}" style="${style}"
       onclick="setCalFilter('${it.key}',this,'${it.color||''}')">${it.label}</button>`;
   }).join('');
 }
-function setCalFilter(f, btn, color){
-  calFilter = f;
-  document.querySelectorAll('#calFilterRow .filter-btn').forEach(b=>{
-    b.classList.remove('active');
-    b.style.background=''; b.style.color=''; b.style.borderColor='';
-  });
+function setCalFilter(f,btn,color){
+  calFilter=f;
+  document.querySelectorAll('#calFilterRow .filter-btn').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.color='';b.style.borderColor='';});
   btn.classList.add('active');
-  if(f!=='ALL' && color){ btn.style.background=color; btn.style.color='#fff'; btn.style.borderColor=color; }
+  if(f!=='ALL'&&color){btn.style.background=color;btn.style.color='#fff';btn.style.borderColor=color;}
   renderCalendar();
 }
 function changeMonth(d){ currentMonth+=d; if(currentMonth>11){currentMonth=0;currentYear++;} if(currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(); }
@@ -1359,21 +1347,13 @@ function isSameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()=
 function renderCalendar(){
   const months=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('calLabel').textContent=currentYear+'년 '+months[currentMonth];
-
-  // Filter: ALL = all cameras with out date, else specific camera id
   const loans=cameras
-    .filter(c=>c.out && (calFilter==='ALL' || String(c.id)===calFilter))
+    .filter(c=>c.out&&(calFilter==='ALL'||String(c.id)===calFilter))
     .map(c=>({
-      id:   c.id,
-      sn:   c.sn,
-      mn:   c.mn,
-      label: c.name||c.sn,
-      color: c.color||null,
-      start: new Date(c.out),
-      end:   c.inn?new Date(c.inn):null,
-      type:  c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
+      id:c.id,sn:c.sn,mn:c.mn,label:c.name||c.sn,color:c.color||null,
+      start:new Date(c.out),end:c.inn?new Date(c.inn):null,
+      type:c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
     }));
-
   const firstDay=new Date(currentYear,currentMonth,1).getDay();
   const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
   const container=document.getElementById('calDays'); container.innerHTML='';
@@ -1391,9 +1371,7 @@ function renderCalendar(){
       const bar=document.createElement('div');
       const cls=l.type==='returned'?'bar-returned':l.type==='overdue'?'bar-overdue':'bar-loan';
       bar.className=`loan-bar ${cls}${isS&&isE?' start end':isS?' start':isE?' end':' middle'}`;
-      if(l.color && l.type==='loan'){
-        bar.style.background=l.color+'22'; bar.style.color=l.color; bar.style.borderColor=l.color+'88';
-      }
+      if(l.color&&l.type==='loan'){bar.style.background=l.color+'22';bar.style.color=l.color;bar.style.borderColor=l.color+'88';}
       bar.setAttribute('data-tip',`${l.label}${l.sn!==l.label?' ('+l.sn+')':''} · ${l.mn}`);
       if(isS) bar.textContent=l.label.length>12?l.label.slice(0,11)+'…':l.label;
       cell.appendChild(bar);
@@ -1412,8 +1390,6 @@ function openHistory(camId){
   const label=cam.name||(cam.sn);
   document.getElementById('historyTitle').textContent=`📋 대여 기록 — ${label}`;
   const entries=(loanHistory[camId]||[]);
-
-  // Also show current active loan if status is 'out'
   let currentEntry='';
   if(cam.status==='out'||cam.status==='overdue'){
     currentEntry=`<div class="hist-entry">
@@ -1426,13 +1402,12 @@ function openHistory(camId){
       <span class="pill pill-red" style="flex-shrink:0;align-self:center">대여 중</span>
     </div>`;
   }
-
   const histHtml=entries.map(e=>{
     const iconClass=e.type==='returned'?'ret':e.type==='out'?'out':'edit';
     const icon=e.type==='returned'?'✔️':e.type==='out'?'📤':'✏️';
     const typeLabel=e.type==='returned'?'반납 완료':e.type==='out'?'대여 시작':'수정';
     const detailParts=[];
-    if(e.outDate && e.type==='returned') detailParts.push(`대여 기간: ${e.outDate} → ${e.date}`);
+    if(e.outDate&&e.type==='returned') detailParts.push(`대여 기간: ${e.outDate} → ${e.date}`);
     if(e.company) detailParts.push(`위치: ${e.company}`);
     if(e.note) detailParts.push(e.note);
     return`<div class="hist-entry">
@@ -1444,14 +1419,11 @@ function openHistory(camId){
       </div>
     </div>`;
   }).join('');
-
   document.getElementById('historyBody').innerHTML=
-    currentEntry + (histHtml||`<div class="history-empty">📭 아직 대여 기록이 없습니다.<br><span style="font-size:12px;color:#B3BAC5">카메라를 대여하거나 반납하면 여기에 기록됩니다.</span></div>`);
+    currentEntry+(histHtml||`<div class="history-empty">📭 아직 대여 기록이 없습니다.<br><span style="font-size:12px;color:#B3BAC5">카메라를 대여하거나 반납하면 여기에 기록됩니다.</span></div>`);
   document.getElementById('historyOverlay').classList.remove('hidden');
 }
-function closeHistory(){
-  document.getElementById('historyOverlay').classList.add('hidden');
-}
+function closeHistory(){ document.getElementById('historyOverlay').classList.add('hidden'); }
 
 // ════════════════════════════════════════════
 //  UTILITIES
@@ -1469,7 +1441,6 @@ function renderAll(){ renderStats();renderNameFilterRow();renderInventory();rend
 // ════════════════════════════════════════════
 initPdfUpload();
 buildColorPicker(BADGE_COLORS[0]);
-// Restore data from localStorage (works without Google Sheets too)
 loadLocal();
 updateLiveTime();
 if(SHEET_API_URL){
