@@ -82,6 +82,10 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-chip .pdf-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #172B4D; font-weight: 500; flex: 1; }
 .pdf-chip .pdf-del { color: #97A0AF; font-size: 14px; line-height: 1; flex-shrink: 0; }
 .pdf-chip .pdf-del:hover { color: #DE350B; }
+/* Drive 저장된 PDF 구분 */
+.pdf-chip.drive { background: #E3FCEF; border-color: #ABF5D1; }
+.pdf-chip.drive:hover { background: #ABF5D1; }
+.pdf-chip.local { background: #FFEBE6; border-color: #FFBDAD; }
 
 .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
 .pill-green{background:#E3FCEF;color:#00875A} .pill-red{background:#FFEBE6;color:#DE350B}
@@ -122,6 +126,9 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .form-group textarea { resize: vertical; min-height: 90px; }
 .fsec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #5E6C84; grid-column: 1/-1; padding-top: 10px; border-top: 1px solid #DFE1E6; }
 
+/* ── 날짜 입력 힌트 ── */
+.date-hint { font-size: 11px; color: #97A0AF; margin-top: 2px; }
+
 .color-picker-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .color-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform .1s; flex-shrink: 0; }
 .color-swatch:hover { transform: scale(1.2); }
@@ -134,6 +141,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .item-check-label.special-item { color: #FF8B00; }
 .item-check-label.special-item input[type=checkbox] { accent-color: #FF8B00; }
 
+/* ── PDF 업로드 영역 ── */
 .pdf-upload-area { grid-column: 1/-1; border: 2px dashed #B3D4FF; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all .2s; background: #F8FBFF; }
 .pdf-upload-area:hover, .pdf-upload-area.drag-over { border-color: #0052CC; background: #DEEBFF; }
 .pdf-upload-area input[type=file] { display: none; }
@@ -141,6 +149,9 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-upload-icon { font-size: 26px; }
 .pdf-upload-text { font-size: 13px; font-weight: 600; color: #0052CC; }
 .pdf-upload-sub { font-size: 11px; color: #5E6C84; }
+/* Drive 저장 안내 배너 */
+.pdf-drive-notice { grid-column: 1/-1; background: #E3FCEF; border: 1px solid #ABF5D1; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #00875A; display: flex; align-items: flex-start; gap: 8px; }
+.pdf-drive-notice.warn { background: #FFFAE6; border-color: #FFE380; color: #FF8B00; }
 .pending-pdfs { grid-column: 1/-1; display: flex; flex-direction: column; gap: 6px; }
 .pending-pdf-item { display: flex; align-items: center; gap: 8px; background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 7px 10px; }
 .pending-pdf-item .pdf-icon { font-size: 16px; color: #DE350B; }
@@ -152,7 +163,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-viewer-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.7); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .pdf-viewer-overlay.hidden { display: none; }
 .pdf-viewer-box { background: #fff; border-radius: 8px; width: 100%; max-width: 900px; height: 85vh; display: flex; flex-direction: column; }
-.pdf-viewer-header { padding: 14px 18px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; }
+.pdf-viewer-header { padding: 14px 18px; border-bottom: 1px solid #DFE1E6; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .pdf-viewer-header span { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 700px; }
 .pdf-viewer-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #5E6C84; }
 .pdf-viewer-body { flex: 1; overflow: hidden; }
@@ -212,75 +223,24 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .live-bar .btn-refresh { background: #DEEBFF; border: none; border-radius: 4px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: #0052CC; cursor: pointer; }
 .live-bar .btn-refresh:hover { background: #B3D4FF; }
 
-/* ── 대기 목록 ETA 인라인 수정 ─────────────────────────────── */
 .avail-match { display: inline-flex; align-items: center; gap: 4px; background: #E3FCEF; border: 1px solid #ABF5D1; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; color: #00875A; white-space: nowrap; }
 .avail-match.none { background: #F4F5F7; border-color: #DFE1E6; color: #97A0AF; }
 .wait-row-matched { background: #F3FFF8 !important; }
 
-/* ETA 셀 — 평소엔 텍스트, 호버하면 수정 버튼 노출 */
 .eta-cell { position: relative; min-width: 130px; }
 .eta-display { display: flex; align-items: center; gap: 6px; }
 .eta-tag { font-size: 11px; color: #5E6C84; }
 .eta-tag.soon { color: #00875A; font-weight: 700; }
 .eta-tag.overdue-wait { color: #DE350B; font-weight: 700; }
-.eta-edit-btn {
-  opacity: 0;
-  background: #F4F5F7;
-  border: 1px solid #DFE1E6;
-  border-radius: 3px;
-  padding: 1px 6px;
-  font-size: 10px;
-  cursor: pointer;
-  color: #5E6C84;
-  transition: opacity .15s, background .15s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.eta-cell:hover .eta-edit-btn,
-.eta-cell:focus-within .eta-edit-btn {
-  opacity: 1;
-}
+.eta-edit-btn { opacity: 0; background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 3px; padding: 1px 6px; font-size: 10px; cursor: pointer; color: #5E6C84; transition: opacity .15s, background .15s; white-space: nowrap; flex-shrink: 0; }
+.eta-cell:hover .eta-edit-btn, .eta-cell:focus-within .eta-edit-btn { opacity: 1; }
 .eta-edit-btn:hover { background: #DEEBFF; color: #0052CC; border-color: #0052CC; }
-
-/* ETA 인라인 입력 폼 */
-.eta-inline-form {
-  display: none;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: nowrap;
-}
+.eta-inline-form { display: none; align-items: center; gap: 4px; flex-wrap: nowrap; }
 .eta-inline-form.active { display: flex; }
-.eta-inline-input {
-  border: 2px solid #0052CC;
-  border-radius: 4px;
-  padding: 3px 6px;
-  font-size: 12px;
-  font-family: inherit;
-  color: #172B4D;
-  outline: none;
-  width: 130px;
-}
-.eta-inline-save {
-  background: #0052CC;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  padding: 3px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
+.eta-inline-input { border: 2px solid #0052CC; border-radius: 4px; padding: 3px 6px; font-size: 12px; font-family: inherit; color: #172B4D; outline: none; width: 130px; }
+.eta-inline-save { background: #0052CC; color: #fff; border: none; border-radius: 3px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .eta-inline-save:hover { background: #0747A6; }
-.eta-inline-cancel {
-  background: none;
-  border: none;
-  color: #97A0AF;
-  font-size: 15px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 2px;
-}
+.eta-inline-cancel { background: none; border: none; color: #97A0AF; font-size: 15px; cursor: pointer; line-height: 1; padding: 0 2px; }
 .eta-inline-cancel:hover { color: #DE350B; }
 
 .history-overlay { position: fixed; inset: 0; background: rgba(9,30,66,.5); z-index: 250; display: flex; align-items: flex-end; justify-content: center; }
@@ -345,7 +305,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     <button class="setup-banner-close" onclick="document.getElementById('setupBanner').classList.add('hidden')">✕</button>
   </div>
 
-  <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card"><div class="stat-num num-blue"   id="statTotal">0</div><div class="stat-label">전체 카메라</div></div>
     <div class="stat-card"><div class="stat-num num-green"  id="statAvail">0</div><div class="stat-label">대여 가능</div></div>
@@ -355,7 +314,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     <div class="stat-card"><div class="stat-num" style="color:#5E6C84" id="statUnavail">0</div><div class="stat-label">대여 불가</div></div>
   </div>
 
-  <!-- Inventory -->
   <div class="card">
     <div class="section-h">
       <span>📦 카메라 재고 현황</span>
@@ -399,7 +357,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     </div>
   </div>
 
-  <!-- Waiting + Model summary -->
   <div class="bottom-two-col">
     <div class="card">
       <div class="section-h">
@@ -412,7 +369,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
             <tr>
               <th>M/N</th>
               <th>회사명</th>
-              <th>요청</th><!-- ← "시작" → "요청" -->
+              <th>요청</th>
               <th>반납 예정</th>
               <th>예상 배송일</th>
               <th>가용 재고</th>
@@ -434,7 +391,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     </div>
   </div>
 
-  <!-- Calendar -->
   <div class="card">
     <div class="section-h"><span>📅 대여 캘린더</span></div>
     <div class="legend">
@@ -474,7 +430,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <div class="form-group full">
           <label>이름 (Name) <span class="req">*</span></label>
           <input type="text" id="f-name" placeholder="예: Alpha, Blue Star, Z2-001">
-          <span style="font-size:11px;color:#5E6C84;margin-top:2px">카메라를 구분하는 고유한 이름입니다. 표에 배지로 표시됩니다.</span>
+          <span class="date-hint">카메라를 구분하는 고유한 이름입니다. 표에 배지로 표시됩니다.</span>
         </div>
         <div class="form-group">
           <label>뱃지 색상</label>
@@ -496,17 +452,22 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <div class="fsec">📦 구성품 포함 여부 (복수 선택)</div>
         <div class="items-grid" id="itemsGrid"></div>
         <div class="fsec">📅 대여 기간 &amp; 상태</div>
+
+        <!-- ★ 날짜 입력: type=date (캘린더 픽커) + 직접 입력도 가능 -->
         <div class="form-group">
           <label>Out (체크아웃 날짜)</label>
-          <input type="date" id="f-out">
+          <input type="date" id="f-out" placeholder="YYYY-MM-DD">
+          <span class="date-hint">📅 캘린더 아이콘 클릭 또는 직접 입력 (YYYY-MM-DD)</span>
         </div>
         <div class="form-group">
           <label>In (반납 예정일)</label>
-          <input type="date" id="f-in">
+          <input type="date" id="f-in" placeholder="YYYY-MM-DD">
+          <span class="date-hint">📅 캘린더 아이콘 클릭 또는 직접 입력 (YYYY-MM-DD)</span>
         </div>
         <div class="form-group">
           <label>Last Update</label>
-          <input type="date" id="f-lastupdate">
+          <input type="date" id="f-lastupdate" placeholder="YYYY-MM-DD">
+          <span class="date-hint">비워두면 오늘 날짜로 자동 저장됩니다</span>
         </div>
         <div class="form-group">
           <label>상태 <span class="req">*</span></label>
@@ -522,7 +483,13 @@ tbody td { padding: 9px 10px; vertical-align: top; }
           <label>Note</label>
           <textarea id="f-note" placeholder="예: 반납 요청 완료 (2023/8/1) / 특이사항"></textarea>
         </div>
+
+        <!-- PDF 섹션 -->
         <div class="fsec">📎 PDF 첨부파일</div>
+        <div id="pdfDriveNotice" class="pdf-drive-notice warn">
+          ⚠️ Google Sheets 미연결 상태입니다. PDF는 브라우저에 임시 저장되며 새로고침 시 사라질 수 있습니다.<br>
+          Google Sheets 연동 후 Apps Script에 <code>uploadPdfToDrive</code> 함수를 추가하면 Google Drive에 영구 저장됩니다.
+        </div>
         <div class="pdf-upload-area full" id="pdfDropZone">
           <label class="pdf-upload-label" for="pdfFileInput">
             <span class="pdf-upload-icon">📄</span>
@@ -560,7 +527,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
           <input type="text" id="w-company" placeholder="예: Kawasaki Robotics">
         </div>
         <div class="form-group">
-          <label>요청</label><!-- ← "시작 날짜" → "요청" -->
+          <label>요청</label>
           <input type="text" id="w-start" placeholder="즉시 / 2026-04-01">
         </div>
         <div class="form-group">
@@ -570,6 +537,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <div class="form-group">
           <label>예상 배송일 (Estimated Ship Date)</label>
           <input type="date" id="w-eta">
+          <span class="date-hint">📅 캘린더에서 선택하거나 직접 입력 (YYYY-MM-DD)</span>
         </div>
         <div class="form-group">
           <label>연락처 / 이메일</label>
@@ -594,7 +562,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 
 <!-- ══ SETUP MODAL ══ -->
 <div class="modal-overlay hidden" id="setupModal">
-  <div class="modal" style="max-width:520px">
+  <div class="modal" style="max-width:560px">
     <div class="modal-header">
       <h3>☁️ Google Sheets 연동 설정</h3>
       <button class="modal-close" onclick="closeModal('setupModal')">✕</button>
@@ -611,6 +579,48 @@ tbody td { padding: 9px 10px; vertical-align: top; }
             <li><span>유형: <code>웹 앱</code> / 실행: <code>나</code> / 액세스: <code>모든 사용자</code> → <strong>배포</strong></span></li>
             <li><span>표시된 <strong>웹 앱 URL</strong> 복사 → 아래에 붙여넣기</span></li>
           </ol>
+        </div>
+        <!-- PDF Drive 저장 안내 -->
+        <div style="background:#E8F4FD;border:1px solid #B3D4FF;border-radius:8px;padding:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:8px;color:#0052CC">📁 PDF Google Drive 저장 설정</div>
+          <div style="font-size:12px;color:#172B4D;line-height:1.7">
+            PDF를 영구적으로 저장하려면 <code>Code.gs</code>에 아래 함수를 추가하세요.<br>
+            PDF가 Google Drive에 저장되고, 링크로 언제든 열람할 수 있습니다.
+          </div>
+          <details style="margin-top:10px">
+            <summary style="font-size:12px;font-weight:700;color:#0052CC;cursor:pointer">Code.gs에 추가할 PDF 저장 코드 보기 ▼</summary>
+            <pre style="background:#fff;border:1px solid #DFE1E6;border-radius:4px;padding:12px;font-size:11px;overflow-x:auto;margin-top:8px;line-height:1.6">// PDF를 Google Drive에 저장하고 URL 반환
+function uploadPdfToDrive(base64Data, fileName) {
+  try {
+    // base64 디코딩 (data:application/pdf;base64, 제거)
+    var data = base64Data.replace(/^data:application\/pdf;base64,/, '');
+    var blob = Utilities.newBlob(
+      Utilities.base64Decode(data),
+      'application/pdf',
+      fileName
+    );
+    // "Zivid PDFs" 폴더에 저장 (없으면 자동 생성)
+    var folders = DriveApp.getFoldersByName('Zivid PDFs');
+    var folder = folders.hasNext()
+      ? folders.next()
+      : DriveApp.createFolder('Zivid PDFs');
+    var file = folder.createFile(blob);
+    // 링크 공유 설정 (뷰어 접근 허용)
+    file.setSharing(
+      DriveApp.Access.ANYONE_WITH_LINK,
+      DriveApp.Permission.VIEW
+    );
+    return { id: file.getId(), url: file.getUrl(), name: fileName };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+// doPost에 uploadPdf 액션 추가 (기존 doPost 함수에 병합)
+// case 'uploadPdf':
+//   var result = uploadPdfToDrive(data.base64, data.name);
+//   return jsonResponse(result);</pre>
+          </details>
         </div>
         <div>
           <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px">Apps Script 웹 앱 URL <span style="color:#DE350B">*</span></label>
@@ -639,7 +649,10 @@ tbody td { padding: 9px 10px; vertical-align: top; }
   <div class="pdf-viewer-box">
     <div class="pdf-viewer-header">
       <span id="pdfViewerTitle">PDF 파일</span>
-      <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <a id="pdfViewerOpenLink" href="#" target="_blank" class="btn btn-edit btn-sm" style="display:none">🔗 새 탭에서 열기</a>
+        <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
+      </div>
     </div>
     <div class="pdf-viewer-body">
       <iframe id="pdfViewerFrame" src=""></iframe>
@@ -692,6 +705,41 @@ const BADGE_COLORS = [
 ];
 
 // ════════════════════════════════════════════
+//  ★ 날짜 유틸리티 — 시간 제거
+// ════════════════════════════════════════════
+/**
+ * 어떤 형태의 날짜 문자열이든 "YYYY-MM-DD" 만 반환.
+ * "2026-03-30T12:34:56.000Z"  →  "2026-03-30"
+ * "2026-03-30 00:00:00"       →  "2026-03-30"
+ * "2026-03-30"                →  "2026-03-30"
+ * "", null, undefined         →  ""
+ */
+function cleanDate(d) {
+  if (!d) return '';
+  // ISO 문자열 또는 공백 이후 시간 부분 제거
+  const s = String(d).trim();
+  // YYYY-MM-DD 패턴 추출
+  const m = s.match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : '';
+}
+
+/** "2026-03-30" → "Mar 30, 2026" 표시용 포맷 */
+function fd(d) {
+  if (!d || d === '—') return '—';
+  const clean = cleanDate(d);
+  if (!clean) return d; // 알 수 없는 포맷이면 원본 반환
+  const parts = clean.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!parts) return d;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(parts[2], 10) - 1] + ' ' + parseInt(parts[3], 10) + ', ' + parts[1];
+}
+
+/** 오늘 날짜를 "YYYY-MM-DD" 로 반환 */
+function todayStr() {
+  return cleanDate(new Date().toISOString());
+}
+
+// ════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════
 let cameras     = [];
@@ -700,7 +748,7 @@ let loanHistory = {};
 let nextCamId   = 1;
 let nextWaitId  = 1;
 let editingId   = null;
-let editingWaitId = null;  // ← 대기 목록 수정용
+let editingWaitId = null;
 let pendingPdfs = [];
 let viewFilter  = 'all';
 let nameFilter  = 'ALL';
@@ -738,6 +786,25 @@ async function apiCall(action, data=null) {
     return null;
   }
 }
+
+// ────────────────────────────────────────────
+// PDF → Google Drive 업로드 (Apps Script 지원 시)
+// ────────────────────────────────────────────
+async function uploadPdfToDriveApi(base64, name) {
+  if (!SHEET_API_URL) return null;
+  try {
+    const res = await fetch(SHEET_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'uploadPdf', data: { base64, name } })
+    });
+    const json = await res.json();
+    if (json.error || !json.url) return null;
+    return { name, driveUrl: json.url, driveId: json.id, isDrive: true };
+  } catch(e) {
+    return null;
+  }
+}
+
 async function loadFromSheet() {
   if (!SHEET_API_URL) return;
   showLoading(true);
@@ -755,12 +822,19 @@ async function loadFromSheet() {
     if (!cam.sn||cam.sn.trim()===''||looksLikeColor(cam.sn)) cam.sn = cam.pn||cam.nickname||cam.mn||"UNKNOWN";
     return {
       id: Number(cam.id),
-      name: String(cam.name||''), color: String(cam.color||'#0052CC'),
-      sn: String(cam.sn||''), mn: String(cam.mn||''),
-      location: String(cam.location||''), lastUpdate: String(cam.lastUpdate||''),
-      out: String(cam.out||''), inn: String(cam.inn||''),
-      status: String(cam.status||'available'), note: String(cam.note||''),
-      items: Array.isArray(cam.items)?cam.items:[], pdfs: Array.isArray(cam.pdfs)?cam.pdfs:[],
+      name: String(cam.name||''),
+      color: String(cam.color||'#0052CC'),
+      sn: String(cam.sn||''),
+      mn: String(cam.mn||''),
+      location: String(cam.location||''),
+      // ★ cleanDate 적용 — 시간 제거
+      lastUpdate: cleanDate(cam.lastUpdate),
+      out: cleanDate(cam.out),
+      inn: cleanDate(cam.inn),
+      status: String(cam.status||'available'),
+      note: String(cam.note||''),
+      items: Array.isArray(cam.items)?cam.items:[],
+      pdfs: Array.isArray(cam.pdfs)?cam.pdfs:[],
     };
   }
 
@@ -770,9 +844,14 @@ async function loadFromSheet() {
   }
   if (result.waiting) {
     waitingList = result.waiting.map(raw => ({
-      id: Number(raw.id), mn: String(raw.mn||''), company: String(raw.company||''),
-      start: String(raw.start||''), returnPlan: String(raw.returnPlan||''),
-      eta: String(raw.eta||''), contact: String(raw.contact||''), prio: String(raw.prio||'med'),
+      id: Number(raw.id),
+      mn: String(raw.mn||''),
+      company: String(raw.company||''),
+      start: String(raw.start||''),
+      returnPlan: String(raw.returnPlan||''),
+      eta: cleanDate(raw.eta), // ★ cleanDate 적용
+      contact: String(raw.contact||''),
+      prio: String(raw.prio||'med'),
     }));
     nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
   }
@@ -783,19 +862,53 @@ async function loadFromSheet() {
 
 function saveLocal() {
   try {
-    localStorage.setItem('zivid_cameras',   JSON.stringify(cameras));
+    // ★ PDF base64(dataUrl)는 localStorage에 저장하지 않음 — 용량 초과 방지
+    // Drive 저장된 PDF(driveUrl 있음)만 저장
+    const camsForStorage = cameras.map(c => ({
+      ...c,
+      pdfs: (c.pdfs||[]).map(p => p.isDrive
+        ? p  // Drive PDF: URL만 저장 (가벼움)
+        : { name: p.name, isDrive: false, dataUrl: p.dataUrl, size: p.size } // 로컬 임시 PDF
+      )
+    }));
+    localStorage.setItem('zivid_cameras',   JSON.stringify(camsForStorage));
     localStorage.setItem('zivid_waiting',   JSON.stringify(waitingList));
     localStorage.setItem('zivid_history',   JSON.stringify(loanHistory));
-  } catch(e) {}
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      // PDF base64 제외하고 재시도
+      try {
+        const camsNoPdf = cameras.map(c => ({ ...c, pdfs: (c.pdfs||[]).filter(p=>p.isDrive) }));
+        localStorage.setItem('zivid_cameras', JSON.stringify(camsNoPdf));
+        localStorage.setItem('zivid_waiting', JSON.stringify(waitingList));
+        localStorage.setItem('zivid_history', JSON.stringify(loanHistory));
+        showToast('⚠ 로컬 PDF 용량 초과 — Drive 저장 PDF만 보존됩니다.', 'err');
+      } catch(e2) {}
+    }
+  }
 }
 function loadLocal() {
   try {
     const c = localStorage.getItem('zivid_cameras');
     const w = localStorage.getItem('zivid_waiting');
     const h = localStorage.getItem('zivid_history');
-    if (c) { cameras     = JSON.parse(c); nextCamId  = cameras.length    ? Math.max(...cameras.map(x=>x.id))+1    : 1; }
-    if (w) { waitingList = JSON.parse(w); nextWaitId = waitingList.length ? Math.max(...waitingList.map(x=>x.id))+1: 1; }
-    if (h)   loanHistory = JSON.parse(h);
+    if (c) {
+      cameras = JSON.parse(c);
+      // ★ 날짜 정규화
+      cameras = cameras.map(cam => ({
+        ...cam,
+        out: cleanDate(cam.out),
+        inn: cleanDate(cam.inn),
+        lastUpdate: cleanDate(cam.lastUpdate),
+      }));
+      nextCamId = cameras.length ? Math.max(...cameras.map(x=>x.id))+1 : 1;
+    }
+    if (w) {
+      waitingList = JSON.parse(w);
+      waitingList = waitingList.map(wt => ({ ...wt, eta: cleanDate(wt.eta) }));
+      nextWaitId = waitingList.length ? Math.max(...waitingList.map(x=>x.id))+1 : 1;
+    }
+    if (h) loanHistory = JSON.parse(h);
   } catch(e) {}
 }
 
@@ -837,6 +950,8 @@ async function saveSheetUrl() {
   SHEET_API_URL = url;
   localStorage.setItem('zivid_sheet_url', url);
   document.getElementById('setupBanner').classList.add('hidden');
+  // PDF 안내 업데이트
+  updatePdfNotice();
   closeModal('setupModal');
   await loadFromSheet();
 }
@@ -846,8 +961,21 @@ function disconnectSheet() {
   localStorage.removeItem('zivid_sheet_url');
   setSyncStatus('','연결 안 됨');
   document.getElementById('setupBanner').classList.remove('hidden');
+  updatePdfNotice();
   closeModal('setupModal');
   showToast('연결이 해제됐습니다.','info');
+}
+
+function updatePdfNotice() {
+  const el = document.getElementById('pdfDriveNotice');
+  if (!el) return;
+  if (SHEET_API_URL) {
+    el.className = 'pdf-drive-notice';
+    el.innerHTML = '✅ Google Sheets 연결됨. Apps Script에 <code>uploadPdfToDrive</code> 함수가 있으면 PDF가 Google Drive에 영구 저장됩니다. 없으면 브라우저에만 임시 저장됩니다.';
+  } else {
+    el.className = 'pdf-drive-notice warn';
+    el.innerHTML = '⚠️ Google Sheets 미연결 상태입니다. PDF는 브라우저에 임시 저장되며 새로고침 시 사라질 수 있습니다. <strong>⚙ Google Sheets 설정</strong>에서 연결 후 Drive 저장을 활성화하세요.';
+  }
 }
 
 // ════════════════════════════════════════════
@@ -924,7 +1052,10 @@ function handleFiles(files) {
   files.forEach(file => {
     if (file.type!=='application/pdf') { showToast('PDF 파일만 업로드 가능합니다.','err'); return; }
     const reader = new FileReader();
-    reader.onload = e => { pendingPdfs.push({name:file.name, dataUrl:e.target.result, size:file.size}); renderPendingPdfs(); };
+    reader.onload = e => {
+      pendingPdfs.push({ name: file.name, dataUrl: e.target.result, size: file.size, isDrive: false });
+      renderPendingPdfs();
+    };
     reader.readAsDataURL(file);
   });
 }
@@ -933,25 +1064,49 @@ function renderPendingPdfs() {
     `<div class="pending-pdf-item">
       <span class="pdf-icon">📄</span>
       <span class="pdf-fname">${p.name}</span>
-      <span class="pdf-size">${fmtSize(p.size)}</span>
+      <span class="pdf-size">${p.isDrive ? '☁ Drive 저장됨' : fmtSize(p.size)}</span>
       <button class="pdf-rm" onclick="removePending(${i})">✕</button>
     </div>`).join('');
 }
 function removePending(i) { pendingPdfs.splice(i,1); renderPendingPdfs(); }
 function fmtSize(b) { if(!b)return''; if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
-function openPdf(camId,pi) {
-  const cam=cameras.find(c=>c.id===camId); if(!cam||!cam.pdfs[pi])return;
-  const pdf=cam.pdfs[pi];
-  if(!pdf.dataUrl){showToast('파일 데이터가 없습니다.','err');return;}
-  document.getElementById('pdfViewerTitle').textContent=pdf.name;
-  document.getElementById('pdfViewerFrame').src=pdf.dataUrl;
+
+function openPdf(camId, pi) {
+  const cam = cameras.find(c=>c.id===camId); if(!cam||!cam.pdfs[pi]) return;
+  const pdf = cam.pdfs[pi];
+
+  document.getElementById('pdfViewerTitle').textContent = pdf.name;
+  const linkEl = document.getElementById('pdfViewerOpenLink');
+
+  if (pdf.isDrive && pdf.driveUrl) {
+    // Drive PDF: 새 탭으로 열기
+    linkEl.href = pdf.driveUrl;
+    linkEl.style.display = 'flex';
+    // iframe에 Drive 미리보기 URL 삽입
+    const previewUrl = `https://drive.google.com/file/d/${pdf.driveId}/preview`;
+    document.getElementById('pdfViewerFrame').src = previewUrl;
+  } else if (pdf.dataUrl) {
+    // 로컬 base64 PDF
+    linkEl.style.display = 'none';
+    document.getElementById('pdfViewerFrame').src = pdf.dataUrl;
+  } else {
+    showToast('파일 데이터가 없습니다.','err'); return;
+  }
   document.getElementById('pdfViewer').classList.remove('hidden');
 }
-function closePdfViewer() { document.getElementById('pdfViewer').classList.add('hidden'); document.getElementById('pdfViewerFrame').src=''; }
-async function deletePdf(camId,pi) {
-  const cam=cameras.find(c=>c.id===camId); if(!cam)return;
-  cam.pdfs.splice(pi,1);
-  await apiCall('saveCamera',cam);
+function closePdfViewer() {
+  document.getElementById('pdfViewer').classList.add('hidden');
+  document.getElementById('pdfViewerFrame').src = '';
+}
+async function deletePdf(camId, pi) {
+  const cam = cameras.find(c=>c.id===camId); if(!cam) return;
+  const pdf = cam.pdfs[pi];
+  // Drive 파일 삭제도 지원 (Apps Script에 deletePdf 액션 있는 경우)
+  if (pdf && pdf.isDrive && pdf.driveId) {
+    await apiCall('deletePdf', { driveId: pdf.driveId });
+  }
+  cam.pdfs.splice(pi, 1);
+  await apiCall('saveCamera', cam);
   saveLocal(); renderInventory(); showToast('파일이 삭제됐습니다.','success');
 }
 
@@ -965,10 +1120,10 @@ function setViewFilter(f,btn){
 }
 function filteredCams(){
   let list = cameras;
-  if(viewFilter==='out')       list=list.filter(c=>c.status==='out'||c.status==='overdue');
-  else if(viewFilter==='avail')     list=list.filter(c=>c.status==='available');
-  else if(viewFilter==='returned')  list=list.filter(c=>c.status==='returned');
-  else if(viewFilter==='unavail')   list=list.filter(c=>c.status==='unavailable');
+  if(viewFilter==='out')           list=list.filter(c=>c.status==='out'||c.status==='overdue');
+  else if(viewFilter==='avail')    list=list.filter(c=>c.status==='available');
+  else if(viewFilter==='returned') list=list.filter(c=>c.status==='returned');
+  else if(viewFilter==='unavail')  list=list.filter(c=>c.status==='unavailable');
   if(nameFilter!=='ALL') list=list.filter(c=>c.name===nameFilter);
   return list;
 }
@@ -981,20 +1136,12 @@ function renderInventory(){
   const list=filteredCams();
   if(!list.length){tbody.innerHTML=`<tr><td colspan="11" class="empty-td">해당하는 카메라가 없습니다.</td></tr>`;return;}
   const sp=s=>{
-    if(s==='available') return`<span class="pill pill-green"><span class="dot dot-green"></span>대여 가능</span>`;
-    if(s==='out')       return`<span class="pill pill-red"><span class="dot dot-red"></span>대여 중</span>`;
-    if(s==='overdue')   return`<span class="pill pill-orange">⚠️ 연체</span>`;
-    if(s==='returned')  return`<span class="pill pill-purple">✔️ 반납 완료</span>`;
+    if(s==='available')   return`<span class="pill pill-green"><span class="dot dot-green"></span>대여 가능</span>`;
+    if(s==='out')         return`<span class="pill pill-red"><span class="dot dot-red"></span>대여 중</span>`;
+    if(s==='overdue')     return`<span class="pill pill-orange">⚠️ 연체</span>`;
+    if(s==='returned')    return`<span class="pill pill-purple">✔️ 반납 완료</span>`;
     if(s==='unavailable') return`<span class="pill pill-grey">🚫 대여 불가</span>`;
     return'';
-  };
-  // "2024-03-15" → "Mar 15, 2024"
-  const fd=d=>{
-    if(!d||d==='—')return'—';
-    const parts=String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(!parts)return d;
-    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return months[parseInt(parts[2],10)-1]+' '+parseInt(parts[3],10)+', '+parts[1];
   };
   tbody.innerHTML=list.map((c,i)=>{
     const color = c.color || BADGE_COLORS[0];
@@ -1010,8 +1157,9 @@ function renderInventory(){
       :`<span style="color:#B3BAC5;font-size:12px">—</span>`;
     const pdfsHtml=(c.pdfs&&c.pdfs.length)
       ?`<div class="pdf-list">${c.pdfs.map((p,pi)=>
-          `<div class="pdf-chip" onclick="openPdf(${c.id},${pi})">
-            <span class="pdf-icon">📄</span><span class="pdf-name">${p.name}</span>
+          `<div class="pdf-chip ${p.isDrive?'drive':'local'}" onclick="openPdf(${c.id},${pi})">
+            <span class="pdf-icon">${p.isDrive?'☁️':'📄'}</span>
+            <span class="pdf-name">${p.name}</span>
             <span class="pdf-del" onclick="event.stopPropagation();deletePdf(${c.id},${pi})">✕</span>
           </div>`).join('')}</div>`:'';
     return`<tr class="${c.status==='returned'?'returned-row':''}">
@@ -1040,7 +1188,7 @@ function renderInventory(){
 // ════════════════════════════════════════════
 async function markReturned(id){
   const c=cameras.find(x=>x.id===id); if(!c)return;
-  const today=new Date().toISOString().slice(0,10);
+  const today = todayStr(); // ★ 시간 없이 날짜만
   addHistoryEntry(c.id,{type:'returned',date:today,outDate:c.out||'',company:c.location||'',note:c.note||''});
   c.status='returned'; c.inn=today; c.lastUpdate=today; c.location='Zivid Oslo';
   await apiCall('saveCamera',c);
@@ -1052,7 +1200,7 @@ function addHistoryEntry(camId, entry) {
 }
 
 // ════════════════════════════════════════════
-//  RENDER WAITING  (요청 컬럼 + ETA 인라인 수정)
+//  RENDER WAITING
 // ════════════════════════════════════════════
 function renderWaiting(){
   const tbody=document.getElementById('waitingBody');
@@ -1067,28 +1215,18 @@ function renderWaiting(){
       :`<span class="avail-match none">대기 중</span>`;
     const isMatched=availCams.length>0;
 
-  // ETA 날짜 포맷 헬퍼
-  const fmtEta=d=>{
-    if(!d)return d;
-    const parts=String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(!parts)return d;
-    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return months[parseInt(parts[2],10)-1]+' '+parseInt(parts[3],10)+', '+parts[1];
-  };
-
-  // ETA 표시 텍스트
-  let etaText='날짜 미정';
+    const etaClean = cleanDate(w.eta); // ★ 시간 제거
+    let etaText='날짜 미정';
     let etaClass='eta-tag';
-    if(w.eta){
-      const etaDate=new Date(w.eta); etaDate.setHours(0,0,0,0);
+    if(etaClean){
+      const etaDate=new Date(etaClean); etaDate.setHours(0,0,0,0);
       const diff=Math.round((etaDate-today)/(1000*60*60*24));
-      if(diff<0)        { etaText=`⚠ ${fmtEta(w.eta)} (지남)`;          etaClass='eta-tag overdue-wait'; }
-      else if(diff===0) { etaText=`🚀 오늘 발송`;                         etaClass='eta-tag soon'; }
-      else if(diff<=7)  { etaText=`📦 ${fmtEta(w.eta)} (${diff}일 후)`;  etaClass='eta-tag soon'; }
-      else              { etaText=fmtEta(w.eta);                          etaClass='eta-tag'; }
+      if(diff<0)        { etaText=`⚠ ${fd(etaClean)} (지남)`;              etaClass='eta-tag overdue-wait'; }
+      else if(diff===0) { etaText=`🚀 오늘 발송`;                           etaClass='eta-tag soon'; }
+      else if(diff<=7)  { etaText=`📦 ${fd(etaClean)} (${diff}일 후)`;     etaClass='eta-tag soon'; }
+      else              { etaText=fd(etaClean);                             etaClass='eta-tag'; }
     }
 
-    // ETA 셀: 텍스트 + 수정 버튼 / 인라인 date input
     const etaCellHtml=`
       <div class="eta-cell" id="eta-cell-${w.id}">
         <div class="eta-display" id="eta-display-${w.id}">
@@ -1096,7 +1234,7 @@ function renderWaiting(){
           <button class="eta-edit-btn" onclick="showEtaInput(${w.id})" title="날짜 수정">✏ 수정</button>
         </div>
         <div class="eta-inline-form" id="eta-form-${w.id}">
-          <input type="date" class="eta-inline-input" id="eta-input-${w.id}" value="${w.eta||''}">
+          <input type="date" class="eta-inline-input" id="eta-input-${w.id}" value="${etaClean||''}">
           <button class="eta-inline-save" onclick="saveEta(${w.id})">저장</button>
           <button class="eta-inline-cancel" onclick="hideEtaInput(${w.id})" title="취소">✕</button>
         </div>
@@ -1105,7 +1243,7 @@ function renderWaiting(){
     return`<tr class="${isMatched?'wait-row-matched':''}">
       <td><span class="pill pill-blue">${w.mn}</span></td>
       <td>${pi[w.prio]||'🟠'} <strong>${w.company}</strong>${w.contact?`<br><span style="font-size:11px;color:#97A0AF">${w.contact}</span>`:''}</td>
-      <td style="font-size:12px">${w.start||'미정'}</td><!-- ← "요청" 컬럼 -->
+      <td style="font-size:12px">${w.start||'미정'}</td>
       <td style="font-size:12px">${w.returnPlan||'미정'}</td>
       <td>${etaCellHtml}</td>
       <td>${availBadge}</td>
@@ -1119,7 +1257,6 @@ function renderWaiting(){
   }).join('');
 }
 
-// ── ETA 인라인 수정 헬퍼 ──────────────────────────────────────
 function showEtaInput(id){
   document.getElementById('eta-display-'+id).style.display='none';
   document.getElementById('eta-form-'+id).classList.add('active');
@@ -1131,12 +1268,9 @@ function hideEtaInput(id){
 }
 async function saveEta(id){
   const w=waitingList.find(x=>x.id===id); if(!w)return;
-  const val=document.getElementById('eta-input-'+id).value;
-  w.eta=val;
+  w.eta = cleanDate(document.getElementById('eta-input-'+id).value); // ★ cleanDate
   await apiCall('saveWaiting',w);
-  saveLocal();
-  hideEtaInput(id);
-  renderWaiting();
+  saveLocal(); hideEtaInput(id); renderWaiting();
   showToast('예상 배송일이 업데이트됐습니다.','success');
 }
 
@@ -1161,9 +1295,6 @@ function renderModelSummary(){
   </tr>`).join('')||`<tr><td colspan="5" class="empty-td">없음</td></tr>`;
 }
 
-// ════════════════════════════════════════════
-//  RENDER STATS
-// ════════════════════════════════════════════
 function renderStats(){
   document.getElementById('statTotal').textContent=cameras.length;
   document.getElementById('statAvail').textContent=cameras.filter(c=>c.status==='available').length;
@@ -1173,9 +1304,6 @@ function renderStats(){
   document.getElementById('statUnavail').textContent=cameras.filter(c=>c.status==='unavailable').length;
 }
 
-// ════════════════════════════════════════════
-//  DATALIST
-// ════════════════════════════════════════════
 function refreshDatalist(){
   const mns=[...new Set(cameras.map(c=>c.mn))];
   ['mnList','mnList2'].forEach(id=>{
@@ -1194,7 +1322,7 @@ function openAddModal(){
   ['f-sn','f-mn','f-location'].forEach(id=>document.getElementById(id).classList.remove('err'));
   document.getElementById('f-status').value='available';
   buildItemsGrid([]); buildColorPicker(BADGE_COLORS[0]);
-  renderPendingPdfs(); refreshDatalist();
+  renderPendingPdfs(); refreshDatalist(); updatePdfNotice();
   document.getElementById('cameraModal').classList.remove('hidden');
 }
 function openEditModal(id){
@@ -1205,60 +1333,78 @@ function openEditModal(id){
   document.getElementById('f-sn').value=c.sn;
   document.getElementById('f-mn').value=c.mn;
   document.getElementById('f-location').value=c.location;
-  document.getElementById('f-out').value=c.out||'';
-  document.getElementById('f-in').value=c.inn||'';
-  document.getElementById('f-lastupdate').value=c.lastUpdate||'';
+  document.getElementById('f-out').value=cleanDate(c.out);        // ★ cleanDate
+  document.getElementById('f-in').value=cleanDate(c.inn);         // ★ cleanDate
+  document.getElementById('f-lastupdate').value=cleanDate(c.lastUpdate); // ★ cleanDate
   document.getElementById('f-status').value=c.status;
   document.getElementById('f-note').value=c.note||'';
   buildItemsGrid(c.items||[]); buildColorPicker(c.color||BADGE_COLORS[0]);
-  renderPendingPdfs(); refreshDatalist();
+  renderPendingPdfs(); refreshDatalist(); updatePdfNotice();
   document.getElementById('cameraModal').classList.remove('hidden');
 }
+
 async function saveCamera(){
-  const name=document.getElementById('f-name').value.trim();
-  const sn=document.getElementById('f-sn').value.trim();
-  const mn=document.getElementById('f-mn').value.trim();
-  const location=document.getElementById('f-location').value.trim();
-  let ok=true;
+  const name     = document.getElementById('f-name').value.trim();
+  const sn       = document.getElementById('f-sn').value.trim();
+  const mn       = document.getElementById('f-mn').value.trim();
+  const location = document.getElementById('f-location').value.trim();
+  let ok = true;
   [['f-sn',sn],['f-mn',mn],['f-location',location]].forEach(([id,v])=>{
     const el=document.getElementById(id);
     if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err');
   });
   if(!ok){showToast('필수 항목을 입력해주세요.','err');return;}
 
-  const formOut        = document.getElementById('f-out').value;
-  const formInn        = document.getElementById('f-in').value;
-  const formLastUpdate = document.getElementById('f-lastupdate').value;
+  // ★ cleanDate로 시간 제거
+  const formOut        = cleanDate(document.getElementById('f-out').value);
+  const formInn        = cleanDate(document.getElementById('f-in').value);
+  const formLastUpdate = cleanDate(document.getElementById('f-lastupdate').value);
 
-  const data={
-    name,sn,mn,location,color:selectedColor,items:getSelectedItems(),
-    // 날짜 필드: 폼이 비어 있으면 기존 값 유지 (수정 시), 신규면 빈 문자열
-    out:        formOut        || (editingId ? (cameras.find(x=>x.id===editingId)||{}).out        || '' : ''),
-    inn:        formInn        || (editingId ? (cameras.find(x=>x.id===editingId)||{}).inn        || '' : ''),
-    lastUpdate: formLastUpdate || (editingId ? (cameras.find(x=>x.id===editingId)||{}).lastUpdate || '' : '') || new Date().toISOString().slice(0,10),
-    status:document.getElementById('f-status').value,
-    note:document.getElementById('f-note').value.trim(),
+  // ★ pendingPdfs를 Drive에 업로드 시도 (Apps Script 지원 시)
+  let finalPdfs = [];
+  for (const p of pendingPdfs) {
+    if (SHEET_API_URL && p.dataUrl) {
+      const driveResult = await uploadPdfToDriveApi(p.dataUrl, p.name);
+      if (driveResult) {
+        finalPdfs.push(driveResult); // Drive 저장 성공
+        continue;
+      }
+    }
+    // Drive 업로드 실패 또는 미연결 → base64 로컬 저장
+    finalPdfs.push(p);
+  }
+
+  const prev = editingId ? cameras.find(x=>x.id===editingId) : null;
+  const data = {
+    name, sn, mn, location, color: selectedColor,
+    items: getSelectedItems(),
+    out:        formOut        || (prev ? prev.out        || '' : ''),
+    inn:        formInn        || (prev ? prev.inn        || '' : ''),
+    lastUpdate: formLastUpdate || (prev ? prev.lastUpdate || '' : '') || todayStr(),
+    status: document.getElementById('f-status').value,
+    note:   document.getElementById('f-note').value.trim(),
   };
+
   if(editingId){
     const idx=cameras.findIndex(x=>x.id===editingId);
-    const prev=cameras[idx];
     if(prev.status!=='out'&&data.status==='out'){
-      addHistoryEntry(editingId,{type:'out',date:data.out||new Date().toISOString().slice(0,10),company:data.location,note:data.note});
+      addHistoryEntry(editingId,{type:'out',date:data.out||todayStr(),company:data.location,note:data.note});
     }
-    cameras[idx]={...cameras[idx],...data,pdfs:[...(cameras[idx].pdfs||[]),...pendingPdfs]};
+    cameras[idx]={...cameras[idx],...data, pdfs:[...(cameras[idx].pdfs||[]),...finalPdfs]};
     await apiCall('saveCamera',cameras[idx]);
     showToast('수정됐습니다.','success');
   } else {
-    const newCam={id:nextCamId++,...data,pdfs:[...pendingPdfs]};
+    const newCam={id:nextCamId++,...data,pdfs:[...finalPdfs]};
     cameras.push(newCam);
     if(data.status==='out'){
-      addHistoryEntry(newCam.id,{type:'out',date:data.out||new Date().toISOString().slice(0,10),company:data.location,note:data.note});
+      addHistoryEntry(newCam.id,{type:'out',date:data.out||todayStr(),company:data.location,note:data.note});
     }
     await apiCall('saveCamera',newCam);
     showToast('카메라가 추가됐습니다.','success');
   }
   saveLocal(); pendingPdfs=[]; closeModal('cameraModal'); renderAll();
 }
+
 async function deleteCamera(id){
   if(!confirm('삭제하시겠습니까?'))return;
   cameras=cameras.filter(c=>c.id!==id);
@@ -1267,7 +1413,7 @@ async function deleteCamera(id){
 }
 
 // ════════════════════════════════════════════
-//  MODAL - WAITING  (추가 + 수정 공용)
+//  MODAL - WAITING
 // ════════════════════════════════════════════
 function openWaitModal(){
   editingWaitId = null;
@@ -1277,7 +1423,6 @@ function openWaitModal(){
   refreshDatalist();
   document.getElementById('waitModal').classList.remove('hidden');
 }
-
 function openEditWaitModal(id){
   const w=waitingList.find(x=>x.id===id); if(!w)return;
   editingWaitId = id;
@@ -1286,38 +1431,37 @@ function openEditWaitModal(id){
   document.getElementById('w-company').value = w.company||'';
   document.getElementById('w-start').value   = w.start||'';
   document.getElementById('w-return').value  = w.returnPlan||'';
-  document.getElementById('w-eta').value     = w.eta||'';
+  document.getElementById('w-eta').value     = cleanDate(w.eta)||''; // ★ cleanDate
   document.getElementById('w-contact').value = w.contact||'';
   document.getElementById('w-prio').value    = w.prio||'med';
   refreshDatalist();
   document.getElementById('waitModal').classList.remove('hidden');
 }
-
 async function saveWaiting(){
-  const mn=document.getElementById('w-mn').value.trim();
-  const company=document.getElementById('w-company').value.trim();
+  const mn      = document.getElementById('w-mn').value.trim();
+  const company = document.getElementById('w-company').value.trim();
   if(!mn||!company){showToast('모델과 회사명은 필수입니다.','err');return;}
 
+  const etaVal = cleanDate(document.getElementById('w-eta').value); // ★ cleanDate
+
   if(editingWaitId){
-    // 수정
     const idx=waitingList.findIndex(x=>x.id===editingWaitId);
     waitingList[idx]={
       ...waitingList[idx], mn, company,
       start:      document.getElementById('w-start').value||'미정',
       returnPlan: document.getElementById('w-return').value||'미정',
-      eta:        document.getElementById('w-eta').value||'',
+      eta:        etaVal,
       contact:    document.getElementById('w-contact').value.trim()||'',
       prio:       document.getElementById('w-prio').value,
     };
     await apiCall('saveWaiting', waitingList[idx]);
     showToast('대기 목록이 수정됐습니다.','success');
   } else {
-    // 신규 추가
     const item={
       id:nextWaitId++, mn, company,
       start:      document.getElementById('w-start').value||'미정',
       returnPlan: document.getElementById('w-return').value||'미정',
-      eta:        document.getElementById('w-eta').value||'',
+      eta:        etaVal,
       contact:    document.getElementById('w-contact').value.trim()||'',
       prio:       document.getElementById('w-prio').value,
     };
@@ -1327,7 +1471,6 @@ async function saveWaiting(){
   }
   saveLocal(); closeModal('waitModal'); renderAll();
 }
-
 async function deleteWaiting(id){
   waitingList=waitingList.filter(w=>w.id!==id);
   await apiCall('deleteWaiting',{id});
@@ -1373,8 +1516,10 @@ function renderCalendar(){
     .filter(c=>c.out&&(calFilter==='ALL'||String(c.id)===calFilter))
     .map(c=>({
       id:c.id,sn:c.sn,mn:c.mn,label:c.name||c.sn,color:c.color||null,
-      start:new Date(c.out),end:c.inn?new Date(c.inn):null,
-      type:c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
+      // ★ cleanDate 적용
+      start: new Date(cleanDate(c.out)),
+      end:   c.inn ? new Date(cleanDate(c.inn)) : null,
+      type:  c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
     }));
   const firstDay=new Date(currentYear,currentMonth,1).getDay();
   const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
@@ -1418,7 +1563,7 @@ function openHistory(camId){
       <div class="hist-icon out">📤</div>
       <div class="hist-content">
         <div class="hist-title">현재 대여 중</div>
-        <div class="hist-meta">${cam.out||'날짜 미상'} → 반납 예정: ${cam.inn||'미정'}</div>
+        <div class="hist-meta">${fd(cam.out)||'날짜 미상'} → 반납 예정: ${fd(cam.inn)||'미정'}</div>
         <div class="hist-detail">위치: ${cam.location||'—'}${cam.note?` · ${cam.note}`:''}</div>
       </div>
       <span class="pill pill-red" style="flex-shrink:0;align-self:center">대여 중</span>
@@ -1429,14 +1574,14 @@ function openHistory(camId){
     const icon=e.type==='returned'?'✔️':e.type==='out'?'📤':'✏️';
     const typeLabel=e.type==='returned'?'반납 완료':e.type==='out'?'대여 시작':'수정';
     const detailParts=[];
-    if(e.outDate&&e.type==='returned') detailParts.push(`대여 기간: ${e.outDate} → ${e.date}`);
+    if(e.outDate&&e.type==='returned') detailParts.push(`대여 기간: ${fd(e.outDate)} → ${fd(e.date)}`);
     if(e.company) detailParts.push(`위치: ${e.company}`);
     if(e.note) detailParts.push(e.note);
     return`<div class="hist-entry">
       <div class="hist-icon ${iconClass}">${icon}</div>
       <div class="hist-content">
         <div class="hist-title">${typeLabel}</div>
-        <div class="hist-meta">${e.date||'날짜 미상'}</div>
+        <div class="hist-meta">${fd(e.date)||'날짜 미상'}</div>
         ${detailParts.length?`<div class="hist-detail">${detailParts.join(' · ')}</div>`:''}
       </div>
     </div>`;
@@ -1465,6 +1610,7 @@ initPdfUpload();
 buildColorPicker(BADGE_COLORS[0]);
 loadLocal();
 updateLiveTime();
+updatePdfNotice();
 if(SHEET_API_URL){
   document.getElementById('setupBanner').classList.add('hidden');
   setSyncStatus('syncing','연결 중...');
