@@ -82,10 +82,14 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-chip .pdf-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #172B4D; font-weight: 500; flex: 1; }
 .pdf-chip .pdf-del { color: #97A0AF; font-size: 14px; line-height: 1; flex-shrink: 0; }
 .pdf-chip .pdf-del:hover { color: #DE350B; }
-/* Drive 저장된 PDF 구분 */
 .pdf-chip.drive { background: #E3FCEF; border-color: #ABF5D1; }
 .pdf-chip.drive:hover { background: #ABF5D1; }
 .pdf-chip.local { background: #FFEBE6; border-color: #FFBDAD; }
+/* 세션 내에 캐시된 로컬 PDF */
+.pdf-chip.cached { background: #EAE6FF; border-color: #C0B6F2; }
+.pdf-chip.cached:hover { background: #C0B6F2; }
+/* 캐시 없어진 로컬 PDF (새로고침 등으로 사라짐) */
+.pdf-chip.nocache { background: #F4F5F7; border-color: #DFE1E6; opacity:.6; cursor:default; }
 
 .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
 .pill-green{background:#E3FCEF;color:#00875A} .pill-red{background:#FFEBE6;color:#DE350B}
@@ -125,8 +129,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .form-group input.err { border-color: #DE350B; }
 .form-group textarea { resize: vertical; min-height: 90px; }
 .fsec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #5E6C84; grid-column: 1/-1; padding-top: 10px; border-top: 1px solid #DFE1E6; }
-
-/* ── 날짜 입력 힌트 ── */
 .date-hint { font-size: 11px; color: #97A0AF; margin-top: 2px; }
 
 .color-picker-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -141,7 +143,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .item-check-label.special-item { color: #FF8B00; }
 .item-check-label.special-item input[type=checkbox] { accent-color: #FF8B00; }
 
-/* ── PDF 업로드 영역 ── */
+/* ── PDF 업로드 ── */
 .pdf-upload-area { grid-column: 1/-1; border: 2px dashed #B3D4FF; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all .2s; background: #F8FBFF; }
 .pdf-upload-area:hover, .pdf-upload-area.drag-over { border-color: #0052CC; background: #DEEBFF; }
 .pdf-upload-area input[type=file] { display: none; }
@@ -149,9 +151,10 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .pdf-upload-icon { font-size: 26px; }
 .pdf-upload-text { font-size: 13px; font-weight: 600; color: #0052CC; }
 .pdf-upload-sub { font-size: 11px; color: #5E6C84; }
-/* Drive 저장 안내 배너 */
 .pdf-drive-notice { grid-column: 1/-1; background: #E3FCEF; border: 1px solid #ABF5D1; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #00875A; display: flex; align-items: flex-start; gap: 8px; }
 .pdf-drive-notice.warn { background: #FFFAE6; border-color: #FFE380; color: #FF8B00; }
+/* ★ 캐시 안내 배너 */
+.pdf-cache-notice { grid-column: 1/-1; background: #EAE6FF; border: 1px solid #C0B6F2; border-radius: 6px; padding: 9px 13px; font-size: 12px; color: #6554C0; line-height: 1.6; }
 .pending-pdfs { grid-column: 1/-1; display: flex; flex-direction: column; gap: 6px; }
 .pending-pdf-item { display: flex; align-items: center; gap: 8px; background: #F4F5F7; border: 1px solid #DFE1E6; border-radius: 4px; padding: 7px 10px; }
 .pending-pdf-item .pdf-icon { font-size: 16px; color: #DE350B; }
@@ -226,6 +229,11 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 .avail-match { display: inline-flex; align-items: center; gap: 4px; background: #E3FCEF; border: 1px solid #ABF5D1; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; color: #00875A; white-space: nowrap; }
 .avail-match.none { background: #F4F5F7; border-color: #DFE1E6; color: #97A0AF; }
 .wait-row-matched { background: #F3FFF8 !important; }
+
+/* 대기 메모 */
+.wait-note-cell { max-width: 200px; }
+.wait-note-text { font-size: 11px; color: #5E6C84; white-space: pre-wrap; word-break: break-word; line-height: 1.5; }
+.wait-note-default { color: #FF8B00; font-style: italic; font-size: 11px; }
 
 .eta-cell { position: relative; min-width: 130px; }
 .eta-display { display: flex; align-items: center; gap: 6px; }
@@ -373,6 +381,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
               <th>반납 예정</th>
               <th>예상 배송일</th>
               <th>가용 재고</th>
+              <th>메모</th>
               <th></th>
             </tr>
           </thead>
@@ -430,7 +439,6 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <div class="form-group full">
           <label>이름 (Name) <span class="req">*</span></label>
           <input type="text" id="f-name" placeholder="예: Alpha, Blue Star, Z2-001">
-          <span class="date-hint">카메라를 구분하는 고유한 이름입니다. 표에 배지로 표시됩니다.</span>
         </div>
         <div class="form-group">
           <label>뱃지 색상</label>
@@ -452,17 +460,15 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         <div class="fsec">📦 구성품 포함 여부 (복수 선택)</div>
         <div class="items-grid" id="itemsGrid"></div>
         <div class="fsec">📅 대여 기간 &amp; 상태</div>
-
-        <!-- ★ 날짜 입력: type=date (캘린더 픽커) + 직접 입력도 가능 -->
         <div class="form-group">
           <label>Out (체크아웃 날짜)</label>
           <input type="date" id="f-out" placeholder="YYYY-MM-DD">
-          <span class="date-hint">📅 캘린더 아이콘 클릭 또는 직접 입력 (YYYY-MM-DD)</span>
+          <span class="date-hint">📅 캘린더 아이콘 클릭 또는 직접 입력</span>
         </div>
         <div class="form-group">
           <label>In (반납 예정일)</label>
           <input type="date" id="f-in" placeholder="YYYY-MM-DD">
-          <span class="date-hint">📅 캘린더 아이콘 클릭 또는 직접 입력 (YYYY-MM-DD)</span>
+          <span class="date-hint">📅 캘린더 아이콘 클릭 또는 직접 입력</span>
         </div>
         <div class="form-group">
           <label>Last Update</label>
@@ -486,9 +492,13 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 
         <!-- PDF 섹션 -->
         <div class="fsec">📎 PDF 첨부파일</div>
+        <!-- ★ 캐시 안내 -->
+        <div class="pdf-cache-notice">
+          💜 업로드한 PDF는 <strong>브라우저 탭이 열려 있는 동안</strong> 메모리에 안전하게 보관됩니다.
+          탭을 닫거나 새로고침하면 사라지므로, 영구 보관은 Google Drive 연동을 사용하세요.
+        </div>
         <div id="pdfDriveNotice" class="pdf-drive-notice warn">
-          ⚠️ Google Sheets 미연결 상태입니다. PDF는 브라우저에 임시 저장되며 새로고침 시 사라질 수 있습니다.<br>
-          Google Sheets 연동 후 Apps Script에 <code>uploadPdfToDrive</code> 함수를 추가하면 Google Drive에 영구 저장됩니다.
+          ⚠️ Google Sheets 미연결. Drive 업로드 불가 — 로컬 메모리에만 임시 저장됩니다.
         </div>
         <div class="pdf-upload-area full" id="pdfDropZone">
           <label class="pdf-upload-label" for="pdfFileInput">
@@ -543,13 +553,19 @@ tbody td { padding: 9px 10px; vertical-align: top; }
           <label>연락처 / 이메일</label>
           <input type="text" id="w-contact" placeholder="예: john@company.com">
         </div>
-        <div class="form-group full">
+        <div class="form-group">
           <label>우선순위</label>
           <select id="w-prio">
             <option value="high">🔴 높음 (즉시)</option>
             <option value="med">🟠 보통</option>
             <option value="low">🟢 낮음 (날짜 확정)</option>
           </select>
+        </div>
+        <!-- ★ 메모 필드 추가 -->
+        <div class="form-group full">
+          <label>메모</label>
+          <textarea id="w-note" placeholder="추가 필요 물품 작성 요망" rows="3"></textarea>
+          <span class="date-hint">필요한 구성품, 특이사항 등을 작성하세요.</span>
         </div>
       </div>
     </div>
@@ -580,46 +596,29 @@ tbody td { padding: 9px 10px; vertical-align: top; }
             <li><span>표시된 <strong>웹 앱 URL</strong> 복사 → 아래에 붙여넣기</span></li>
           </ol>
         </div>
-        <!-- PDF Drive 저장 안내 -->
         <div style="background:#E8F4FD;border:1px solid #B3D4FF;border-radius:8px;padding:14px">
           <div style="font-weight:700;font-size:13px;margin-bottom:8px;color:#0052CC">📁 PDF Google Drive 저장 설정</div>
           <div style="font-size:12px;color:#172B4D;line-height:1.7">
-            PDF를 영구적으로 저장하려면 <code>Code.gs</code>에 아래 함수를 추가하세요.<br>
-            PDF가 Google Drive에 저장되고, 링크로 언제든 열람할 수 있습니다.
+            PDF를 영구적으로 저장하려면 <code>Code.gs</code>에 아래 함수를 추가하세요.
           </div>
           <details style="margin-top:10px">
             <summary style="font-size:12px;font-weight:700;color:#0052CC;cursor:pointer">Code.gs에 추가할 PDF 저장 코드 보기 ▼</summary>
-            <pre style="background:#fff;border:1px solid #DFE1E6;border-radius:4px;padding:12px;font-size:11px;overflow-x:auto;margin-top:8px;line-height:1.6">// PDF를 Google Drive에 저장하고 URL 반환
-function uploadPdfToDrive(base64Data, fileName) {
+            <pre style="background:#fff;border:1px solid #DFE1E6;border-radius:4px;padding:12px;font-size:11px;overflow-x:auto;margin-top:8px;line-height:1.6">function uploadPdfToDrive(base64Data, fileName) {
   try {
-    // base64 디코딩 (data:application/pdf;base64, 제거)
     var data = base64Data.replace(/^data:application\/pdf;base64,/, '');
     var blob = Utilities.newBlob(
-      Utilities.base64Decode(data),
-      'application/pdf',
-      fileName
-    );
-    // "Zivid PDFs" 폴더에 저장 (없으면 자동 생성)
+      Utilities.base64Decode(data), 'application/pdf', fileName);
     var folders = DriveApp.getFoldersByName('Zivid PDFs');
     var folder = folders.hasNext()
-      ? folders.next()
-      : DriveApp.createFolder('Zivid PDFs');
+      ? folders.next() : DriveApp.createFolder('Zivid PDFs');
     var file = folder.createFile(blob);
-    // 링크 공유 설정 (뷰어 접근 허용)
-    file.setSharing(
-      DriveApp.Access.ANYONE_WITH_LINK,
-      DriveApp.Permission.VIEW
-    );
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     return { id: file.getId(), url: file.getUrl(), name: fileName };
-  } catch(e) {
-    return { error: e.message };
-  }
+  } catch(e) { return { error: e.message }; }
 }
-
-// doPost에 uploadPdf 액션 추가 (기존 doPost 함수에 병합)
+// doPost case 추가:
 // case 'uploadPdf':
-//   var result = uploadPdfToDrive(data.base64, data.name);
-//   return jsonResponse(result);</pre>
+//   return jsonOut(uploadPdfToDrive(data.base64, data.name));</pre>
           </details>
         </div>
         <div>
@@ -705,44 +704,33 @@ const BADGE_COLORS = [
 ];
 
 // ════════════════════════════════════════════
-//  ★ 날짜 유틸리티
+//  ★ PDF 캐시 — 전역 메모리 (탭 세션 내 유지)
+//  key: uuid string → { name, dataUrl, size }
+//  카메라 객체의 pdfs 배열은 { name, cacheKey, isDrive, ... } 만 보유
+//  (base64 dataUrl을 카메라 객체에 넣지 않아 자동새로고침 덮어쓰기 방지)
 // ════════════════════════════════════════════
-/**
- * 어떤 형태의 날짜값이든 "YYYY-MM-DD" 만 반환.
- * ─────────────────────────────────────────────
- * "2026-03-30T12:34:56.000Z"  →  "2026-03-30"
- * "2026-03-30 00:00:00"       →  "2026-03-30"
- * "2026-03-30"                →  "2026-03-30"
- * "", null, undefined         →  ""
- *
- * ★ 주의: new Date(str).toISOString() 을 쓰면 UTC 변환 때문에
- *         한국(UTC+9) 에서 하루가 밀릴 수 있습니다.
- *         이 함수는 정규식 우선으로 UTC 변환을 완전히 피합니다.
- */
+const _pdfCache = {};
+
+function genCacheKey() {
+  return '_pdf_' + Math.random().toString(36).slice(2,9) + '_' + Date.now().toString(36);
+}
+
+// ════════════════════════════════════════════
+//  날짜 유틸리티
+// ════════════════════════════════════════════
 function cleanDate(d) {
   if (d === null || d === undefined || d === '') return '';
   const s = String(d).trim();
   if (!s) return '';
-
-  // ① YYYY-MM-DD (혹은 YYYY-MM-DDTHH:... 형태) 직접 추출 — 가장 안전
   const m1 = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (m1) return m1[1] + '-' + m1[2] + '-' + m1[3];
-
-  // ② YYYY/MM/DD 형태 (일부 로케일)
   const m2 = s.match(/^(\d{4})\/(\d{2})\/(\d{2})/);
   if (m2) return m2[1] + '-' + m2[2] + '-' + m2[3];
-
-  // ③ 그 외 — Date 객체로 파싱 후 로컬 기준으로 추출 (UTC 오프셋 피함)
   const dt = new Date(s);
   if (!isNaN(dt.getTime())) return localDateStr(dt);
-
-  return ''; // 파싱 불가
+  return '';
 }
 
-/**
- * Date 객체 → "YYYY-MM-DD" (로컬 시각 기준)
- * toISOString() 은 UTC 기준이라 한국에서 날짜가 -1 되는 버그 있음 → 사용 금지
- */
 function localDateStr(dt) {
   const y  = dt.getFullYear();
   const mo = String(dt.getMonth() + 1).padStart(2, '0');
@@ -750,7 +738,6 @@ function localDateStr(dt) {
   return y + '-' + mo + '-' + d;
 }
 
-/** "2026-03-30" → "Mar 30, 2026" 표시용 포맷 */
 function fd(d) {
   if (!d || d === '—') return '—';
   const clean = cleanDate(d);
@@ -761,10 +748,6 @@ function fd(d) {
   return months[parseInt(parts[2], 10) - 1] + ' ' + parseInt(parts[3], 10) + ', ' + parts[1];
 }
 
-/**
- * 오늘 날짜 "YYYY-MM-DD" — 로컬 기준 (UTC 오프셋 문제 없음)
- * ★ new Date().toISOString().slice(0,10) 을 절대 쓰지 말 것
- */
 function todayStr() {
   return localDateStr(new Date());
 }
@@ -779,7 +762,7 @@ let nextCamId   = 1;
 let nextWaitId  = 1;
 let editingId   = null;
 let editingWaitId = null;
-let pendingPdfs = [];
+let pendingPdfs = [];   // { name, cacheKey, size, isDrive }
 let viewFilter  = 'all';
 let nameFilter  = 'ALL';
 let calFilter   = 'ALL';
@@ -796,6 +779,7 @@ function setSyncStatus(status, label) {
   document.getElementById('syncDot').className = 'sync-dot ' + status;
   document.getElementById('syncLabel').textContent = label;
 }
+
 async function apiCall(action, data=null) {
   if (!SHEET_API_URL) return null;
   setSyncStatus('syncing','동기화 중...');
@@ -817,9 +801,7 @@ async function apiCall(action, data=null) {
   }
 }
 
-// ────────────────────────────────────────────
-// PDF → Google Drive 업로드 (Apps Script 지원 시)
-// ────────────────────────────────────────────
+// PDF → Google Drive 업로드
 async function uploadPdfToDriveApi(base64, name) {
   if (!SHEET_API_URL) return null;
   try {
@@ -835,6 +817,10 @@ async function uploadPdfToDriveApi(base64, name) {
   }
 }
 
+// ════════════════════════════════════════════
+//  LOAD FROM SHEET
+//  ★ 핵심: 자동새로고침 시 로컬 캐시 PDF 보존
+// ════════════════════════════════════════════
 async function loadFromSheet() {
   if (!SHEET_API_URL) return;
   showLoading(true);
@@ -843,6 +829,7 @@ async function loadFromSheet() {
   if (!result) return;
 
   const looksLikeColor = v => typeof v === 'string' && /^#([0-9a-f]{6})$/i.test(v);
+
   function normalizeCamera(raw) {
     const cam = { ...raw };
     if (looksLikeColor(cam.sn)) { const tmp=cam.sn; cam.sn=cam.color||''; cam.color=tmp; }
@@ -857,21 +844,35 @@ async function loadFromSheet() {
       sn: String(cam.sn||''),
       mn: String(cam.mn||''),
       location: String(cam.location||''),
-      // ★ cleanDate 적용 — 시간 제거
       lastUpdate: cleanDate(cam.lastUpdate),
       out: cleanDate(cam.out),
       inn: cleanDate(cam.inn),
       status: String(cam.status||'available'),
       note: String(cam.note||''),
       items: Array.isArray(cam.items)?cam.items:[],
-      pdfs: Array.isArray(cam.pdfs)?cam.pdfs:[],
+      // ★ Sheet에서 온 pdfs는 Drive PDF만 신뢰 (local cacheKey 기반 PDF는 아래서 병합)
+      pdfs: (Array.isArray(cam.pdfs)?cam.pdfs:[])
+              .filter(p => p && p.isDrive),  // Drive PDF만
     };
   }
 
+  const prevCameras = [...cameras]; // 기존 카메라 목록 보존 (캐시 PDF 참조용)
+
   if (result.cameras) {
-    cameras = result.cameras.map(normalizeCamera);
+    cameras = result.cameras.map(normalizeCamera).map(newCam => {
+      // ★ 기존 카메라에서 세션 캐시 PDF 복원
+      const existing = prevCameras.find(c => c.id === newCam.id);
+      if (existing) {
+        const cachedLocalPdfs = (existing.pdfs || []).filter(
+          p => !p.isDrive && p.cacheKey && _pdfCache[p.cacheKey]
+        );
+        newCam.pdfs = [...newCam.pdfs, ...cachedLocalPdfs];
+      }
+      return newCam;
+    });
     nextCamId = cameras.length ? Math.max(...cameras.map(c=>c.id))+1 : 1;
   }
+
   if (result.waiting) {
     waitingList = result.waiting.map(raw => ({
       id: Number(raw.id),
@@ -879,53 +880,46 @@ async function loadFromSheet() {
       company: String(raw.company||''),
       start: String(raw.start||''),
       returnPlan: String(raw.returnPlan||''),
-      eta: cleanDate(raw.eta), // ★ cleanDate 적용
+      eta: cleanDate(raw.eta),
       contact: String(raw.contact||''),
       prio: String(raw.prio||'med'),
+      note: String(raw.note||''),
     }));
     nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
   }
+
   if (result.history) loanHistory = result.history || {};
   saveLocal(); updateLiveTime(); renderAll();
-  showToast('구글 시트에서 데이터를 불러왔습니다.', 'success');
 }
 
+// ════════════════════════════════════════════
+//  LOCAL STORAGE  (PDF base64 저장 안 함)
+// ════════════════════════════════════════════
 function saveLocal() {
   try {
-    // ★ PDF base64(dataUrl)는 localStorage에 저장하지 않음 — 용량 초과 방지
-    // Drive 저장된 PDF(driveUrl 있음)만 저장
+    // ★ 로컬 PDF는 cacheKey 메타데이터만 저장 (base64 없음 → 용량 초과 없음)
     const camsForStorage = cameras.map(c => ({
       ...c,
       pdfs: (c.pdfs||[]).map(p => p.isDrive
-        ? p  // Drive PDF: URL만 저장 (가벼움)
-        : { name: p.name, isDrive: false, dataUrl: p.dataUrl, size: p.size } // 로컬 임시 PDF
+        ? p
+        : { name: p.name, cacheKey: p.cacheKey, size: p.size, isDrive: false }
       )
     }));
     localStorage.setItem('zivid_cameras',   JSON.stringify(camsForStorage));
     localStorage.setItem('zivid_waiting',   JSON.stringify(waitingList));
     localStorage.setItem('zivid_history',   JSON.stringify(loanHistory));
   } catch(e) {
-    if (e.name === 'QuotaExceededError') {
-      // PDF base64 제외하고 재시도
-      try {
-        const camsNoPdf = cameras.map(c => ({ ...c, pdfs: (c.pdfs||[]).filter(p=>p.isDrive) }));
-        localStorage.setItem('zivid_cameras', JSON.stringify(camsNoPdf));
-        localStorage.setItem('zivid_waiting', JSON.stringify(waitingList));
-        localStorage.setItem('zivid_history', JSON.stringify(loanHistory));
-        showToast('⚠ 로컬 PDF 용량 초과 — Drive 저장 PDF만 보존됩니다.', 'err');
-      } catch(e2) {}
-    }
+    console.warn('[Zivid] localStorage 저장 오류:', e.message);
   }
 }
+
 function loadLocal() {
   try {
     const c = localStorage.getItem('zivid_cameras');
     const w = localStorage.getItem('zivid_waiting');
     const h = localStorage.getItem('zivid_history');
     if (c) {
-      cameras = JSON.parse(c);
-      // ★ 날짜 정규화
-      cameras = cameras.map(cam => ({
+      cameras = JSON.parse(c).map(cam => ({
         ...cam,
         out: cleanDate(cam.out),
         inn: cleanDate(cam.inn),
@@ -934,8 +928,11 @@ function loadLocal() {
       nextCamId = cameras.length ? Math.max(...cameras.map(x=>x.id))+1 : 1;
     }
     if (w) {
-      waitingList = JSON.parse(w);
-      waitingList = waitingList.map(wt => ({ ...wt, eta: cleanDate(wt.eta) }));
+      waitingList = JSON.parse(w).map(wt => ({
+        ...wt,
+        eta: cleanDate(wt.eta),
+        note: wt.note||'',
+      }));
       nextWaitId = waitingList.length ? Math.max(...waitingList.map(x=>x.id))+1 : 1;
     }
     if (h) loanHistory = JSON.parse(h);
@@ -950,11 +947,14 @@ function updateLiveTime() {
   const el = document.getElementById('liveTimeLabel');
   if (el) el.textContent = `마지막 업데이트: ${hh}:${mm}:${ss}`;
 }
+
 async function manualRefresh() {
-  if (SHEET_API_URL) { await loadFromSheet(); }
+  if (SHEET_API_URL) { await loadFromSheet(); showToast('구글 시트에서 데이터를 불러왔습니다.','success'); }
   else { updateLiveTime(); renderAll(); showToast('재고 현황이 업데이트됐습니다.','info'); }
 }
-setInterval(()=>{ if(SHEET_API_URL) loadFromSheet(); }, 60000);
+
+// 60초 자동 새로고침 — 캐시 PDF 보존 로직이 loadFromSheet에 포함됨
+setInterval(() => { if(SHEET_API_URL) loadFromSheet(); }, 60000);
 
 function openSetupModal() {
   document.getElementById('sheetUrlInput').value = SHEET_API_URL;
@@ -980,7 +980,6 @@ async function saveSheetUrl() {
   SHEET_API_URL = url;
   localStorage.setItem('zivid_sheet_url', url);
   document.getElementById('setupBanner').classList.add('hidden');
-  // PDF 안내 업데이트
   updatePdfNotice();
   closeModal('setupModal');
   await loadFromSheet();
@@ -1001,10 +1000,10 @@ function updatePdfNotice() {
   if (!el) return;
   if (SHEET_API_URL) {
     el.className = 'pdf-drive-notice';
-    el.innerHTML = '✅ Google Sheets 연결됨. Apps Script에 <code>uploadPdfToDrive</code> 함수가 있으면 PDF가 Google Drive에 영구 저장됩니다. 없으면 브라우저에만 임시 저장됩니다.';
+    el.innerHTML = '✅ Google Sheets 연결됨. Apps Script에 <code>uploadPdfToDrive</code> 함수가 있으면 Google Drive에 영구 저장됩니다.';
   } else {
     el.className = 'pdf-drive-notice warn';
-    el.innerHTML = '⚠️ Google Sheets 미연결 상태입니다. PDF는 브라우저에 임시 저장되며 새로고침 시 사라질 수 있습니다. <strong>⚙ Google Sheets 설정</strong>에서 연결 후 Drive 저장을 활성화하세요.';
+    el.innerHTML = '⚠️ Google Sheets 미연결. Drive 업로드 불가 — 로컬 메모리에만 임시 저장됩니다.';
   }
 }
 
@@ -1065,7 +1064,7 @@ function getSelectedItems() {
 }
 
 // ════════════════════════════════════════════
-//  PDF HANDLING
+//  ★ PDF HANDLING — 캐시 기반
 // ════════════════════════════════════════════
 function initPdfUpload() {
   const input = document.getElementById('pdfFileInput');
@@ -1078,62 +1077,81 @@ function initPdfUpload() {
     handleFiles([...e.dataTransfer.files].filter(f=>f.type==='application/pdf'));
   });
 }
+
 function handleFiles(files) {
   files.forEach(file => {
-    if (file.type!=='application/pdf') { showToast('PDF 파일만 업로드 가능합니다.','err'); return; }
+    if (file.type !== 'application/pdf') { showToast('PDF 파일만 업로드 가능합니다.','err'); return; }
     const reader = new FileReader();
     reader.onload = e => {
-      pendingPdfs.push({ name: file.name, dataUrl: e.target.result, size: file.size, isDrive: false });
+      // ★ base64 데이터는 _pdfCache에 보관, pendingPdfs에는 cacheKey만
+      const cacheKey = genCacheKey();
+      _pdfCache[cacheKey] = { name: file.name, dataUrl: e.target.result, size: file.size };
+      pendingPdfs.push({ name: file.name, cacheKey, size: file.size, isDrive: false });
       renderPendingPdfs();
+      showToast('PDF가 메모리에 로드됐습니다. 저장 버튼을 눌러 반영하세요.', 'info');
     };
     reader.readAsDataURL(file);
   });
 }
+
 function renderPendingPdfs() {
-  document.getElementById('pendingPdfs').innerHTML = pendingPdfs.map((p,i)=>
-    `<div class="pending-pdf-item">
+  document.getElementById('pendingPdfs').innerHTML = pendingPdfs.map((p,i) => {
+    const sizeStr = p.isDrive ? '☁ Drive 저장됨' : fmtSize(_pdfCache[p.cacheKey]?.size || p.size || 0);
+    return `<div class="pending-pdf-item">
       <span class="pdf-icon">📄</span>
       <span class="pdf-fname">${p.name}</span>
-      <span class="pdf-size">${p.isDrive ? '☁ Drive 저장됨' : fmtSize(p.size)}</span>
+      <span class="pdf-size">${sizeStr}</span>
       <button class="pdf-rm" onclick="removePending(${i})">✕</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
-function removePending(i) { pendingPdfs.splice(i,1); renderPendingPdfs(); }
+function removePending(i) {
+  const p = pendingPdfs[i];
+  if (p && p.cacheKey) delete _pdfCache[p.cacheKey];
+  pendingPdfs.splice(i, 1);
+  renderPendingPdfs();
+}
 function fmtSize(b) { if(!b)return''; if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
 
+// ★ PDF 열기 — cacheKey 우선, driveUrl 차선
 function openPdf(camId, pi) {
   const cam = cameras.find(c=>c.id===camId); if(!cam||!cam.pdfs[pi]) return;
   const pdf = cam.pdfs[pi];
-
-  document.getElementById('pdfViewerTitle').textContent = pdf.name;
   const linkEl = document.getElementById('pdfViewerOpenLink');
 
+  document.getElementById('pdfViewerTitle').textContent = pdf.name;
+
   if (pdf.isDrive && pdf.driveUrl) {
-    // Drive PDF: 새 탭으로 열기
     linkEl.href = pdf.driveUrl;
     linkEl.style.display = 'flex';
-    // iframe에 Drive 미리보기 URL 삽입
     const previewUrl = `https://drive.google.com/file/d/${pdf.driveId}/preview`;
     document.getElementById('pdfViewerFrame').src = previewUrl;
-  } else if (pdf.dataUrl) {
-    // 로컬 base64 PDF
+  } else if (pdf.cacheKey && _pdfCache[pdf.cacheKey]) {
+    // ★ 세션 캐시에서 불러오기
     linkEl.style.display = 'none';
-    document.getElementById('pdfViewerFrame').src = pdf.dataUrl;
+    document.getElementById('pdfViewerFrame').src = _pdfCache[pdf.cacheKey].dataUrl;
   } else {
-    showToast('파일 데이터가 없습니다.','err'); return;
+    // 캐시 없음 (탭 재시작 등)
+    showToast('⚠ 로컬 PDF가 캐시에 없습니다. 새로고침 또는 탭 재시작 시 사라집니다.', 'err');
+    return;
   }
   document.getElementById('pdfViewer').classList.remove('hidden');
 }
+
 function closePdfViewer() {
   document.getElementById('pdfViewer').classList.add('hidden');
   document.getElementById('pdfViewerFrame').src = '';
 }
+
 async function deletePdf(camId, pi) {
   const cam = cameras.find(c=>c.id===camId); if(!cam) return;
   const pdf = cam.pdfs[pi];
-  // Drive 파일 삭제도 지원 (Apps Script에 deletePdf 액션 있는 경우)
   if (pdf && pdf.isDrive && pdf.driveId) {
     await apiCall('deletePdf', { driveId: pdf.driveId });
+  }
+  // 로컬 캐시 정리
+  if (pdf && pdf.cacheKey && _pdfCache[pdf.cacheKey]) {
+    delete _pdfCache[pdf.cacheKey];
   }
   cam.pdfs.splice(pi, 1);
   await apiCall('saveCamera', cam);
@@ -1185,13 +1203,25 @@ function renderInventory(){
           return`<div class="item-tag ${def.special?'special':''}"><span class="itick">✓</span>${idx}. ${def.label}</div>`;
         }).join('')}</div>`
       :`<span style="color:#B3BAC5;font-size:12px">—</span>`;
+
+    // ★ PDF 칩 — cached(세션 유지) / drive / nocache(접근 불가) 구분
     const pdfsHtml=(c.pdfs&&c.pdfs.length)
-      ?`<div class="pdf-list">${c.pdfs.map((p,pi)=>
-          `<div class="pdf-chip ${p.isDrive?'drive':'local'}" onclick="openPdf(${c.id},${pi})">
-            <span class="pdf-icon">${p.isDrive?'☁️':'📄'}</span>
+      ?`<div class="pdf-list">${c.pdfs.map((p,pi)=>{
+          let chipClass, icon;
+          if (p.isDrive) {
+            chipClass='drive'; icon='☁️';
+          } else if (p.cacheKey && _pdfCache[p.cacheKey]) {
+            chipClass='cached'; icon='💜';
+          } else {
+            chipClass='nocache'; icon='📄';
+          }
+          const clickable = p.isDrive || (p.cacheKey && _pdfCache[p.cacheKey]);
+          return`<div class="pdf-chip ${chipClass}" ${clickable?`onclick="openPdf(${c.id},${pi})"`:''} title="${chipClass==='nocache'?'세션 종료로 캐시 없음':'클릭하여 보기'}">
+            <span class="pdf-icon">${icon}</span>
             <span class="pdf-name">${p.name}</span>
             <span class="pdf-del" onclick="event.stopPropagation();deletePdf(${c.id},${pi})">✕</span>
-          </div>`).join('')}</div>`:'';
+          </div>`;
+        }).join('')}</div>`:'';
     return`<tr class="${c.status==='returned'?'returned-row':''}">
       <td class="num-cell vmid">${i+1}</td>
       <td class="name-cell vmid">${nameHtml}</td>
@@ -1218,7 +1248,7 @@ function renderInventory(){
 // ════════════════════════════════════════════
 async function markReturned(id){
   const c=cameras.find(x=>x.id===id); if(!c)return;
-  const today = todayStr(); // ★ 시간 없이 날짜만
+  const today = todayStr();
   addHistoryEntry(c.id,{type:'returned',date:today,outDate:c.out||'',company:c.location||'',note:c.note||''});
   c.status='returned'; c.inn=today; c.lastUpdate=today; c.location='Zivid Oslo';
   await apiCall('saveCamera',c);
@@ -1230,11 +1260,11 @@ function addHistoryEntry(camId, entry) {
 }
 
 // ════════════════════════════════════════════
-//  RENDER WAITING
+//  RENDER WAITING  ★ 메모 컬럼 추가
 // ════════════════════════════════════════════
 function renderWaiting(){
   const tbody=document.getElementById('waitingBody');
-  if(!waitingList.length){tbody.innerHTML=`<tr><td colspan="7" class="empty-td">대기 없음</td></tr>`;return;}
+  if(!waitingList.length){tbody.innerHTML=`<tr><td colspan="8" class="empty-td">대기 없음</td></tr>`;return;}
   const pi={high:'🔴',med:'🟠',low:'🟢'};
   const today=new Date(); today.setHours(0,0,0,0);
 
@@ -1245,7 +1275,7 @@ function renderWaiting(){
       :`<span class="avail-match none">대기 중</span>`;
     const isMatched=availCams.length>0;
 
-    const etaClean = cleanDate(w.eta); // ★ 시간 제거
+    const etaClean = cleanDate(w.eta);
     let etaText='날짜 미정';
     let etaClass='eta-tag';
     if(etaClean){
@@ -1270,6 +1300,14 @@ function renderWaiting(){
         </div>
       </div>`;
 
+    // ★ 메모 표시 — 기본 안내문구면 주황색 italic
+    const DEFAULT_NOTE = '추가 필요 물품 작성 요망';
+    const noteHtml = w.note
+      ? (w.note === DEFAULT_NOTE
+          ? `<span class="wait-note-default">✏ ${w.note}</span>`
+          : `<div class="wait-note-text">${w.note}</div>`)
+      : `<span class="wait-note-default" style="opacity:.5">—</span>`;
+
     return`<tr class="${isMatched?'wait-row-matched':''}">
       <td><span class="pill pill-blue">${w.mn}</span></td>
       <td>${pi[w.prio]||'🟠'} <strong>${w.company}</strong>${w.contact?`<br><span style="font-size:11px;color:#97A0AF">${w.contact}</span>`:''}</td>
@@ -1277,6 +1315,7 @@ function renderWaiting(){
       <td style="font-size:12px">${w.returnPlan||'미정'}</td>
       <td>${etaCellHtml}</td>
       <td>${availBadge}</td>
+      <td class="wait-note-cell">${noteHtml}</td>
       <td>
         <div style="display:flex;gap:4px">
           <button class="btn btn-edit btn-sm" onclick="openEditWaitModal(${w.id})" title="수정">✏️</button>
@@ -1298,7 +1337,7 @@ function hideEtaInput(id){
 }
 async function saveEta(id){
   const w=waitingList.find(x=>x.id===id); if(!w)return;
-  w.eta = cleanDate(document.getElementById('eta-input-'+id).value); // ★ cleanDate
+  w.eta = cleanDate(document.getElementById('eta-input-'+id).value);
   await apiCall('saveWaiting',w);
   saveLocal(); hideEtaInput(id); renderWaiting();
   showToast('예상 배송일이 업데이트됐습니다.','success');
@@ -1363,9 +1402,9 @@ function openEditModal(id){
   document.getElementById('f-sn').value=c.sn;
   document.getElementById('f-mn').value=c.mn;
   document.getElementById('f-location').value=c.location;
-  document.getElementById('f-out').value=cleanDate(c.out);        // ★ cleanDate
-  document.getElementById('f-in').value=cleanDate(c.inn);         // ★ cleanDate
-  document.getElementById('f-lastupdate').value=cleanDate(c.lastUpdate); // ★ cleanDate
+  document.getElementById('f-out').value=cleanDate(c.out);
+  document.getElementById('f-in').value=cleanDate(c.inn);
+  document.getElementById('f-lastupdate').value=cleanDate(c.lastUpdate);
   document.getElementById('f-status').value=c.status;
   document.getElementById('f-note').value=c.note||'';
   buildItemsGrid(c.items||[]); buildColorPicker(c.color||BADGE_COLORS[0]);
@@ -1385,23 +1424,24 @@ async function saveCamera(){
   });
   if(!ok){showToast('필수 항목을 입력해주세요.','err');return;}
 
-  // ★ cleanDate로 시간 제거
   const formOut        = cleanDate(document.getElementById('f-out').value);
   const formInn        = cleanDate(document.getElementById('f-in').value);
   const formLastUpdate = cleanDate(document.getElementById('f-lastupdate').value);
 
-  // ★ pendingPdfs를 Drive에 업로드 시도 (Apps Script 지원 시)
+  // ★ pendingPdfs: Drive 업로드 시도, 실패 시 cacheKey만 보관 (base64는 _pdfCache에)
   let finalPdfs = [];
   for (const p of pendingPdfs) {
-    if (SHEET_API_URL && p.dataUrl) {
-      const driveResult = await uploadPdfToDriveApi(p.dataUrl, p.name);
+    if (SHEET_API_URL && p.cacheKey && _pdfCache[p.cacheKey]) {
+      const driveResult = await uploadPdfToDriveApi(_pdfCache[p.cacheKey].dataUrl, p.name);
       if (driveResult) {
-        finalPdfs.push(driveResult); // Drive 저장 성공
+        // Drive 저장 성공 → 캐시 정리
+        delete _pdfCache[p.cacheKey];
+        finalPdfs.push(driveResult);
         continue;
       }
     }
-    // Drive 업로드 실패 또는 미연결 → base64 로컬 저장
-    finalPdfs.push(p);
+    // Drive 실패 또는 미연결 → 로컬 캐시 참조만 저장
+    finalPdfs.push({ name: p.name, cacheKey: p.cacheKey, size: p.size, isDrive: false });
   }
 
   const prev = editingId ? cameras.find(x=>x.id===editingId) : null;
@@ -1421,7 +1461,9 @@ async function saveCamera(){
       addHistoryEntry(editingId,{type:'out',date:data.out||todayStr(),company:data.location,note:data.note});
     }
     cameras[idx]={...cameras[idx],...data, pdfs:[...(cameras[idx].pdfs||[]),...finalPdfs]};
-    await apiCall('saveCamera',cameras[idx]);
+    // Sheets에는 Drive PDF만 전송 (로컬 캐시 PDF는 전송 안 함)
+    const camForApi = { ...cameras[idx], pdfs: cameras[idx].pdfs.filter(p=>p.isDrive) };
+    await apiCall('saveCamera', camForApi);
     showToast('수정됐습니다.','success');
   } else {
     const newCam={id:nextCamId++,...data,pdfs:[...finalPdfs]};
@@ -1429,7 +1471,8 @@ async function saveCamera(){
     if(data.status==='out'){
       addHistoryEntry(newCam.id,{type:'out',date:data.out||todayStr(),company:data.location,note:data.note});
     }
-    await apiCall('saveCamera',newCam);
+    const camForApi = { ...newCam, pdfs: newCam.pdfs.filter(p=>p.isDrive) };
+    await apiCall('saveCamera', camForApi);
     showToast('카메라가 추가됐습니다.','success');
   }
   saveLocal(); pendingPdfs=[]; closeModal('cameraModal'); renderAll();
@@ -1437,19 +1480,28 @@ async function saveCamera(){
 
 async function deleteCamera(id){
   if(!confirm('삭제하시겠습니까?'))return;
+  // 해당 카메라의 로컬 캐시 정리
+  const cam = cameras.find(c=>c.id===id);
+  if (cam) {
+    (cam.pdfs||[]).forEach(p => { if(p.cacheKey && _pdfCache[p.cacheKey]) delete _pdfCache[p.cacheKey]; });
+  }
   cameras=cameras.filter(c=>c.id!==id);
   await apiCall('deleteCamera',{id});
   saveLocal(); showToast('삭제됐습니다.','success'); renderAll();
 }
 
 // ════════════════════════════════════════════
-//  MODAL - WAITING
+//  MODAL - WAITING  ★ 메모 필드 추가
 // ════════════════════════════════════════════
+const DEFAULT_WAIT_NOTE = '추가 필요 물품 작성 요망';
+
 function openWaitModal(){
   editingWaitId = null;
   document.getElementById('waitModalTitle').textContent = '대여 대기 목록 추가';
   ['w-mn','w-company','w-start','w-return','w-eta','w-contact'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('w-prio').value='high';
+  // ★ 신규 추가 시 기본 메모 자동 입력
+  document.getElementById('w-note').value = DEFAULT_WAIT_NOTE;
   refreshDatalist();
   document.getElementById('waitModal').classList.remove('hidden');
 }
@@ -1461,9 +1513,10 @@ function openEditWaitModal(id){
   document.getElementById('w-company').value = w.company||'';
   document.getElementById('w-start').value   = w.start||'';
   document.getElementById('w-return').value  = w.returnPlan||'';
-  document.getElementById('w-eta').value     = cleanDate(w.eta)||''; // ★ cleanDate
+  document.getElementById('w-eta').value     = cleanDate(w.eta)||'';
   document.getElementById('w-contact').value = w.contact||'';
   document.getElementById('w-prio').value    = w.prio||'med';
+  document.getElementById('w-note').value    = w.note||'';
   refreshDatalist();
   document.getElementById('waitModal').classList.remove('hidden');
 }
@@ -1472,7 +1525,8 @@ async function saveWaiting(){
   const company = document.getElementById('w-company').value.trim();
   if(!mn||!company){showToast('모델과 회사명은 필수입니다.','err');return;}
 
-  const etaVal = cleanDate(document.getElementById('w-eta').value); // ★ cleanDate
+  const etaVal  = cleanDate(document.getElementById('w-eta').value);
+  const noteVal = document.getElementById('w-note').value.trim();
 
   if(editingWaitId){
     const idx=waitingList.findIndex(x=>x.id===editingWaitId);
@@ -1483,6 +1537,7 @@ async function saveWaiting(){
       eta:        etaVal,
       contact:    document.getElementById('w-contact').value.trim()||'',
       prio:       document.getElementById('w-prio').value,
+      note:       noteVal,
     };
     await apiCall('saveWaiting', waitingList[idx]);
     showToast('대기 목록이 수정됐습니다.','success');
@@ -1494,6 +1549,7 @@ async function saveWaiting(){
       eta:        etaVal,
       contact:    document.getElementById('w-contact').value.trim()||'',
       prio:       document.getElementById('w-prio').value,
+      note:       noteVal,
     };
     waitingList.push(item);
     await apiCall('saveWaiting',item);
@@ -1546,7 +1602,6 @@ function renderCalendar(){
     .filter(c=>c.out&&(calFilter==='ALL'||String(c.id)===calFilter))
     .map(c=>({
       id:c.id,sn:c.sn,mn:c.mn,label:c.name||c.sn,color:c.color||null,
-      // ★ cleanDate 적용
       start: new Date(cleanDate(c.out)),
       end:   c.inn ? new Date(cleanDate(c.inn)) : null,
       type:  c.status==='returned'?'returned':c.status==='overdue'?'overdue':'loan',
