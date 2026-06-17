@@ -451,7 +451,7 @@ Versioning follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.P
 
 | Version | Date | Summary |
 |---|---|---|
-| **1.2.0** | 2026-06-17 | Cable inventory & standalone cable loans |
+| **2.0.0** | 2026-06-17 | Cable inventory & standalone cable loans |
 | **1.1.0** | 2026-03-31 | PDF → Google Drive saving, date-format hardening, waiting-list notes |
 | **1.0.0** | 2026-03-17 | First documented release |
 
