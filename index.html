@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zivid 카메라 대여 관리</title>
+<title>카메라 대여 관리</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; color: #172B4D; background: #F4F5F7; }
@@ -291,7 +291,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 </div>
 
 <div class="topbar">
-  <div class="topbar-title">📷 Zivid <span>카메라 대여 관리 시스템</span></div>
+  <div class="topbar-title">📷 <span>카메라 대여 관리 시스템</span></div>
   <div class="topbar-right">
     <div class="sync-status">
       <div class="sync-dot" id="syncDot"></div>
@@ -479,7 +479,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
         </div>
         <div class="form-group">
           <label>Current Location <span class="req">*</span></label>
-          <input type="text" id="f-location" placeholder="예: Zivid Oslo">
+          <input type="text" id="f-location" placeholder="예: Oslo">
         </div>
         <div class="fsec">📦 구성품 포함 여부 (복수 선택)</div>
         <div class="items-grid" id="itemsGrid"></div>
@@ -675,9 +675,9 @@ tbody td { padding: 9px 10px; vertical-align: top; }
     var data = base64Data.replace(/^data:application\/pdf;base64,/, '');
     var blob = Utilities.newBlob(
       Utilities.base64Decode(data), 'application/pdf', fileName);
-    var folders = DriveApp.getFoldersByName('Zivid PDFs');
+    var folders = DriveApp.getFoldersByName('Camera Loan PDFs');
     var folder = folders.hasNext()
-      ? folders.next() : DriveApp.createFolder('Zivid PDFs');
+      ? folders.next() : DriveApp.createFolder('Camera Loan PDFs');
     var file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     return { id: file.getId(), url: file.getUrl(), name: fileName };
@@ -745,8 +745,8 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 // ════════════════════════════════════════════
 const ITEMS = [
   { id:'camera_body',       label:'Camera Body',                        special:false },
-  { id:'psu_z2',            label:'PSU (External AC-DC) Zivid 2/2+',   special:false },
-  { id:'psu_z3',            label:'PSU (External AC-DC) Zivid 3',      special:false },
+  { id:'psu_z2',            label:'PSU (External AC-DC) 2/2+',        special:false },
+  { id:'psu_z3',            label:'PSU (External AC-DC) 3',              special:false },
   { id:'pwr_ext_5m',        label:'Power Extension 5m',                 special:false },
   { id:'pwr_ext_10m',       label:'Power Extension 10m',                special:false },
   { id:'pwr_ext_20m',       label:'Power Extension 20m',                special:false },
@@ -760,7 +760,7 @@ const ITEMS = [
   { id:'tripod_mount',      label:'Tripod mount',                       special:false },
   { id:'robot_mount',       label:'Robot mount',                        special:false },
   { id:'stationary_mount',  label:'Stationary mount',                   special:false },
-  { id:'data_cable_one',    label:'Data cable - Zivid One+',            special:false },
+  { id:'data_cable_one',    label:'Data cable - One+',                 special:false },
   { id:'check_note',        label:'Need to check Note or Files',        special:true  },
 ];
 
@@ -876,7 +876,7 @@ async function apiCall(action, data=null) {
     return json;
   } catch(e) {
     setSyncStatus('error','동기화 오류: '+e.message);
-    console.error('[Zivid] API 오류', action, e.message);
+    console.error('[LoanPool] API 오류', action, e.message);
     return null;
   }
 }
@@ -1009,7 +1009,7 @@ function saveLocal() {
     localStorage.setItem('zivid_cableTotals',JSON.stringify(cableTotals));
     localStorage.setItem('zivid_history',   JSON.stringify(loanHistory));
   } catch(e) {
-    console.warn('[Zivid] localStorage 저장 오류:', e.message);
+    console.warn('[LoanPool] localStorage 저장 오류:', e.message);
   }
 }
 
@@ -1371,7 +1371,7 @@ async function markReturned(id){
   const c=cameras.find(x=>x.id===id); if(!c)return;
   const today = todayStr();
   addHistoryEntry(c.id,{type:'returned',date:today,outDate:c.out||'',company:c.location||'',note:c.note||''});
-  c.status='returned'; c.inn=today; c.lastUpdate=today; c.location='Zivid Oslo';
+  c.status='returned'; c.inn=today; c.lastUpdate=today; c.location='Oslo';
   await apiCall('saveCamera',c);
   saveLocal(); showToast('반납 완료 처리됐습니다.','success'); renderAll();
 }
