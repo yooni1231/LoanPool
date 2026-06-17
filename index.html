@@ -834,12 +834,12 @@ function todayStr() {
 // ════════════════════════════════════════════
 let cameras     = [];
 let waitingList = [];
-let cableLoans  = [];   // { id, sku, qty, borrower, out, due, returned, note }
-let loanHistory = {};
+let cableLoans  = [];   // { id, sku, qty, borrower, out, due, returned, note }let loanHistory = {};
 let nextCamId   = 1;
 let nextWaitId  = 1;
 let nextCableLoanId = 1;
 let editingCableLoanId = null;
+let cableTotals = {};   // { sku: total } — CABLE_STOCK 기본값을 덮어쓰는 사용자 지정 재고
 let editingId   = null;
 let editingWaitId = null;
 let pendingPdfs = [];   // { name, cacheKey, size, isDrive }
@@ -982,6 +982,10 @@ async function loadFromSheet() {
     nextCableLoanId = cableLoans.length ? Math.max(...cableLoans.map(c=>c.id))+1 : 1;
   }
 
+  if (result.cableTotals && typeof result.cableTotals === 'object') {
+    cableTotals = result.cableTotals;
+  }
+
   if (result.history) loanHistory = result.history || {};
   saveLocal(); updateLiveTime(); renderAll();
 }
@@ -1002,6 +1006,7 @@ function saveLocal() {
     localStorage.setItem('zivid_cameras',   JSON.stringify(camsForStorage));
     localStorage.setItem('zivid_waiting',   JSON.stringify(waitingList));
     localStorage.setItem('zivid_cableLoans',JSON.stringify(cableLoans));
+    localStorage.setItem('zivid_cableTotals',JSON.stringify(cableTotals));
     localStorage.setItem('zivid_history',   JSON.stringify(loanHistory));
   } catch(e) {
     console.warn('[Zivid] localStorage 저장 오류:', e.message);
@@ -1013,6 +1018,7 @@ function loadLocal() {
     const c = localStorage.getItem('zivid_cameras');
     const w = localStorage.getItem('zivid_waiting');
     const cb = localStorage.getItem('zivid_cableLoans');
+    const ct = localStorage.getItem('zivid_cableTotals');
     const h = localStorage.getItem('zivid_history');
     if (c) {
       cameras = JSON.parse(c).map(cam => ({
@@ -1041,6 +1047,7 @@ function loadLocal() {
       }));
       nextCableLoanId = cableLoans.length ? Math.max(...cableLoans.map(x=>x.id))+1 : 1;
     }
+    if (ct) { try { cableTotals = JSON.parse(ct) || {}; } catch(e) { cableTotals = {}; } }
     if (h) loanHistory = JSON.parse(h);
   } catch(e) {}
 }
@@ -1814,9 +1821,22 @@ function cableOutByLoan(sku){
     .filter(l => l.sku===sku && !l.returned)
     .reduce((s,l)=> s + (Number(l.qty)||0), 0);
 }
+function getCableTotal(sku){
+  const def = CABLE_STOCK.find(s=>s.id===sku);
+  const override = cableTotals[sku];
+  if (override !== undefined && override !== null && override !== '') return Math.max(0, Number(override)||0);
+  return def ? def.total : 0;
+}
+async function saveCableTotal(sku, val){
+  let n = parseInt(val, 10);
+  if (isNaN(n) || n < 0) n = 0;
+  cableTotals[sku] = n;
+  saveLocal();
+  await apiCall('saveCableTotal', { sku, total: n });
+  renderAll();
+}
 function cableStat(sku){
-  const def   = CABLE_STOCK.find(s=>s.id===sku);
-  const total = def ? def.total : 0;
+  const total = getCableTotal(sku);
   const viaCam  = cableOutByCamera(sku);
   const viaLoan = cableOutByLoan(sku);
   const out = viaCam + viaLoan;
@@ -1831,7 +1851,11 @@ function renderCableStock(){
     const availCls = st.over ? 'pill-red' : (st.avail>0 ? 'pill-green' : 'pill-grey');
     return `<tr>
       <td><span class="pill pill-grey">${s.label}</span></td>
-      <td>${st.total}</td>
+      <td><input type="number" min="0" value="${st.total}"
+            onchange="saveCableTotal('${s.id}', this.value)"
+            onclick="this.select()"
+            style="width:60px;padding:3px 6px;border:1px solid #DFE1E6;border-radius:4px;font-family:inherit;font-size:13px;text-align:center"
+            title="총 재고 수정"></td>
       <td>${st.viaCam||'—'}</td>
       <td>${st.viaLoan||'—'}</td>
       <td><span class="pill ${st.out>0?'pill-orange':''}">${st.out}</span></td>
