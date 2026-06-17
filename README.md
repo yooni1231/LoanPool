@@ -1,6 +1,6 @@
 # 📷Camera Loan Management System
 
-**Version 1.2.0** · Last updated 2026-06-17 · [Version History](#version-history)
+**Version 2.0.0** · Last updated 2026-06-17 · [Version History](#version-history)
 
 A web-based camera inventory and loan tracking system for managing 3D cameras. Built with a single HTML file for the frontend and Google Apps Script as the backend, with Google Sheets as the database.
 
@@ -457,7 +457,7 @@ Versioning follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.P
 
 ---
 
-### 1.2.0 — 2026-06-17
+### 2.0.0 — 2026-06-17
 
 **Cable inventory management.**
 
@@ -467,7 +467,7 @@ Versioning follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.P
 - Cable availability is **auto-computed** from cameras that are out/overdue (via their `items`) plus open standalone loans — bundling a cable with a camera deducts stock with no double entry
 - Camera modal checklist now shows a live `가용 N/총 M` badge next to tracked cables
 - Renamed the inventory section to **카메라 / 케이블 재고 현황**
-- Cleaned up accessory labels (`Zivid 2/2+`, `Zivid 3`, `Zivid One+`)
+- Cleaned up accessory labels 
 
 **Backend (`Code.gs`):**
 
