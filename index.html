@@ -324,7 +324,7 @@ tbody td { padding: 9px 10px; vertical-align: top; }
 
   <div class="card">
     <div class="section-h">
-      <span>📦 카메라 재고 현황</span>
+      <span>📦 카메라 / 케이블 재고 현황</span>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <div class="tab-row">
           <button class="tab-btn active" onclick="setViewFilter('all',this)">전체</button>
@@ -397,6 +397,30 @@ tbody td { padding: 9px 10px; vertical-align: top; }
           <tbody id="modelBody"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-h">
+      <span>🧵 케이블 재고 현황</span>
+      <button class="btn btn-primary btn-sm" onclick="openCableLoanModal()">＋ 케이블 단독 대여</button>
+    </div>
+    <div class="tbl-wrap">
+      <table style="min-width:unset;width:100%">
+        <thead><tr>
+          <th>케이블</th><th>총 재고</th><th>카메라 동반</th><th>단독 대여</th><th>대여 중</th><th>가용</th>
+        </tr></thead>
+        <tbody id="cableStockBody"></tbody>
+      </table>
+    </div>
+    <div class="section-h" style="margin-top:18px"><span>📤 케이블 단독 대여 현황</span></div>
+    <div class="tbl-wrap">
+      <table style="min-width:unset;width:100%">
+        <thead><tr>
+          <th>케이블</th><th>수량</th><th>대여처</th><th>Out</th><th>반납 예정</th><th>메모</th><th>관리</th>
+        </tr></thead>
+        <tbody id="cableLoanBody"></tbody>
+      </table>
     </div>
   </div>
 
@@ -576,6 +600,49 @@ tbody td { padding: 9px 10px; vertical-align: top; }
   </div>
 </div>
 
+<!-- ══ CABLE LOAN MODAL ══ -->
+<div class="modal-overlay hidden" id="cableModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="cableModalTitle">케이블 단독 대여</h3>
+      <button class="modal-close" onclick="closeModal('cableModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>케이블 종류 <span class="req">*</span></label>
+          <select id="cb-sku" onchange="updateCableAvailHint()"></select>
+        </div>
+        <div class="form-group">
+          <label>수량 <span class="req">*</span></label>
+          <input type="number" id="cb-qty" min="1" value="1">
+          <span class="date-hint" id="cb-avail-hint"></span>
+        </div>
+        <div class="form-group">
+          <label>대여처 (회사 / 담당자) <span class="req">*</span></label>
+          <input type="text" id="cb-borrower" placeholder="예: Kawasaki Robotics">
+        </div>
+        <div class="form-group">
+          <label>Out (대여 시작일)</label>
+          <input type="date" id="cb-out">
+        </div>
+        <div class="form-group">
+          <label>반납 예정일</label>
+          <input type="date" id="cb-due">
+        </div>
+        <div class="form-group full">
+          <label>메모</label>
+          <textarea id="cb-note" rows="2" placeholder="특이사항"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-edit" onclick="closeModal('cableModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveCableLoan()">저장</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ SETUP MODAL ══ -->
 <div class="modal-overlay hidden" id="setupModal">
   <div class="modal" style="max-width:560px">
@@ -697,6 +764,16 @@ const ITEMS = [
   { id:'check_note',        label:'Need to check Note or Files',        special:true  },
 ];
 
+// ── 케이블 재고 (id는 위 ITEMS와 동일하게 재사용 → 카메라 대여 시 자동 차감) ──
+const CABLE_STOCK = [
+  { id:'pwr_ext_5m',   label:'Power 5m',     total:4 },
+  { id:'pwr_ext_10m',  label:'Power 10m',    total:1 },
+  { id:'pwr_ext_20m',  label:'Power 20m',    total:1 },
+  { id:'eth_cable_5m', label:'Ethernet 5m',  total:4 },
+  { id:'eth_cable_10m',label:'Ethernet 10m', total:1 },
+  { id:'eth_cable_25m',label:'Ethernet 25m', total:1 },
+];
+
 const BADGE_COLORS = [
   '#0052CC','#00875A','#DE350B','#6554C0',
   '#FF8B00','#008DA6','#403294','#BF2600',
@@ -757,9 +834,12 @@ function todayStr() {
 // ════════════════════════════════════════════
 let cameras     = [];
 let waitingList = [];
+let cableLoans  = [];   // { id, sku, qty, borrower, out, due, returned, note }
 let loanHistory = {};
 let nextCamId   = 1;
 let nextWaitId  = 1;
+let nextCableLoanId = 1;
+let editingCableLoanId = null;
 let editingId   = null;
 let editingWaitId = null;
 let pendingPdfs = [];   // { name, cacheKey, size, isDrive }
@@ -888,6 +968,20 @@ async function loadFromSheet() {
     nextWaitId = waitingList.length ? Math.max(...waitingList.map(w=>w.id))+1 : 1;
   }
 
+  if (result.cables) {
+    cableLoans = result.cables.map(raw => ({
+      id: Number(raw.id),
+      sku: String(raw.sku||''),
+      qty: Number(raw.qty)||1,
+      borrower: String(raw.borrower||''),
+      out: cleanDate(raw.out),
+      due: cleanDate(raw.due),
+      returned: raw.returned ? cleanDate(raw.returned) : '',
+      note: String(raw.note||''),
+    }));
+    nextCableLoanId = cableLoans.length ? Math.max(...cableLoans.map(c=>c.id))+1 : 1;
+  }
+
   if (result.history) loanHistory = result.history || {};
   saveLocal(); updateLiveTime(); renderAll();
 }
@@ -907,6 +1001,7 @@ function saveLocal() {
     }));
     localStorage.setItem('zivid_cameras',   JSON.stringify(camsForStorage));
     localStorage.setItem('zivid_waiting',   JSON.stringify(waitingList));
+    localStorage.setItem('zivid_cableLoans',JSON.stringify(cableLoans));
     localStorage.setItem('zivid_history',   JSON.stringify(loanHistory));
   } catch(e) {
     console.warn('[Zivid] localStorage 저장 오류:', e.message);
@@ -917,6 +1012,7 @@ function loadLocal() {
   try {
     const c = localStorage.getItem('zivid_cameras');
     const w = localStorage.getItem('zivid_waiting');
+    const cb = localStorage.getItem('zivid_cableLoans');
     const h = localStorage.getItem('zivid_history');
     if (c) {
       cameras = JSON.parse(c).map(cam => ({
@@ -934,6 +1030,16 @@ function loadLocal() {
         note: wt.note||'',
       }));
       nextWaitId = waitingList.length ? Math.max(...waitingList.map(x=>x.id))+1 : 1;
+    }
+    if (cb) {
+      cableLoans = JSON.parse(cb).map(l => ({
+        ...l,
+        out: cleanDate(l.out),
+        due: cleanDate(l.due),
+        returned: l.returned ? cleanDate(l.returned) : '',
+        qty: Number(l.qty)||1,
+      }));
+      nextCableLoanId = cableLoans.length ? Math.max(...cableLoans.map(x=>x.id))+1 : 1;
     }
     if (h) loanHistory = JSON.parse(h);
   } catch(e) {}
@@ -1053,11 +1159,19 @@ function setNameFilter(key, btn, color) {
 //  ITEMS CHECKLIST
 // ════════════════════════════════════════════
 function buildItemsGrid(selectedIds=[]) {
-  document.getElementById('itemsGrid').innerHTML = ITEMS.map((item,i) =>
-    `<label class="item-check-label ${item.special?'special-item':''}">
+  document.getElementById('itemsGrid').innerHTML = ITEMS.map((item,i) => {
+    const cable = CABLE_STOCK.find(s=>s.id===item.id);
+    let stockTag = '';
+    if (cable) {
+      const st = cableStat(item.id);
+      const cls = st.avail>0 ? 'pill-green' : 'pill-red';
+      stockTag = ` <span class="pill ${cls}" style="font-size:10px;padding:1px 6px;margin-left:4px">가용 ${st.avail}/${st.total}</span>`;
+    }
+    return `<label class="item-check-label ${item.special?'special-item':''}">
       <input type="checkbox" id="item_${item.id}" ${selectedIds.includes(item.id)?'checked':''}>
-      <span>${i+1}. ${item.label}</span>
-    </label>`).join('');
+      <span>${i+1}. ${item.label}${stockTag}</span>
+    </label>`;
+  }).join('');
 }
 function getSelectedItems() {
   return ITEMS.map(it=>it.id).filter(id=>{ const el=document.getElementById('item_'+id); return el&&el.checked; });
@@ -1686,7 +1800,153 @@ function showToast(msg,type='success'){
   t.textContent=msg; t.className=`toast ${type} show`;
   setTimeout(()=>t.classList.remove('show'),2800);
 }
-function renderAll(){ renderStats();renderNameFilterRow();renderInventory();renderWaiting();renderModelSummary();renderCalFilterBtns();renderCalendar(); }
+// ════════════════════════════════════════════
+//  CABLE STOCK  (카메라 대여 + 단독 대여 합산)
+// ════════════════════════════════════════════
+function cableOutByCamera(sku){
+  return cameras.filter(c =>
+    (c.status==='out'||c.status==='overdue') &&
+    Array.isArray(c.items) && c.items.includes(sku)
+  ).length;
+}
+function cableOutByLoan(sku){
+  return cableLoans
+    .filter(l => l.sku===sku && !l.returned)
+    .reduce((s,l)=> s + (Number(l.qty)||0), 0);
+}
+function cableStat(sku){
+  const def   = CABLE_STOCK.find(s=>s.id===sku);
+  const total = def ? def.total : 0;
+  const viaCam  = cableOutByCamera(sku);
+  const viaLoan = cableOutByLoan(sku);
+  const out = viaCam + viaLoan;
+  return { total, viaCam, viaLoan, out, avail: Math.max(0, total - out), over: out>total };
+}
+
+function renderCableStock(){
+  const tbody = document.getElementById('cableStockBody');
+  if(!tbody) return;
+  tbody.innerHTML = CABLE_STOCK.map(s=>{
+    const st = cableStat(s.id);
+    const availCls = st.over ? 'pill-red' : (st.avail>0 ? 'pill-green' : 'pill-grey');
+    return `<tr>
+      <td><span class="pill pill-grey">${s.label}</span></td>
+      <td>${st.total}</td>
+      <td>${st.viaCam||'—'}</td>
+      <td>${st.viaLoan||'—'}</td>
+      <td><span class="pill ${st.out>0?'pill-orange':''}">${st.out}</span></td>
+      <td><span class="pill ${availCls}">${st.over?('초과 '+(st.out-st.total)):st.avail}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCableLoans(){
+  const tbody = document.getElementById('cableLoanBody');
+  if(!tbody) return;
+  const open = cableLoans.filter(l=>!l.returned);
+  if(!open.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty-td">단독 대여 없음</td></tr>`; return; }
+  tbody.innerHTML = open.map(l=>{
+    const def = CABLE_STOCK.find(s=>s.id===l.sku);
+    return `<tr>
+      <td><span class="pill pill-grey">${def?def.label:l.sku}</span></td>
+      <td>${l.qty}</td>
+      <td>${l.borrower||''}</td>
+      <td style="font-size:12px">${fd(l.out)}</td>
+      <td style="font-size:12px">${fd(l.due)}</td>
+      <td style="font-size:12px;color:#5E6C84">${l.note||''}</td>
+      <td><div class="action-cell">
+        <button class="btn btn-return btn-sm" onclick="returnCableLoan(${l.id})" title="반납 완료">✔️</button>
+        <button class="btn btn-edit btn-sm" onclick="openEditCableLoan(${l.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCableLoan(${l.id})">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── 케이블 대여 모달 ──
+function cableSkuOptions(selected){
+  return CABLE_STOCK.map(s=>{
+    const st = cableStat(s.id);
+    return `<option value="${s.id}" ${s.id===selected?'selected':''}>${s.label} (가용 ${st.avail}/${st.total})</option>`;
+  }).join('');
+}
+function availForEdit(sku){
+  // 수정 중인 기록은 이미 out에 포함돼 있으므로 자기 수량을 가용에 되돌려서 표시
+  let avail = cableStat(sku).avail;
+  if(editingCableLoanId){
+    const cur = cableLoans.find(l=>l.id===editingCableLoanId);
+    if(cur && cur.sku===sku && !cur.returned) avail += (Number(cur.qty)||0);
+  }
+  return avail;
+}
+function updateCableAvailHint(){
+  const sku = document.getElementById('cb-sku').value;
+  document.getElementById('cb-avail-hint').textContent = `현재 가용: ${availForEdit(sku)}개`;
+}
+function openCableLoanModal(){
+  editingCableLoanId = null;
+  document.getElementById('cableModalTitle').textContent = '케이블 단독 대여';
+  document.getElementById('cb-sku').innerHTML = cableSkuOptions(CABLE_STOCK[0].id);
+  document.getElementById('cb-qty').value = 1;
+  ['cb-borrower','cb-due','cb-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cb-out').value = todayStr();
+  updateCableAvailHint();
+  document.getElementById('cableModal').classList.remove('hidden');
+}
+function openEditCableLoan(id){
+  const l = cableLoans.find(x=>x.id===id); if(!l) return;
+  editingCableLoanId = id;
+  document.getElementById('cableModalTitle').textContent = '케이블 대여 수정';
+  document.getElementById('cb-sku').innerHTML = cableSkuOptions(l.sku);
+  document.getElementById('cb-qty').value = l.qty;
+  document.getElementById('cb-borrower').value = l.borrower||'';
+  document.getElementById('cb-out').value = cleanDate(l.out)||'';
+  document.getElementById('cb-due').value = cleanDate(l.due)||'';
+  document.getElementById('cb-note').value = l.note||'';
+  updateCableAvailHint();
+  document.getElementById('cableModal').classList.remove('hidden');
+}
+async function saveCableLoan(){
+  const sku      = document.getElementById('cb-sku').value;
+  const qty      = parseInt(document.getElementById('cb-qty').value,10);
+  const borrower = document.getElementById('cb-borrower').value.trim();
+  if(!sku){ showToast('케이블 종류를 선택해주세요.','err'); return; }
+  if(!qty||qty<1){ showToast('수량은 1 이상이어야 합니다.','err'); return; }
+  if(!borrower){ showToast('대여처를 입력해주세요.','err'); return; }
+  const avail = availForEdit(sku);
+  if(qty>avail){ showToast(`가용 수량(${avail}개)을 초과했습니다.`,'err'); return; }
+
+  const out  = cleanDate(document.getElementById('cb-out').value)||todayStr();
+  const due  = cleanDate(document.getElementById('cb-due').value);
+  const note = document.getElementById('cb-note').value.trim();
+
+  if(editingCableLoanId){
+    const idx = cableLoans.findIndex(l=>l.id===editingCableLoanId);
+    cableLoans[idx] = { ...cableLoans[idx], sku, qty, borrower, out, due, note };
+    await apiCall('saveCable', cableLoans[idx]);
+    showToast('케이블 대여가 수정됐습니다.','success');
+  } else {
+    const item = { id:nextCableLoanId++, sku, qty, borrower, out, due, returned:'', note };
+    cableLoans.push(item);
+    await apiCall('saveCable', item);
+    showToast('케이블 대여가 등록됐습니다.','success');
+  }
+  saveLocal(); closeModal('cableModal'); renderAll();
+}
+async function returnCableLoan(id){
+  const l = cableLoans.find(x=>x.id===id); if(!l) return;
+  l.returned = todayStr();
+  await apiCall('saveCable', l);
+  saveLocal(); showToast('케이블이 반납 처리됐습니다.','success'); renderAll();
+}
+async function deleteCableLoan(id){
+  if(!confirm('이 케이블 대여 기록을 삭제할까요?')) return;
+  cableLoans = cableLoans.filter(l=>l.id!==id);
+  await apiCall('deleteCable',{id});
+  saveLocal(); showToast('삭제됐습니다.','success'); renderAll();
+}
+
+function renderAll(){ renderStats();renderNameFilterRow();renderInventory();renderWaiting();renderModelSummary();renderCableStock();renderCableLoans();renderCalFilterBtns();renderCalendar(); }
 
 // ════════════════════════════════════════════
 //  INIT
